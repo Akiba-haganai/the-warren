@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/noto-sans";
+@import "@fontsource-variable/playfair-display";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------- CUSTOM BLUE PALETTE (vibrant cobalt) ---------- */
+@theme {
+  /* Override Tailwind’s default blue with a vibrant cobalt scale */
+  --color-blue-50: oklch(0.97 0.02 255);
+  --color-blue-100: oklch(0.93 0.04 250);
+  --color-blue-200: oklch(0.85 0.08 248);
+  --color-blue-300: oklch(0.75 0.14 245);
+  --color-blue-400: oklch(0.65 0.2 243);
+  --color-blue-500: oklch(0.58 0.24 250);
+  --color-blue-600: oklch(0.52 0.25 255);
+  --color-blue-700: oklch(0.45 0.23 260);
+  --color-blue-800: oklch(0.38 0.2 265);
+  --color-blue-900: oklch(0.28 0.16 268);
+  --color-blue-950: oklch(0.18 0.12 270);
+
+  /* Your custom accent aliases (optional) */
+  --color-primary-accent: var(--color-blue-600);
+  --color-primary-accent-foreground: oklch(1 0 0);
+}
+
+/* ---------- GRADIENTS & SHADOWS ---------- */
+:root {
+  /* Vibrant blue gradients – replace the old copper/royal with these */
+  --gradient-copper: linear-gradient(135deg, oklch(0.75 0.14 245), oklch(0.52 0.25 255), oklch(0.38 0.2 265));
+  --gradient-royal: linear-gradient(135deg, oklch(0.52 0.25 255), oklch(0.28 0.16 268));
+  --shadow-glow: 0 20px 60px -20px oklch(0.52 0.25 255 / 0.5);
+  --shadow-elegant: 0 30px 80px -30px oklch(0.28 0.16 268 / 0.35);
+
+  /* Keep your existing base shadcn variables here */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.3);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.3);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.3);
+  --primary: var(--color-blue-600);           /* now blue! */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.002 17.2);
+  --secondary-foreground: oklch(0.214 0.009 43.1);
+  --muted: oklch(0.96 0.002 17.2);
+  --muted-foreground: oklch(0.547 0.021 43.1);
+  --accent: oklch(0.96 0.002 17.2);
+  --accent-foreground: oklch(0.214 0.009 43.1);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0.005 34.3);
+  --input: oklch(0.922 0.005 34.3);
+  --ring: var(--color-blue-500);              /* blue focus ring */
+  --radius: 0.625rem;
+
+  /* ... keep your other shadcn variables (chart, sidebar, etc.) */
+  /* I'll omit them for brevity – leave them as they were */
+}
+
+/* ---------- DARK MODE TWEAKS ---------- */
+.dark {
+  /* Adjust primary to a lighter blue */
+  --primary: var(--color-blue-400);
+  --primary-foreground: oklch(0.18 0.12 270);
+  --ring: var(--color-blue-300);
+  /* keep other dark variables */
+}
+
+/* ---------- FONT UTILITIES ---------- */
+/* Because you removed --font-display, create a class that uses the heading font */
+@utility font-display {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Gradient text utilities (already there but ensure they use new vars) */
+@utility text-gradient-blue {
+  background: var(--gradient-copper);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-gradient-royal {
+  background: var(--gradient-royal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Your existing @theme inline block with shadcn mappings – keep it */
+@theme inline {
+  --font-sans: 'Noto Sans Variable', sans-serif;
+  --font-heading: 'Playfair Display Variable', serif;
+  /* ... all your color mappings ... */
+}

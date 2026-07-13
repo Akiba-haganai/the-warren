@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# AdSense readiness — no ads.txt yet; add when publisher ID is issued.

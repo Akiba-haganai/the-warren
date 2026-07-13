@@ -1,0 +1,12 @@
+{
+  "name": "Warren — Student Life at Copperbelt University",
+  "short_name": "Warren",
+  "description": "The digital home of student life at Copperbelt University.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fcfbf8",
+  "theme_color": "#B87333",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}
