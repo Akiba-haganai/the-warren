@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
+import type { ReactNode } from "react";
+import type { Episode } from "@/data/podcasts";
 
 interface PlayerContextType {
   currentEpisode: Episode | null;

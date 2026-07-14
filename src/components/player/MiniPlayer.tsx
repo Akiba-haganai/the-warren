@@ -1,6 +1,6 @@
 import YouTube from "react-youtube";
 import { usePlayer } from "@/contexts/PlayerContext";
-import { X, Play, Pause, SkipForward, SkipBack, Maximize2 } from "lucide-react";
+import { X, Play, Pause, SkipForward, SkipBack } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 
