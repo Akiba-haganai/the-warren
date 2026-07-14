@@ -1,16 +1,23 @@
 import { Link } from "react-router-dom";
-import { Compass, Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
+import warrenLogo from "@/assets/warren_logo.png";
 
 export function Footer() {
   return (
+
     <footer className="mt-auto border-t border-border/60 bg-secondary/40">
       <div className="mx-auto max-w-7xl px-6 py-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Compass className="h-4 w-4" />
+              <img
+                src={warrenLogo}
+                alt="Warren Hub logo"
+                className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
+              />
             </span>
+
             <span className="font-display text-xl font-semibold">Warren Hub</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
