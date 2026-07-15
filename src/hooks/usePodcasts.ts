@@ -14,6 +14,15 @@ export function usePodcasts(category?: string) {
       setLoading(true);
       setError(null);
 
+      if (!supabase) {
+        if (!cancelled) {
+          setError("Podcast service is not configured.");
+          setData([]);
+          setLoading(false);
+        }
+        return;
+      }
+
       let query = supabase
         .from("episodes")
         .select("*")
