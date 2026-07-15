@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
@@ -15,23 +15,34 @@ import { Input } from "@/components/ui/input";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export default function Podcasts() {
-  const { playEpisode } = usePlayer();
+  const { playEpisode, currentEpisode, restoreFromEpisodes } = usePlayer();
   const { podcasts, loading, error } = usePodcasts();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  const restoredRef = useRef(false);
 
   const categories = ["All", "Entrepreneurship", "Faith", "Career", "Relationships", "Academics"];
 
   // Filter and search logic
   const filtered = podcasts
     .filter((ep) => filter === "All" || ep.category === filter)
-    .filter((ep) =>
-      ep.title.toLowerCase().includes(search.toLowerCase()) ||
-      ep.description.toLowerCase().includes(search.toLowerCase())
+    .filter(
+      (ep) =>
+        ep.title.toLowerCase().includes(search.toLowerCase()) ||
+        ep.description.toLowerCase().includes(search.toLowerCase()),
     );
 
-  // Featured episodes (first 3)
+  // Featured episodes (first 3, from the full unfiltered list)
   const featured = podcasts.slice(0, 3);
+
+  // Once episodes have loaded, try to resume whatever was playing last
+  // time (if anything). Only runs once per page load.
+  useEffect(() => {
+    if (!loading && podcasts.length > 0 && !restoredRef.current && !currentEpisode) {
+      restoreFromEpisodes(podcasts);
+      restoredRef.current = true;
+    }
+  }, [loading, podcasts, currentEpisode, restoreFromEpisodes]);
 
   return (
     <>
@@ -57,13 +68,17 @@ export default function Podcasts() {
                 <CarouselContent>
                   {featured.map((ep) => (
                     <CarouselItem key={ep.id} className="md:basis-1/2 lg:basis-1/3">
-                      <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition">
+                      <Card
+                        className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
+                          currentEpisode?.id === ep.id ? "ring-2 ring-primary" : ""
+                        }`}
+                      >
                         <div className="relative">
                           <img src={ep.thumbnail} alt={ep.title} className="w-full aspect-video object-cover" loading="lazy" />
                           <button
-                            onClick={() => playEpisode(ep)}
+                            onClick={() => playEpisode(ep, featured)}
                             className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
-                            aria-label="Play episode"
+                            aria-label={`Play ${ep.title}`}
                           >
                             <Play className="h-12 w-12 text-white fill-white" />
                           </button>
@@ -122,6 +137,25 @@ export default function Podcasts() {
             </div>
           )}
 
+          {/* Empty state (no episodes match search/filter) */}
+          {!loading && !error && filtered.length === 0 && (
+            <div className="mt-12 text-center py-20">
+              <p className="text-muted-foreground">No episodes match your search.</p>
+              {(search || filter !== "All") && (
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    setSearch("");
+                    setFilter("All");
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )}
+            </div>
+          )}
+
           {/* Episode grid */}
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {loading
@@ -140,13 +174,17 @@ export default function Podcasts() {
               : filtered.map((ep, i) => (
                   <Reveal key={ep.id} delay={i * 0.05}>
                     <motion.div whileHover={{ y: -4 }}>
-                      <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition">
+                      <Card
+                        className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
+                          currentEpisode?.id === ep.id ? "ring-2 ring-primary" : ""
+                        }`}
+                      >
                         <div className="relative">
                           <img src={ep.thumbnail} alt={ep.title} className="w-full aspect-video object-cover" loading="lazy" />
                           <button
-                            onClick={() => playEpisode(ep)}
+                            onClick={() => playEpisode(ep, filtered)}
                             className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
-                            aria-label="Play episode"
+                            aria-label={`Play ${ep.title}`}
                           >
                             <Play className="h-12 w-12 text-white fill-white" />
                           </button>

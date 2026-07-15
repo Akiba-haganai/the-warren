@@ -12,6 +12,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import {
   CommandDialog,
   CommandEmpty,
@@ -49,6 +51,22 @@ const THEME_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }
   { value: "dark", label: "Dark", icon: Moon },
   { value: "system", label: "System", icon: Laptop },
 ];
+
+function InstallAppButton() {
+  const { canInstall, promptInstall } = useInstallPrompt();
+  if (!canInstall) return null;
+
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={promptInstall}
+      className="rounded-full"
+    >
+      Install App
+    </Button>
+  );
+}
 
 export function Header() {
   const location = useLocation();
@@ -189,6 +207,7 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <InstallAppButton />
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
               <Search className="h-4 w-4" />
             </Button>
@@ -246,14 +265,14 @@ export function Header() {
                   </div>
 
                   <Button
-  asChild
-  className="mt-2 rounded-full text-white font-semibold bg-gradient-royal shadow-glow hover:shadow-glow hover:brightness-125 transition-all duration-300"
->
-  <a href={GET_STARTED_URL} target="_blank" rel="noreferrer">
-    Get Started
-    <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-  </a>
-</Button>
+                    asChild
+                    className="mt-2 rounded-full text-white font-semibold bg-gradient-royal shadow-glow hover:shadow-glow hover:brightness-125 transition-all duration-300"
+                  >
+                    <a href={GET_STARTED_URL} target="_blank" rel="noreferrer">
+                      Get Started
+                      <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                    </a>
+                  </Button>
                 </nav>
               </SheetContent>
             </Sheet>
