@@ -14,6 +14,9 @@ import { MiniPlayer } from "./components/player/MiniPlayer";
 import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 
+
+
+
 function App() {
   return (
     <>

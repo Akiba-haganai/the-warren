@@ -1,7 +1,8 @@
-import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Reveal, SectionLabel } from "../../components/layout/Reveal";
 import { ArrowRight } from "lucide-react";
+import founderPhoto from "../../assets/warren.png";
 
 export function FounderNote() {
   return (
@@ -19,7 +20,6 @@ export function FounderNote() {
                 CBU student can move faster—toward community, opportunities, and real support.
               </p>
             </Reveal>
-
             <Reveal delay={0.15}>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow font-semibold">
@@ -33,13 +33,17 @@ export function FounderNote() {
               </div>
             </Reveal>
           </div>
-
           <div className="relative">
             <Reveal>
               <div className="rounded-3xl border border-border bg-card p-8 shadow-elegant">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 rounded-2xl bg-blue-600 text-white">
-                    <AvatarFallback className="text-xl">W</AvatarFallback>
+                  <Avatar className="h-16 w-16 rounded-2xl">
+                    <AvatarImage
+                      src={founderPhoto}
+                      alt="Warren, founder of Warren Hub"
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-xl bg-blue-600 text-white">W</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-display text-2xl font-semibold">Warren</p>
@@ -57,4 +61,3 @@ export function FounderNote() {
     </section>
   );
 }
-

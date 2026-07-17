@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, ExternalLink } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
+
 
 export function Footer() {
   return (
@@ -51,6 +52,7 @@ export function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-foreground">Connect</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+
             <li>
               <a
                 href="mailto:chilengawarren307@gmail.com"
@@ -82,8 +84,37 @@ export function Footer() {
                 WhatsApp Group
               </a>
             </li>
+
+            <li className="pt-2 border-t border-border/60">
+              <span className="text-xs font-semibold uppercase text-muted-foreground">
+                Our Apps
+              </span>
+            </li>
+            <li>
+              <a
+                href="https://warren-campus.vercel.app"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                Warren Campus
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://warren-market.vercel.app"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                Warren Connect
+              </a>
+            </li>
           </ul>
         </div>
+
       </div>
 
       <div className="border-t border-border/60">

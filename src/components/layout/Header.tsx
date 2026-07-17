@@ -40,6 +40,18 @@ const nav = [
   { to: "/contact", label: "Contact" },
 ];
 
+const EXTERNAL_APPS = [
+  {
+    href: "https://warren-campus.vercel.app",
+    label: "Warren Campus",
+  },
+  {
+    href: "https://warren-market.vercel.app",
+    label: "Warren Connect",
+  },
+];
+
+
 // NOTE: "Get Started" previously pointed at /contact, duplicating the
 // Contact nav item. Pointed it at the live flagship product instead —
 // swap this to wherever you actually want new users to land
@@ -204,9 +216,21 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
+            {EXTERNAL_APPS.map((app) => (
+              <a
+                key={app.href}
+                href={app.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40`}
+              >
+                {app.label} ↗
+              </a>
+            ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+
             <InstallAppButton />
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
               <Search className="h-4 w-4" />
@@ -263,6 +287,24 @@ export function Header() {
                       <ThemeSelector compact />
                     </div>
                   </div>
+
+                  <div className="mt-2 rounded-2xl border border-border/60 bg-card p-3">
+                    <div className="flex flex-col gap-2">
+                      <span className="text-sm font-medium">Our Apps</span>
+                      {EXTERNAL_APPS.map((app) => (
+                        <a
+                          key={app.href}
+                          href={app.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                        >
+                          {app.label} ↗
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
 
                   <Button
                     asChild

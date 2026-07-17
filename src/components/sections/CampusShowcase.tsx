@@ -36,7 +36,7 @@ export function CampusShowcase() {
                     variant="link"
                     className="mt-6 text-blue-600 hover:text-blue-700 font-semibold"
                   >
-                    <a href="#contact">Learn more</a>
+                    <a href="https://warren-campus.vercel.app" target="_blank" rel="noreferrer">Learn more</a>
                   </Button>
                 </CardContent>
               </Card>
