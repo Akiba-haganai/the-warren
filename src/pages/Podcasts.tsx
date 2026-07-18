@@ -1,18 +1,24 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, Clock, Search } from "lucide-react";
+import { Play, Clock, Search, Mic, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
-import { AdUnit } from "@/components/ads/AdUnit";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function Podcasts() {
   const { playEpisode, currentEpisode, restoreFromEpisodes } = usePlayer();
@@ -21,7 +27,14 @@ export default function Podcasts() {
   const [filter, setFilter] = useState("All");
   const restoredRef = useRef(false);
 
-  const categories = ["All", "Entrepreneurship", "Faith", "Career", "Relationships", "Academics"];
+  const categories = [
+    "All",
+    "Entrepreneurship",
+    "Faith",
+    "Career",
+    "Relationships",
+    "Academics",
+  ];
 
   // Filter and search logic
   const filtered = podcasts
@@ -35,8 +48,7 @@ export default function Podcasts() {
   // Featured episodes (first 3, from the full unfiltered list)
   const featured = podcasts.slice(0, 3);
 
-  // Once episodes have loaded, try to resume whatever was playing last
-  // time (if anything). Only runs once per page load.
+  // Once episodes have loaded, try to resume whatever was playing last time
   useEffect(() => {
     if (!loading && podcasts.length > 0 && !restoredRef.current && !currentEpisode) {
       restoreFromEpisodes(podcasts);
@@ -56,7 +68,8 @@ export default function Podcasts() {
               <span className="text-gradient-blue">Warren</span> Podcasts
             </h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-              Conversations about student life, faith, career, and everything in between.
+              Conversations about student life, faith, career, and everything in
+              between.
             </p>
           </Reveal>
 
@@ -67,14 +80,24 @@ export default function Podcasts() {
               <Carousel>
                 <CarouselContent>
                   {featured.map((ep) => (
-                    <CarouselItem key={ep.id} className="md:basis-1/2 lg:basis-1/3">
+                    <CarouselItem
+                      key={ep.id}
+                      className="md:basis-1/2 lg:basis-1/3"
+                    >
                       <Card
                         className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
-                          currentEpisode?.id === ep.id ? "ring-2 ring-primary" : ""
+                          currentEpisode?.id === ep.id
+                            ? "ring-2 ring-primary"
+                            : ""
                         }`}
                       >
                         <div className="relative">
-                          <img src={ep.thumbnail} alt={ep.title} className="w-full aspect-video object-cover" loading="lazy" />
+                          <img
+                            src={ep.thumbnail}
+                            alt={ep.title}
+                            className="w-full aspect-video object-cover"
+                            loading="lazy"
+                          />
                           <button
                             onClick={() => playEpisode(ep, featured)}
                             className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
@@ -87,9 +110,15 @@ export default function Podcasts() {
                           </span>
                         </div>
                         <CardContent className="p-4">
-                          <Badge variant="secondary" className="mb-2">{ep.category}</Badge>
-                          <h3 className="font-semibold text-base leading-snug">{ep.title}</h3>
-                          <p className="mt-1 text-xs text-muted-foreground">{ep.date}</p>
+                          <Badge variant="secondary" className="mb-2">
+                            {ep.category}
+                          </Badge>
+                          <h3 className="font-semibold text-base leading-snug">
+                            {ep.title}
+                          </h3>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {ep.date}
+                          </p>
                         </CardContent>
                       </Card>
                     </CarouselItem>
@@ -131,7 +160,11 @@ export default function Podcasts() {
           {error && (
             <div className="mt-12 text-center py-20">
               <p className="text-destructive font-medium">{error}</p>
-              <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => window.location.reload()}
+              >
                 Try again
               </Button>
             </div>
@@ -140,7 +173,9 @@ export default function Podcasts() {
           {/* Empty state (no episodes match search/filter) */}
           {!loading && !error && filtered.length === 0 && (
             <div className="mt-12 text-center py-20">
-              <p className="text-muted-foreground">No episodes match your search.</p>
+              <p className="text-muted-foreground">
+                No episodes match your search.
+              </p>
               {(search || filter !== "All") && (
                 <Button
                   variant="outline"
@@ -176,11 +211,18 @@ export default function Podcasts() {
                     <motion.div whileHover={{ y: -4 }}>
                       <Card
                         className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
-                          currentEpisode?.id === ep.id ? "ring-2 ring-primary" : ""
+                          currentEpisode?.id === ep.id
+                            ? "ring-2 ring-primary"
+                            : ""
                         }`}
                       >
                         <div className="relative">
-                          <img src={ep.thumbnail} alt={ep.title} className="w-full aspect-video object-cover" loading="lazy" />
+                          <img
+                            src={ep.thumbnail}
+                            alt={ep.title}
+                            className="w-full aspect-video object-cover"
+                            loading="lazy"
+                          />
                           <button
                             onClick={() => playEpisode(ep, filtered)}
                             className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
@@ -193,9 +235,15 @@ export default function Podcasts() {
                           </span>
                         </div>
                         <CardContent className="p-4">
-                          <Badge variant="secondary" className="mb-2">{ep.category}</Badge>
-                          <h3 className="font-semibold text-base leading-snug">{ep.title}</h3>
-                          <p className="mt-1 text-xs text-muted-foreground">{ep.date}</p>
+                          <Badge variant="secondary" className="mb-2">
+                            {ep.category}
+                          </Badge>
+                          <h3 className="font-semibold text-base leading-snug">
+                            {ep.title}
+                          </h3>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {ep.date}
+                          </p>
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -203,9 +251,34 @@ export default function Podcasts() {
                 ))}
           </div>
 
-          {/* AdSense */}
-          <div className="mt-16">
-            <AdUnit slot="1234567890" format="horizontal" />
+          {/* ───── CTA: collaborate on podcasts ───── */}
+          <div className="mt-20">
+            <Reveal>
+              <Card className="overflow-hidden border-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-glow">
+                <CardContent className="p-8 sm:p-10 text-center">
+                  <Mic className="h-10 w-10 mx-auto mb-4 text-white/80" />
+                  <h2 className="font-display text-2xl sm:text-3xl font-semibold">
+                    Want to be part of Warren Podcasts?
+                  </h2>
+                  <p className="mt-3 text-white/80 max-w-xl mx-auto">
+                    Whether you have an idea for an episode, want to co‑host a
+                    show, or just have a story to tell — we'd love to hear from
+                    you. Your voice could be the next one on air.
+                  </p>
+                  <div className="mt-6">
+                    <Button
+                      asChild
+                      size="lg"
+                      className="rounded-full bg-white text-purple-700 hover:bg-purple-50 font-semibold"
+                    >
+                      <Link to="/contact">
+                        Get in touch <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
           </div>
         </section>
       </main>

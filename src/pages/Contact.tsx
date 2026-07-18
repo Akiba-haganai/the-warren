@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Mail, MapPin, MessageCircle, Send } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Send, Loader2 } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -17,6 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
+// ---------------------------------------------------------------------------
+// 1. Get your free access key at https://web3forms.com/#start
+//    It sends form submissions to the email you verify during signup.
+// ---------------------------------------------------------------------------
+const WEB3FORMS_ACCESS_KEY = "96890191-321e-44ba-9a32-4c46b2e1a422"; // ← replace with your real key
+
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email"),
@@ -27,16 +34,41 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function Contact() {
+  const [sending, setSending] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", email: "", subject: "", message: "" },
-    mode: "onSubmit",
   });
 
-  function onSubmit(values: FormValues) {
-    console.log("Contact form submitted:", values);
-    toast.success("Message sent! We'll reply to " + values.email);
-    form.reset();
+  async function onSubmit(values: FormValues) {
+    if (sending) return;
+
+    setSending(true);
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          ...values,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Message sent! We'll reply to " + values.email);
+        form.reset();
+      } else {
+        throw new Error(data.message || "Unknown error");
+      }
+    } catch (err) {
+      toast.error(
+        "Something went wrong. Please try again or email us directly."
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -50,6 +82,7 @@ export default function Contact() {
       subtitle="Questions, partnerships, feedback or press — we'd love to hear from you."
     >
       <div className="grid gap-6 md:grid-cols-3">
+        {/* ---------- Email card ---------- */}
         <a
           href="mailto:chilengawarren307@gmail.com"
           className="rounded-2xl border border-border bg-card p-6 hover:shadow-glow transition"
@@ -58,13 +91,14 @@ export default function Contact() {
             <Mail className="h-5 w-5" />
           </span>
           <h3 className="mt-4 font-semibold">Email</h3>
-          <p className="text-muted-foreground text-sm break-all">
+          <p className="text-muted-foreground text-sm break-words">
             chilengawarren307@gmail.com
           </p>
         </a>
 
+        {/* ---------- WhatsApp chat (direct message) ---------- */}
         <a
-          href="https://whatsapp.com/channel/0029Vb8NY5f84OmCRIr9K91V"
+          href="https://wa.me/260966738707"   // ← replace with your actual phone number in international format, no + sign
           target="_blank"
           rel="noreferrer"
           className="rounded-2xl border border-border bg-card p-6 hover:shadow-glow transition"
@@ -72,10 +106,11 @@ export default function Contact() {
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-500 text-white">
             <MessageCircle className="h-5 w-5" />
           </span>
-          <h3 className="mt-4 font-semibold">WhatsApp Channel</h3>
-          <p className="text-muted-foreground text-sm">Follow for updates</p>
+          <h3 className="mt-4 font-semibold">WhatsApp</h3>
+          <p className="text-muted-foreground text-sm">Chat with Warren</p>
         </a>
 
+        {/* ---------- Location (non-interactive, no hover) ---------- */}
         <div className="rounded-2xl border border-border bg-card p-6">
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
             <MapPin className="h-5 w-5" />
@@ -85,20 +120,11 @@ export default function Contact() {
         </div>
       </div>
 
+      {/* ---------- Form ---------- */}
       <div className="mt-12 rounded-3xl border border-border bg-card p-8">
         <h3 className="font-display text-2xl font-semibold">
           Send a direct message
         </h3>
-        <p className="mt-2 text-muted-foreground text-sm">
-          Prefer email? Write to us at{" "}
-          <a
-            href="mailto:chilengawarren307@gmail.com"
-            className="text-blue-600 underline"
-          >
-            chilengawarren307@gmail.com
-          </a>
-          .
-        </p>
 
         <Form {...form}>
           <form
@@ -177,10 +203,20 @@ export default function Contact() {
             <Button
               type="submit"
               size="lg"
+              disabled={sending}
               className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-glow font-semibold"
             >
-              <Send className="mr-2 h-4 w-4" />
-              Send message
+              {sending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Send message
+                </>
+              )}
             </Button>
           </form>
         </Form>
@@ -188,4 +224,3 @@ export default function Contact() {
     </PageShell>
   );
 }
-
