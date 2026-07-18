@@ -1,4 +1,4 @@
-import { MessageCircle, Facebook, Instagram, Youtube } from "lucide-react";
+import { MessageCircle, Users, Camera, PlaySquare } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Reveal, SectionLabel } from "../../components/layout/Reveal";
 
@@ -57,11 +57,11 @@ export function JoinCommunity() {
             className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-glow font-semibold"
           >
             <a
-              href="https://facebook.com/groups/your-group-id"
+              href="https://web.facebook.com/groups/warrenstudenthub/"
               target="_blank"
               rel="noreferrer"
             >
-              <Facebook className="mr-2 h-5 w-5" />
+              <Users className="mr-2 h-5 w-5" />
               Facebook Group
             </a>
           </Button>
@@ -78,7 +78,7 @@ export function JoinCommunity() {
               target="_blank"
               rel="noreferrer"
             >
-              <Instagram className="mr-2 h-5 w-5" />
+              <Camera className="mr-2 h-5 w-5" />
               Instagram
             </a>
           </Button>
@@ -95,7 +95,7 @@ export function JoinCommunity() {
               target="_blank"
               rel="noreferrer"
             >
-              <Youtube className="mr-2 h-5 w-5" />
+              <PlaySquare className="mr-2 h-5 w-5" />
               YouTube
             </a>
           </Button>

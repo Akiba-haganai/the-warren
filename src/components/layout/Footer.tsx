@@ -3,9 +3,9 @@ import {
   Mail,
   MessageCircle,
   ExternalLink,
-  Facebook,
-  Instagram,
-  Youtube,
+  Users,
+  Camera,
+  PlaySquare,
 } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
 
@@ -88,27 +88,24 @@ export function Footer() {
               </a>
             </li>
 
-            {/* Divider */}
             <li className="pt-2 border-t border-border/60">
               <span className="text-xs font-semibold uppercase text-muted-foreground">
                 Follow Us
               </span>
             </li>
 
-            {/* Facebook Group */}
             <li>
               <a
-                href="https://facebook.com/groups/your-group-id"
+                href="https://web.facebook.com/groups/warrenstudenthub/"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
-                <Facebook className="h-3.5 w-3.5" />
+                <Users className="h-3.5 w-3.5" />
                 Facebook Group
               </a>
             </li>
 
-            {/* Instagram */}
             <li>
               <a
                 href="https://instagram.com/warrenpodcasts_cbu"
@@ -116,12 +113,11 @@ export function Footer() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
-                <Instagram className="h-3.5 w-3.5" />
-                Instagram
+                <Camera className="h-3.5 w-3.5" />
+                Instagram (coming soon)
               </a>
             </li>
 
-            {/* YouTube */}
             <li>
               <a
                 href="https://youtube.com/channel/UCGKgsxYNTUESqdvySiMIQ1A"
@@ -129,12 +125,11 @@ export function Footer() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
-                <Youtube className="h-3.5 w-3.5" />
+                <PlaySquare className="h-3.5 w-3.5" />
                 YouTube
               </a>
             </li>
 
-            {/* Divider */}
             <li className="pt-2 border-t border-border/60">
               <span className="text-xs font-semibold uppercase text-muted-foreground">
                 Our Apps
