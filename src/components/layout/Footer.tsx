@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
-import { Mail, MessageCircle, ExternalLink } from "lucide-react";
+import {
+  Mail,
+  MessageCircle,
+  ExternalLink,
+  Facebook,
+  Instagram,
+  Youtube,
+} from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
-
 
 export function Footer() {
   return (
-
     <footer className="mt-auto border-t border-border/60 bg-secondary/40">
       <div className="mx-auto max-w-7xl px-6 py-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
@@ -18,7 +23,6 @@ export function Footer() {
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>
-
             <span className="font-display text-xl font-semibold">Warren Hub</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
@@ -52,7 +56,6 @@ export function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-foreground">Connect</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-
             <li>
               <a
                 href="mailto:chilengawarren307@gmail.com"
@@ -85,6 +88,53 @@ export function Footer() {
               </a>
             </li>
 
+            {/* Divider */}
+            <li className="pt-2 border-t border-border/60">
+              <span className="text-xs font-semibold uppercase text-muted-foreground">
+                Follow Us
+              </span>
+            </li>
+
+            {/* Facebook Group */}
+            <li>
+              <a
+                href="https://facebook.com/groups/your-group-id"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+              >
+                <Facebook className="h-3.5 w-3.5" />
+                Facebook Group
+              </a>
+            </li>
+
+            {/* Instagram */}
+            <li>
+              <a
+                href="https://instagram.com/warrenpodcasts_cbu"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+              >
+                <Instagram className="h-3.5 w-3.5" />
+                Instagram
+              </a>
+            </li>
+
+            {/* YouTube */}
+            <li>
+              <a
+                href="https://youtube.com/channel/UCGKgsxYNTUESqdvySiMIQ1A"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+              >
+                <Youtube className="h-3.5 w-3.5" />
+                YouTube
+              </a>
+            </li>
+
+            {/* Divider */}
             <li className="pt-2 border-t border-border/60">
               <span className="text-xs font-semibold uppercase text-muted-foreground">
                 Our Apps
@@ -114,7 +164,6 @@ export function Footer() {
             </li>
           </ul>
         </div>
-
       </div>
 
       <div className="border-t border-border/60">

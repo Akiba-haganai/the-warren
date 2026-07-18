@@ -155,8 +155,8 @@
    like bg-background, text-foreground, bg-card, border-border, etc. to
    exist at all and to react to the .dark class swap above. */
 @theme inline {
-  --font-sans: 'Noto Sans Variable', sans-serif;
-  --font-heading: 'Playfair Display Variable', serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-sans: 'Lato', sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
