@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight } from "lucide-react";
+import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Shield } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
+import { supabase } from "@/lib/supabase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,11 +33,10 @@ import {
 } from "@/lib/theme";
 
 const nav = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
-  { to: "/ecosystem", label: "Ecosystem" },
-  { to: "/products", label: "Products" },
+  { to: "/", label: "Media" },
   { to: "/podcasts", label: "Podcasts" },
+  { to: "/explore", label: "Explore Warren" },
+  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
 
@@ -51,11 +51,6 @@ const EXTERNAL_APPS = [
   },
 ];
 
-
-// NOTE: "Get Started" previously pointed at /contact, duplicating the
-// Contact nav item. Pointed it at the live flagship product instead —
-// swap this to wherever you actually want new users to land
-// (a signup page, a different product, etc.) if this isn't right.
 const GET_STARTED_URL = "https://warren-campus.vercel.app";
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
@@ -84,15 +79,10 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // themePref = the stored preference ("light" | "dark" | "system")
   const [themePref, setThemePref] = useState<ThemePreference>(() =>
     typeof window === "undefined" ? "system" : getThemePreference(),
   );
 
-  // resolvedDark = the ACTUAL applied theme, kept in React state (not read
-  // ad-hoc from the DOM inside a useMemo) so it re-renders reliably,
-  // including when "system" is selected and the OS theme changes live.
-  // Used below to keep the mobile browser chrome color in sync.
   const [resolvedDark, setResolvedDark] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     const pref = getThemePreference();
@@ -100,17 +90,41 @@ export function Header() {
   });
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Applies stored theme to <html> on mount and wires up the
-    // matchMedia listener for live "system" updates.
+    if (!supabase) return;
+
+    // Check admin status for the current session
+    async function checkAdmin() {
+      const { data: { session } } = await supabase!.auth.getSession();
+      if (session) {
+        const { data } = await supabase!.rpc("is_admin");
+        setIsAdmin(!!data);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+
+    checkAdmin();
+
+    // Re-check whenever auth state changes (sign in, sign out, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        supabase!.rpc("is_admin").then(({ data }) => setIsAdmin(!!data));
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
     const cleanup = initThemeFromStorage();
     setThemePref(getThemePreference());
     setResolvedDark(document.documentElement.classList.contains("dark"));
 
-    // Watch for class changes on <html> so resolvedDark always reflects
-    // reality, no matter what triggered the change (this component,
-    // system preference change, another tab, etc.)
     const observer = new MutationObserver(() => {
       setResolvedDark(document.documentElement.classList.contains("dark"));
     });
@@ -125,8 +139,6 @@ export function Header() {
     };
   }, []);
 
-  // Keep the mobile browser chrome / status bar color matched to the
-  // active theme. This is what resolvedDark actually drives.
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
     const color = resolvedDark ? "#0f1420" : "#ffffff";
@@ -145,8 +157,6 @@ export function Header() {
   const selectTheme = (pref: ThemePreference) => {
     setThemePref(pref);
     setThemePreference(pref);
-    // setThemePreference applies the class synchronously, but the
-    // MutationObserver above will also confirm/sync resolvedDark.
     setResolvedDark(
       pref === "dark" || (pref === "system" && getSystemTheme() === "dark"),
     );
@@ -230,10 +240,19 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-
             <InstallAppButton />
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
               <Search className="h-4 w-4" />
+            </Button>
+            {isAdmin && (
+              <Button variant="ghost" size="icon" asChild title="Admin panel">
+                <Link to="/admin">
+                  <Shield className="h-4 w-4 text-blue-600" />
+                </Link>
+              </Button>
+            )}
+            <Button variant="ghost" size="icon" disabled title="Profile (coming soon)" className="text-muted-foreground">
+              <User className="h-4 w-4" />
             </Button>
 
             <ThemeSelector />
@@ -281,6 +300,15 @@ export function Header() {
                     </Link>
                   ))}
 
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="px-3 py-2 text-sm rounded-lg transition text-blue-600 bg-blue-50 dark:bg-blue-950 font-medium flex items-center gap-2"
+                    >
+                      <Shield className="h-4 w-4" /> Admin Inbox
+                    </Link>
+                  )}
+
                   <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3">
                     <div className="flex flex-col gap-2">
                       <span className="text-sm font-medium">Theme</span>
@@ -304,7 +332,6 @@ export function Header() {
                       ))}
                     </div>
                   </div>
-
 
                   <Button
                     asChild

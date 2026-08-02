@@ -1,11 +1,16 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "crons": [
     {
-      "path": "/api/sync-youtube",
-      "schedule": "0 6 * * *"
-    }
+      "source": "/stories/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|WhatsApp|Discordbot|telegrambot|Googlebot|bingbot|DuckDuckBot)"
+        }
+      ],
+      "destination": "/api/og?slug=:slug"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
