@@ -1,6 +1,8 @@
+import "./lib/sentry"; // 👈 must be first — initializes Sentry before anything else
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import * as Sentry from "@sentry/react";
 import App from "./App";
 import "./index.css";
 import { PlayerProvider } from "./contexts/PlayerContext";
@@ -38,11 +40,31 @@ try {
 
   createRoot(rootEl).render(
     <StrictMode>
-      <BrowserRouter>
-        <PlayerProvider>
-          <App />
-        </PlayerProvider>
-      </BrowserRouter>
+      <Sentry.ErrorBoundary
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-8">
+            <div className="text-center max-w-md">
+              <h1 className="text-2xl font-semibold mb-2">Something went wrong</h1>
+              <p className="text-muted-foreground">
+                An unexpected error occurred. Our team has been notified.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-6 px-5 py-2 rounded-full bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
+              >
+                Reload page
+              </button>
+            </div>
+          </div>
+        }
+        showDialog
+      >
+        <BrowserRouter>
+          <PlayerProvider>
+            <App />
+          </PlayerProvider>
+        </BrowserRouter>
+      </Sentry.ErrorBoundary>
     </StrictMode>,
   );
 } catch (err) {
