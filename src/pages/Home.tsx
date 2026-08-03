@@ -15,12 +15,12 @@ import {
   Send,
 } from "lucide-react";
 import { useTrendingTopics } from "@/hooks/useTrendingTopics";
-import { useLatestStories } from "@/hooks/useLatestStories";
+import { useLatestBlogs } from "@/hooks/useLatestBlogs";
 import { useActivePoll } from "@/hooks/useActivePoll";
 import { useCulturePhotos } from "@/hooks/useCulturePhotos";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { supabase } from "@/lib/supabase";
-import { urlForImage } from "@/lib/sanityImage";
+import { BlogCard } from "@/components/blog/BlogCard";
 
 export default function Home() {
   return (
@@ -29,7 +29,7 @@ export default function Home() {
       <main>
         <MediaHero />
         <TrendingTopics />
-        <LatestStories />
+        <LatestBlogs />
         <StudentVoicePoll />
         <PodcastTeaser />
         <CultureSnapshot />
@@ -110,31 +110,17 @@ function TrendingTopics() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Latest Stories                                                    */
+/*  Latest Blogs                                                      */
 /* ------------------------------------------------------------------ */
-function LatestStories() {
-  const { stories, loading } = useLatestStories();
-
-  // Helper: build a Sanity image URL or fall back to a gradient placeholder
-  function coverUrl(mainImage: unknown, w: number, h: number): string | null {
-    if (!mainImage) return null;
-    try {
-      return urlForImage(mainImage as Parameters<typeof urlForImage>[0])
-        .width(w)
-        .height(h)
-        .fit("crop")
-        .url();
-    } catch {
-      return null;
-    }
-  }
+function LatestBlogs() {
+  const { blogs, loading } = useLatestBlogs();
 
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionLabel>Read</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-8">Latest Stories</h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-8">Latest Blogs</h2>
         </Reveal>
 
         {loading ? (
@@ -150,79 +136,29 @@ function LatestStories() {
               </Card>
             ))}
           </div>
-        ) : stories.length === 0 ? (
+        ) : blogs.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">
-            No stories published yet. Check back soon!
+            No blogs published yet. Check back soon!
           </p>
         ) : (
-          <>
-            {/* Featured story (first item) */}
-            <Reveal delay={0.05}>
-              <Link to={`/stories/${stories[0].slug}`}>
-                <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition mb-8">
-                  <div className="grid md:grid-cols-2">
-                    {/* Cover image */}
-                    {coverUrl(stories[0].mainImage, 800, 450) ? (
-                      <img
-                        src={coverUrl(stories[0].mainImage, 800, 450)!}
-                        alt={stories[0].title}
-                        className="aspect-video w-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-display">
-                        W
-                      </div>
-                    )}
-                    <CardContent className="p-6 flex flex-col justify-center">
-                      <Badge className="mb-2 w-fit">
-                        {stories[0].topics?.[0]?.title || "General"}
-                      </Badge>
-                      <h3 className="font-display text-2xl font-semibold leading-snug">
-                        {stories[0].title}
-                      </h3>
-                      <p className="mt-2 text-muted-foreground">{stories[0].excerpt}</p>
-                      <p className="mt-4 text-xs text-muted-foreground">
-                        By {stories[0].author} &middot; {stories[0].publishedAt?.slice(0, 10)}
-                      </p>
-                    </CardContent>
-                  </div>
-                </Card>
-              </Link>
-            </Reveal>
-
-            {/* Remaining stories */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {stories.slice(1, 5).map((story, i) => (
-                <Reveal key={story._id} delay={0.1 + i * 0.05}>
-                  <Link to={`/stories/${story.slug}`}>
-                    <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition h-full">
-                      {coverUrl(story.mainImage, 600, 340) ? (
-                        <img
-                          src={coverUrl(story.mainImage, 600, 340)!}
-                          alt={story.title}
-                          className="aspect-video w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display">
-                          W
-                        </div>
-                      )}
-                      <CardContent className="p-4">
-                        <Badge className="mb-2 text-xs">
-                          {story.topics?.[0]?.title || "General"}
-                        </Badge>
-                        <h4 className="font-semibold text-base leading-snug">{story.title}</h4>
-                        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{story.excerpt}</p>
-                        <p className="mt-2 text-xs text-muted-foreground">By {story.author}</p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-          </>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {blogs.slice(0, 4).map((blog, i) => (
+              <Reveal key={blog._id} delay={0.05 + i * 0.05}>
+                <BlogCard
+                  blog={{
+                    id: blog._id,
+                    slug: blog.slug,
+                    title: blog.title,
+                    excerpt: blog.excerpt,
+                    author: blog.author,
+                    mainImage: blog.mainImage,
+                    publishedAt: blog.publishedAt,
+                    topic: blog.topics?.[0],
+                  }}
+                />
+              </Reveal>
+            ))}
+          </div>
         )}
       </div>
     </section>
@@ -519,11 +455,11 @@ function YourVoiceCTA() {
           <SectionLabel>Create</SectionLabel>
           <h2 className="text-2xl font-semibold mt-2 mb-4">Have something to say?</h2>
           <p className="text-muted-foreground mb-6">
-            Share your story, opinion, or experience with the CBU community.
+            Share your blog, opinion, or experience with the CBU community.
           </p>
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
             <Link to="/submit">
-              <Send className="mr-2 h-4 w-4" /> Submit a Story
+              <Send className="mr-2 h-4 w-4" /> Submit a Blog
             </Link>
           </Button>
         </Reveal>

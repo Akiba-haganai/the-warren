@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Send, CheckCircle } from "lucide-react";
 import Turnstile from "react-turnstile";
 
-export default function SubmitStory() {
+export default function SubmitBlog() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -65,12 +65,12 @@ export default function SubmitStory() {
       <main className="pt-32 pb-24 bg-background min-h-screen">
         <section className="mx-auto max-w-3xl px-6">
           <Reveal>
-            <SectionLabel>Submit a Story</SectionLabel>
+            <SectionLabel>Submit a Blog</SectionLabel>
             <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
               Share your <span className="text-gradient-blue">voice</span>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Got a story, opinion, or experience to share? We'll review it before it goes live.
+              Got a blog, opinion, or experience to share? We'll review it before it goes live.
             </p>
           </Reveal>
 
@@ -79,9 +79,9 @@ export default function SubmitStory() {
               {done ? (
                 <div className="text-center py-12">
                   <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                  <h2 className="text-xl font-semibold">Story submitted!</h2>
+                  <h2 className="text-xl font-semibold">Blog submitted!</h2>
                   <p className="text-muted-foreground mt-2">
-                    Thanks — your story is in for review. We'll publish it if it's a fit.
+                    Thanks — your blog is in for review. We'll publish it if it's a fit.
                   </p>
                   <Button
                     variant="outline"
@@ -95,7 +95,7 @@ export default function SubmitStory() {
                       setTurnstileToken(null);
                     }}
                   >
-                    Submit another story
+                    Submit another blog
                   </Button>
                 </div>
               ) : (
@@ -105,7 +105,7 @@ export default function SubmitStory() {
                       Title *
                     </label>
                     <Input
-                      placeholder="Title of your story"
+                      placeholder="Title of your blog"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       required
@@ -135,10 +135,10 @@ export default function SubmitStory() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">
-                      Your story *
+                      Your blog *
                     </label>
                     <Textarea
-                      placeholder="Write your story here…"
+                      placeholder="Write your blog here…"
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                       rows={10}
@@ -180,7 +180,7 @@ export default function SubmitStory() {
                     disabled={submitting}
                   >
                     <Send className="mr-2 h-4 w-4" />
-                    {submitting ? "Submitting…" : "Submit Story"}
+                    {submitting ? "Submitting…" : "Submit Blog"}
                   </Button>
                 </form>
               )}

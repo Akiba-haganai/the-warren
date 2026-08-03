@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
 
-export interface Story {
+export interface Blog {
   _id: string;
   title: string;
   slug: string;
@@ -27,8 +27,8 @@ const QUERY = `*[_type == "story" && slug.current == $slug && defined(publishedA
   "topics": topics[]->{_id, title, "slug": slug.current}
 }`;
 
-export function useStory(slug: string) {
-  const [story, setStory] = useState<Story | null>(null);
+export function useBlog(slug: string) {
+  const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -44,18 +44,18 @@ export function useStory(slug: string) {
     setNotFound(false);
 
     sanityClient
-      .fetch<Story | null>(QUERY, { slug })
+      .fetch<Blog | null>(QUERY, { slug })
       .then((data) => {
         if (!active) return;
         if (data) {
-          setStory(data);
+          setBlog(data);
         } else {
           setNotFound(true);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to fetch story from Sanity:", err);
+        console.error("Failed to fetch blog from Sanity:", err);
         if (active) {
           setNotFound(true);
           setLoading(false);
@@ -67,5 +67,5 @@ export function useStory(slug: string) {
     };
   }, [slug]);
 
-  return { story, loading, notFound };
+  return { blog, loading, notFound };
 }

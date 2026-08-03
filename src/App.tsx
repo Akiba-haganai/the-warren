@@ -1,10 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
-import SubmitStory from "./pages/SubmitStory";
-import StoryPreview from "./pages/StoryPreview";
-import StoriesList from "./pages/StoriesList";
-import StoryPage from "./pages/StoryPage";
+import SubmitBlog from "./pages/SubmitBlog";
+import BlogPreview from "./pages/BlogPreview";
+import BlogsList from "./pages/BlogsList";
+import BlogPage from "./pages/BlogPage";
 import TopicPage from "./pages/TopicPage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -22,6 +22,16 @@ import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
 
+function StoryToBlogRedirect() {
+  const params = useParams();
+  return <Navigate to={`/blogs/${params.slug}`} replace />;
+}
+
+function StoryPreviewToBlogRedirect() {
+  const params = useParams();
+  return <Navigate to={`/blogs/preview/${params.token}`} replace />;
+}
+
 function App() {
   return (
     <>
@@ -31,11 +41,20 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
-        <Route path="/submit" element={<SubmitStory />} />
-        <Route path="/stories" element={<StoriesList />} />
-        <Route path="/stories/:slug" element={<StoryPage />} />
-        <Route path="/stories/preview/:token" element={<StoryPreview />} />
+        
+        {/* Blog Routes */}
+        <Route path="/submit" element={<SubmitBlog />} />
+        <Route path="/blogs" element={<BlogsList />} />
+        <Route path="/blogs/:slug" element={<BlogPage />} />
+        <Route path="/blogs/preview/:token" element={<BlogPreview />} />
+        
+        {/* Legacy Story Routes -> Redirect to Blogs */}
+        <Route path="/stories" element={<Navigate to="/blogs" replace />} />
+        <Route path="/stories/:slug" element={<StoryToBlogRedirect />} />
+        <Route path="/stories/preview/:token" element={<StoryPreviewToBlogRedirect />} />
+
         <Route path="/topics/:slug" element={<TopicPage />} />
+        
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<Privacy />} />

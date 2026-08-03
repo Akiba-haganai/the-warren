@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useStoriesPaginated } from "@/hooks/useStoriesPaginated";
+import { Button } from "@/components/ui/button";
+import { useBlogsPaginated } from "@/hooks/useBlogsPaginated";
+import { BlogCard } from "@/components/blog/BlogCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function StoriesList() {
+export default function BlogsList() {
   const [page, setPage] = useState(1);
-  const { stories, total, loading, pageSize } = useStoriesPaginated(page);
+  const { blogs, total, loading, pageSize } = useBlogsPaginated(page);
   const totalPages = Math.ceil(total / pageSize);
 
   return (
@@ -21,9 +20,9 @@ export default function StoriesList() {
       <main className="pt-32 pb-24">
         <section className="mx-auto max-w-7xl px-6">
           <Reveal>
-            <SectionLabel>Stories</SectionLabel>
+            <SectionLabel>Blogs</SectionLabel>
             <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-              All <span className="text-gradient-blue">Stories</span>
+              All <span className="text-gradient-blue">Blogs</span>
             </h1>
           </Reveal>
 
@@ -40,28 +39,30 @@ export default function StoriesList() {
                 </Card>
               ))}
             </div>
-          ) : stories.length === 0 ? (
-            <p className="mt-10 text-center text-muted-foreground">No stories published yet.</p>
+          ) : blogs.length === 0 ? (
+            <div className="mt-20 text-center">
+              <p className="text-2xl font-semibold">No blogs found</p>
+              <p className="text-muted-foreground mt-2">
+                There are no published blogs yet. Check back soon!
+              </p>
+            </div>
           ) : (
             <>
               <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {stories.map((story) => (
-                  <Link key={story.id} to={`/stories/${story.slug}`}>
-                    <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition h-full">
-                      <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display">
-                        W
-                      </div>
-                      <CardContent className="p-4">
-                        <Badge className="mb-2 text-xs">
-                          {story.story_topics?.[0]?.topics?.name || "General"}
-                        </Badge>
-                        <h3 className="font-semibold leading-snug">{story.title}</h3>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          By {story.author_name} &middot; {story.published_at?.slice(0, 10)}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                {blogs.map((blog) => (
+                  <BlogCard
+                    key={blog._id}
+                    blog={{
+                      id: blog._id,
+                      slug: blog.slug,
+                      title: blog.title,
+                      excerpt: blog.excerpt,
+                      author: blog.author,
+                      mainImage: blog.mainImage,
+                      publishedAt: blog.publishedAt,
+                      topic: blog.topics?.[0],
+                    }}
+                  />
                 ))}
               </div>
 

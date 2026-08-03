@@ -1,0 +1,164 @@
+import { useParams, Link } from "react-router-dom";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { Reveal, SectionLabel } from "@/components/layout/Reveal";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useBlog } from "@/hooks/useBlog";
+import { urlForImage } from "@/lib/sanityImage";
+import { ArrowLeft } from "lucide-react";
+
+export default function BlogPage() {
+  const { slug } = useParams<{ slug: string }>();
+  const { blog, loading, notFound } = useBlog(slug || "");
+
+  // Build cover image URL from Sanity image asset
+  const coverSrc = blog?.mainImage
+    ? (() => {
+        try {
+          // Changed to not forcefully crop to aspect-video (630 height)
+          // Just resize width and let height be auto to respect aspect ratio
+          return urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
+            .width(1200)
+            .url();
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+
+  return (
+    <>
+      <Header />
+      <main className="pt-32 pb-24 bg-background min-h-screen">
+        <article className="mx-auto max-w-4xl px-6">
+          {loading ? (
+            <div className="space-y-6 max-w-[750px] mx-auto">
+              <Skeleton className="h-8 w-2/3" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-[400px] w-full rounded-2xl" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/6" />
+            </div>
+          ) : notFound || !blog ? (
+            <div className="text-center py-24">
+              <p className="text-2xl font-semibold">Blog not found</p>
+              <p className="text-muted-foreground mt-2">
+                This blog may have been unpublished or doesn't exist.
+              </p>
+              <Link
+                to="/blogs"
+                className="mt-6 inline-flex items-center gap-2 text-blue-600 hover:underline"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to all blogs
+              </Link>
+            </div>
+          ) : (
+            <Reveal>
+              <div className="max-w-[750px] mx-auto">
+                {/* Back link */}
+                <Link
+                  to="/blogs"
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition mb-8"
+                >
+                  <ArrowLeft className="h-4 w-4" /> All Blogs
+                </Link>
+
+                {/* Topic badges */}
+                {blog.topics?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {blog.topics.map((t) => (
+                      <Link key={t._id} to={`/topics/${t.slug}`}>
+                        <Badge variant="secondary" className="hover:bg-accent transition">
+                          {t.title}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
+                {/* Title */}
+                <SectionLabel>Blog</SectionLabel>
+                <h1 className="mt-2 font-display text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-balance">
+                  {blog.title}
+                </h1>
+
+                {/* Meta */}
+                <p className="mt-4 text-base text-muted-foreground">
+                  By <span className="font-medium text-foreground">{blog.author}</span>
+                  {blog.publishedAt && (
+                    <>
+                      {" "}
+                      &middot;{" "}
+                      {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </>
+                  )}
+                </p>
+
+                {/* Excerpt / standfirst */}
+                {blog.excerpt && (
+                  <p className="mt-6 text-xl text-muted-foreground italic border-l-4 border-blue-400 pl-4 leading-relaxed">
+                    {blog.excerpt}
+                  </p>
+                )}
+              </div>
+
+              {/* Cover image - Allows full width of max-w-4xl for visual interest */}
+              {coverSrc && (
+                <div className="mt-10 mb-12">
+                  <img
+                    src={coverSrc}
+                    alt={blog.title}
+                    className="w-full rounded-2xl shadow-lg mx-auto"
+                    style={{ maxHeight: "70vh", objectFit: "contain" }}
+                    loading="eager"
+                  />
+                </div>
+              )}
+
+              {/* Body — Constrained for reading */}
+              <div className="max-w-[750px] mx-auto">
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  {Array.isArray(blog.body)
+                    ? (blog.body as Array<{ _type: string; children?: Array<{ text: string }> }>)
+                        .filter((block) => block._type === "block")
+                        .map((block, i) => (
+                          <p key={i} className="leading-relaxed text-[17px] md:text-[18px]">
+                            {block.children?.map((span) => span.text).join("")}
+                          </p>
+                        ))
+                    : typeof blog.body === "string"
+                    ? blog.body.split("\n").map((line, i) => (
+                        <p key={i} className="leading-relaxed text-[17px] md:text-[18px]">
+                          {line}
+                        </p>
+                      ))
+                    : null}
+                </div>
+
+                {/* Footer nav */}
+                <div className="mt-16 pt-8 border-t border-border flex justify-between items-center text-sm">
+                  <Link
+                    to="/blogs"
+                    className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> All Blogs
+                  </Link>
+                  <Link to="/submit" className="text-blue-600 hover:underline">
+                    Submit your blog →
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+          )}
+        </article>
+      </main>
+      <Footer />
+    </>
+  );
+}

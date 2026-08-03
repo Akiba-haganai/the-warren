@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { sanityClient } from "@/lib/sanity";
 
-export interface StoryCard {
+export interface BlogCard {
   _id: string;
   title: string;
   slug: string;
@@ -12,7 +12,7 @@ export interface StoryCard {
   topics: { _id: string; title: string; slug: string }[];
 }
 
-// Note: no manual "status = published" filter needed. A story only shows
+// Note: no manual "status = published" filter needed. A blog only shows
 // up here once it's been Published in Studio — while it's a draft, its
 // document id is prefixed `drafts.` and this query (reading the CDN/
 // published dataset) simply never sees it. That draft/publish split is
@@ -29,24 +29,24 @@ const QUERY = `*[_type == "story" && defined(publishedAt)] | order(publishedAt d
   "topics": topics[]->{ _id, title, "slug": slug.current }
 }`;
 
-export function useLatestStories() {
-  const [stories, setStories] = useState<StoryCard[]>([]);
+export function useLatestBlogs() {
+  const [blogs, setBlogs] = useState<BlogCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     sanityClient
-      .fetch<StoryCard[]>(QUERY)
+      .fetch<BlogCard[]>(QUERY)
       .then((data) => {
         if (active) {
-          setStories(data || []);
+          setBlogs(data || []);
           setLoading(false);
         }
       })
       .catch((err) => {
-        console.error("Failed to fetch latest stories from Sanity:", err);
+        console.error("Failed to fetch latest blogs from Sanity:", err);
         if (active) {
-          setStories([]);
+          setBlogs([]);
           setLoading(false);
         }
       });
@@ -55,5 +55,5 @@ export function useLatestStories() {
     };
   }, []);
 
-  return { stories, loading };
+  return { blogs, loading };
 }

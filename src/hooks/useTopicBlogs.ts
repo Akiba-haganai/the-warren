@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
-import type { StoryCard } from "./useLatestStories";
+import type { BlogCard } from "./useLatestBlogs";
 
 export interface TopicInfo {
   _id: string;
@@ -16,7 +16,7 @@ const TOPIC_QUERY = `*[_type == "topic" && slug.current == $slug][0] {
   description
 }`;
 
-const STORIES_QUERY = `*[_type == "story" && defined(publishedAt) && $slug in topics[]->slug.current] | order(publishedAt desc) {
+const BLOGS_QUERY = `*[_type == "story" && defined(publishedAt) && $slug in topics[]->slug.current] | order(publishedAt desc) {
   _id,
   title,
   "slug": slug.current,
@@ -27,8 +27,8 @@ const STORIES_QUERY = `*[_type == "story" && defined(publishedAt) && $slug in to
   "topics": topics[]->{ _id, title, "slug": slug.current }
 }`;
 
-export function useTopicStories(topicSlug: string) {
-  const [stories, setStories] = useState<StoryCard[]>([]);
+export function useTopicBlogs(topicSlug: string) {
+  const [blogs, setBlogs] = useState<BlogCard[]>([]);
   const [topic, setTopic] = useState<TopicInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,20 +43,20 @@ export function useTopicStories(topicSlug: string) {
 
     Promise.all([
       sanityClient.fetch<TopicInfo | null>(TOPIC_QUERY, { slug: topicSlug }),
-      sanityClient.fetch<StoryCard[]>(STORIES_QUERY, { slug: topicSlug }),
+      sanityClient.fetch<BlogCard[]>(BLOGS_QUERY, { slug: topicSlug }),
     ])
       .then(([tData, sData]) => {
         if (active) {
           setTopic(tData);
-          setStories(sData || []);
+          setBlogs(sData || []);
           setLoading(false);
         }
       })
       .catch((err) => {
-        console.error("Failed to fetch topic stories from Sanity:", err);
+        console.error("Failed to fetch topic blogs from Sanity:", err);
         if (active) {
           setTopic(null);
-          setStories([]);
+          setBlogs([]);
           setLoading(false);
         }
       });
@@ -66,5 +66,5 @@ export function useTopicStories(topicSlug: string) {
     };
   }, [topicSlug]);
 
-  return { topic, stories, loading };
+  return { topic, blogs, loading };
 }
