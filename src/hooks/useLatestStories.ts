@@ -35,12 +35,21 @@ export function useLatestStories() {
 
   useEffect(() => {
     let active = true;
-    sanityClient.fetch<StoryCard[]>(QUERY).then((data) => {
-      if (active) {
-        setStories(data);
-        setLoading(false);
-      }
-    });
+    sanityClient
+      .fetch<StoryCard[]>(QUERY)
+      .then((data) => {
+        if (active) {
+          setStories(data || []);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch latest stories from Sanity:", err);
+        if (active) {
+          setStories([]);
+          setLoading(false);
+        }
+      });
     return () => {
       active = false;
     };

@@ -13,7 +13,13 @@ export function useTopics() {
   const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    sanityClient.fetch<Topic[]>(QUERY).then(setTopics);
+    sanityClient
+      .fetch<Topic[]>(QUERY)
+      .then(setTopics)
+      .catch((err) => {
+        console.error("Failed to fetch topics from Sanity:", err);
+        setTopics([]);
+      });
   }, []);
 
   return topics;

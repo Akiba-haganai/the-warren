@@ -43,15 +43,24 @@ export function useStory(slug: string) {
     setLoading(true);
     setNotFound(false);
 
-    sanityClient.fetch<Story | null>(QUERY, { slug }).then((data) => {
-      if (!active) return;
-      if (data) {
-        setStory(data);
-      } else {
-        setNotFound(true);
-      }
-      setLoading(false);
-    });
+    sanityClient
+      .fetch<Story | null>(QUERY, { slug })
+      .then((data) => {
+        if (!active) return;
+        if (data) {
+          setStory(data);
+        } else {
+          setNotFound(true);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch story from Sanity:", err);
+        if (active) {
+          setNotFound(true);
+          setLoading(false);
+        }
+      });
 
     return () => {
       active = false;

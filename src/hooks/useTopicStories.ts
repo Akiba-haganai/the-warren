@@ -44,13 +44,22 @@ export function useTopicStories(topicSlug: string) {
     Promise.all([
       sanityClient.fetch<TopicInfo | null>(TOPIC_QUERY, { slug: topicSlug }),
       sanityClient.fetch<StoryCard[]>(STORIES_QUERY, { slug: topicSlug }),
-    ]).then(([tData, sData]) => {
-      if (active) {
-        setTopic(tData);
-        setStories(sData || []);
-        setLoading(false);
-      }
-    });
+    ])
+      .then(([tData, sData]) => {
+        if (active) {
+          setTopic(tData);
+          setStories(sData || []);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch topic stories from Sanity:", err);
+        if (active) {
+          setTopic(null);
+          setStories([]);
+          setLoading(false);
+        }
+      });
 
     return () => {
       active = false;
