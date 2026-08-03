@@ -18,7 +18,7 @@ export default function SubmitStory() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const turnstileRef = useRef<{ reset: () => void }>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -50,7 +50,7 @@ export default function SubmitStory() {
       setError(data.error || "Something went wrong. Please try again.");
       // Reset the Turnstile widget so user can re-verify
       setTurnstileToken(null);
-      turnstileRef.current?.reset();
+      setTurnstileKey((prev) => prev + 1);
       return;
     }
 
@@ -156,7 +156,7 @@ export default function SubmitStory() {
                         </span>
                       </div>
                       <Turnstile
-                        ref={turnstileRef as React.RefObject<never>}
+                        key={turnstileKey}
                         sitekey={siteKey}
                         onVerify={(token: string) => setTurnstileToken(token)}
                         onExpire={() => setTurnstileToken(null)}
