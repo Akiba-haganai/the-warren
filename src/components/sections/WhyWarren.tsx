@@ -16,7 +16,7 @@ export function WhyWarren() {
     <section className="relative py-32">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
-          <SectionLabel>Why Warren Hub exists</SectionLabel>
+          <SectionLabel>Why Warren exists</SectionLabel>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight max-w-3xl">
             Students shouldn't have to <span className="text-gradient-blue">figure it all out alone</span>.
           </h2>

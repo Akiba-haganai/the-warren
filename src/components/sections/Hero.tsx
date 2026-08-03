@@ -50,7 +50,7 @@ export function Hero() {
 
         <Reveal delay={0.25}>
           <p className="mt-3 mx-auto max-w-2xl text-base text-muted-foreground">
-            Join hundreds of students already using Warren Hub for community, accommodation, jobs, and everything in between.
+            Join hundreds of students already using Warren for community, accommodation, jobs, and everything in between.
           </p>
         </Reveal>
 

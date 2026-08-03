@@ -1,25 +1,20 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { sanityClient } from "@/lib/sanity";
+
+export interface Topic {
+  _id: string;
+  title: string;
+  slug: string;
+}
+
+const QUERY = `*[_type == "topic"] | order(title asc) { _id, title, "slug": slug.current }`;
 
 export function useTopics() {
-  const [topics, setTopics] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
-    supabase
-      .from("topics")
-      .select("*")
-      .order("name")
-      .then(({ data, error }) => {
-        if (!error && data) setTopics(data);
-        setLoading(false);
-      });
+    sanityClient.fetch<Topic[]>(QUERY).then(setTopics);
   }, []);
 
-  return { topics, loading };
+  return topics;
 }

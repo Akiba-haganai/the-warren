@@ -9,7 +9,7 @@ type EcoNode = {
 };
 
 const nodes: EcoNode[] = [
-  { title: "Warren Hub", desc: "Community, events, podcasts and updates.", badge: "Live" },
+  { title: "Warren", desc: "Community, events, podcasts and updates.", badge: "Live" },
   { title: "Warren Market", desc: "Accommodation, services, jobs and student businesses.", badge: "Live" },
   { title: "Warren Homes", desc: "Verified student accommodation pathways.", badge: "Soon" },
   { title: "Warren Jobs", desc: "Opportunities, internships and gigs.", badge: "Soon" },

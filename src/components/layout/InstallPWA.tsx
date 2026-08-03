@@ -32,7 +32,7 @@ export function InstallPWA() {
   return (
     <div
       role="dialog"
-      aria-label="Install Warren Hub app"
+      aria-label="Install Warren app"
       style={{
         // CSS custom-property animation driven by `visible` flag
         transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
@@ -65,7 +65,7 @@ export function InstallPWA() {
           <div className="shrink-0 h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/40">
             <img
               src={warrenLogo}
-              alt="Warren Hub"
+              alt="Warren"
               className="h-7 w-7 object-contain"
             />
           </div>
@@ -73,7 +73,7 @@ export function InstallPWA() {
           {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground leading-tight">
-              Install Warren Hub
+              Install Warren
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Fast, offline-ready &amp; always up to date

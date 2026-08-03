@@ -20,6 +20,7 @@ import { useActivePoll } from "@/hooks/useActivePoll";
 import { useCulturePhotos } from "@/hooks/useCulturePhotos";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { supabase } from "@/lib/supabase";
+import { urlForImage } from "@/lib/sanityImage";
 
 export default function Home() {
   return (
@@ -114,6 +115,20 @@ function TrendingTopics() {
 function LatestStories() {
   const { stories, loading } = useLatestStories();
 
+  // Helper: build a Sanity image URL or fall back to a gradient placeholder
+  function coverUrl(mainImage: unknown, w: number, h: number): string | null {
+    if (!mainImage) return null;
+    try {
+      return urlForImage(mainImage as Parameters<typeof urlForImage>[0])
+        .width(w)
+        .height(h)
+        .fit("crop")
+        .url();
+    } catch {
+      return null;
+    }
+  }
+
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-6">
@@ -146,19 +161,29 @@ function LatestStories() {
               <Link to={`/stories/${stories[0].slug}`}>
                 <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition mb-8">
                   <div className="grid md:grid-cols-2">
-                    <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-display">
-                      W
-                    </div>
+                    {/* Cover image */}
+                    {coverUrl(stories[0].mainImage, 800, 450) ? (
+                      <img
+                        src={coverUrl(stories[0].mainImage, 800, 450)!}
+                        alt={stories[0].title}
+                        className="aspect-video w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-display">
+                        W
+                      </div>
+                    )}
                     <CardContent className="p-6 flex flex-col justify-center">
                       <Badge className="mb-2 w-fit">
-                        {stories[0].story_topics?.[0]?.topics?.name || "General"}
+                        {stories[0].topics?.[0]?.title || "General"}
                       </Badge>
                       <h3 className="font-display text-2xl font-semibold leading-snug">
                         {stories[0].title}
                       </h3>
                       <p className="mt-2 text-muted-foreground">{stories[0].excerpt}</p>
                       <p className="mt-4 text-xs text-muted-foreground">
-                        By {stories[0].author_name} &middot; {stories[0].published_at?.slice(0, 10)}
+                        By {stories[0].author} &middot; {stories[0].publishedAt?.slice(0, 10)}
                       </p>
                     </CardContent>
                   </div>
@@ -169,19 +194,28 @@ function LatestStories() {
             {/* Remaining stories */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {stories.slice(1, 5).map((story, i) => (
-                <Reveal key={story.id} delay={0.1 + i * 0.05}>
+                <Reveal key={story._id} delay={0.1 + i * 0.05}>
                   <Link to={`/stories/${story.slug}`}>
                     <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition h-full">
-                      <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display">
-                        W
-                      </div>
+                      {coverUrl(story.mainImage, 600, 340) ? (
+                        <img
+                          src={coverUrl(story.mainImage, 600, 340)!}
+                          alt={story.title}
+                          className="aspect-video w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display">
+                          W
+                        </div>
+                      )}
                       <CardContent className="p-4">
                         <Badge className="mb-2 text-xs">
-                          {story.story_topics?.[0]?.topics?.name || "General"}
+                          {story.topics?.[0]?.title || "General"}
                         </Badge>
                         <h4 className="font-semibold text-base leading-snug">{story.title}</h4>
                         <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{story.excerpt}</p>
-                        <p className="mt-2 text-xs text-muted-foreground">By {story.author_name}</p>
+                        <p className="mt-2 text-xs text-muted-foreground">By {story.author}</p>
                       </CardContent>
                     </Card>
                   </Link>

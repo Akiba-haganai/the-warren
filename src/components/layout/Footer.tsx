@@ -23,10 +23,10 @@ export function Footer() {
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>
-            <span className="font-display text-xl font-semibold">Warren Hub</span>
+            <span className="font-display text-xl font-semibold">Warren</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            Everything a student needs, all in one place.
+            The digital home of CBU.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
             Built with ❤️ by Warren for CBU.
@@ -143,7 +143,7 @@ export function Footer() {
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Warren Campus
+                Campus
               </a>
             </li>
             <li>
@@ -154,7 +154,7 @@ export function Footer() {
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Warren Connect
+                Market
               </a>
             </li>
           </ul>
@@ -163,7 +163,7 @@ export function Footer() {
 
       <div className="border-t border-border/60">
         <div className="mx-auto max-w-7xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Warren Hub. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Warren. All rights reserved.</p>
           <p>Built with care in Kitwe, Zambia.</p>
         </div>
       </div>

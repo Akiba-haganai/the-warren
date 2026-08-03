@@ -18,9 +18,9 @@ export default defineConfig({
       },
       includeAssets: ["favicon.png"],
       manifest: {
-        name: "Warren Hub",
-        short_name: "Warren Hub",
-        description: "Everything a student needs, all in one place.",
+        name: "Warren",
+        short_name: "Warren",
+        description: "The digital home of CBU.",
         theme_color: "#1e40af",
         background_color: "#ffffff",
         display: "standalone",

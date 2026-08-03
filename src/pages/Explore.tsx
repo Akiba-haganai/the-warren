@@ -66,14 +66,15 @@ function OurApps() {
   const apps = [
     {
       icon: BookOpen,
-      title: "Warren Campus",
+      title: "Campus",
+      subtitle: "by Warren",
       description:
-        "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions — the all‑in‑one student hub.",
+        "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions \u2014 the all\u2011in\u2011one student hub.",
       features: [
-        { text: "Social feed & real‑time chat", icon: Zap },
-        { text: "Study hub with past papers & cram plans", icon: GraduationCap },
-        { text: "Peer‑to‑peer tutoring marketplace", icon: Check },
-        { text: "Quiz battles & AMA sessions", icon: Check },
+        { text: "Social feed \u0026 real\u2011time chat", icon: Zap },
+        { text: "Study hub with past papers \u0026 cram plans", icon: GraduationCap },
+        { text: "Peer\u2011to\u2011peer tutoring marketplace", icon: Check },
+        { text: "Quiz battles \u0026 AMA sessions", icon: Check },
         { text: "Interactive campus map", icon: Map },
         { text: "Verified student badges", icon: Shield },
       ],
@@ -84,14 +85,15 @@ function OurApps() {
     },
     {
       icon: ShoppingBag,
-      title: "Warren Connect",
+      title: "Market",
+      subtitle: "by Warren",
       description:
-        "Marketplace, housing, and roommate finder for Zambian students — buy, sell, rent, and connect safely.",
+        "Marketplace, housing, and roommate finder for Zambian students \u2014 buy, sell, rent, and connect safely.",
       features: [
-        { text: "Buy & sell new/used items", icon: Check },
-        { text: "Find accommodation & roommates", icon: Map },
-        { text: "Landlord dashboard & occupancy tracking", icon: Check },
-        { text: "Verified seller tiers & reputation scoring", icon: Shield },
+        { text: "Buy \u0026 sell new/used items", icon: Check },
+        { text: "Find accommodation \u0026 roommates", icon: Map },
+        { text: "Landlord dashboard \u0026 occupancy tracking", icon: Check },
+        { text: "Verified seller tiers \u0026 reputation scoring", icon: Shield },
         { text: "Fast mobile money escrow (coming soon)", icon: Zap },
       ],
       url: WARREN_CONNECT_URL,
@@ -101,15 +103,16 @@ function OurApps() {
     },
     {
       icon: Podcast,
-      title: "Warren Podcasts",
+      title: "Podcasts",
+      subtitle: "by Warren",
       description:
-        "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
+        "Student\u2011led conversations about faith, career, relationships, and campus life \u2014 powered by YouTube.",
       features: [
         { text: "Exclusive CBU student content", icon: Check },
         { text: "Play directly in the app", icon: Zap },
-        { text: "Bookmark & continue listening", icon: Check },
+        { text: "Bookmark \u0026 continue listening", icon: Check },
         { text: "New episodes added automatically", icon: Zap },
-        { text: "Free & always available", icon: Check },
+        { text: "Free \u0026 always available", icon: Check },
       ],
       url: "/podcasts",
       internal: true,
@@ -144,7 +147,10 @@ function OurApps() {
                     >
                       <app.icon className="h-6 w-6" />
                     </span>
-                    <h3 className="font-display text-2xl font-semibold">{app.title}</h3>
+                    <div>
+                      <h3 className="font-display text-2xl font-semibold leading-tight">{app.title}</h3>
+                      <span className="text-xs text-muted-foreground font-medium tracking-wide">{app.subtitle}</span>
+                    </div>
                   </div>
 
                   <p className="text-sm text-muted-foreground flex-1">{app.description}</p>

@@ -65,7 +65,8 @@ export default function Podcasts() {
           <Reveal>
             <SectionLabel>Podcasts</SectionLabel>
             <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-              <span className="text-gradient-blue">Warren</span> Podcasts
+              Podcasts
+              <span className="ml-3 align-middle text-sm font-normal text-muted-foreground tracking-normal">by Warren</span>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
               Conversations about student life, faith, career, and everything in

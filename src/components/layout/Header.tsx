@@ -216,7 +216,7 @@ export function Header() {
               />
             </span>
 
-            <span className="font-display text-lg font-semibold tracking-tight">Warren Hub</span>
+            <span className="font-display text-lg font-semibold tracking-tight">Warren</span>
           </Link>
 
           {/* Desktop nav */}
