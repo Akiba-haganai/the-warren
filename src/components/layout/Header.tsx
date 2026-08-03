@@ -1,8 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Shield } from "lucide-react";
+import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
-import { supabase } from "@/lib/supabase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -90,35 +89,6 @@ export function Header() {
   });
 
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    if (!supabase) return;
-
-    // Check admin status for the current session
-    async function checkAdmin() {
-      const { data: { session } } = await supabase!.auth.getSession();
-      if (session) {
-        const { data } = await supabase!.rpc("is_admin");
-        setIsAdmin(!!data);
-      } else {
-        setIsAdmin(false);
-      }
-    }
-
-    checkAdmin();
-
-    // Re-check whenever auth state changes (sign in, sign out, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        supabase!.rpc("is_admin").then(({ data }) => setIsAdmin(!!data));
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     const cleanup = initThemeFromStorage();
@@ -244,13 +214,6 @@ export function Header() {
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
               <Search className="h-4 w-4" />
             </Button>
-            {isAdmin && (
-              <Button variant="ghost" size="icon" asChild title="Admin panel">
-                <Link to="/admin">
-                  <Shield className="h-4 w-4 text-blue-600" />
-                </Link>
-              </Button>
-            )}
             <Button variant="ghost" size="icon" disabled title="Profile (coming soon)" className="text-muted-foreground">
               <User className="h-4 w-4" />
             </Button>
@@ -299,15 +262,6 @@ export function Header() {
                       {n.label}
                     </Link>
                   ))}
-
-                  {isAdmin && (
-                    <Link
-                      to="/admin"
-                      className="px-3 py-2 text-sm rounded-lg transition text-blue-600 bg-blue-50 dark:bg-blue-950 font-medium flex items-center gap-2"
-                    >
-                      <Shield className="h-4 w-4" /> Admin Inbox
-                    </Link>
-                  )}
 
                   <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3">
                     <div className="flex flex-col gap-2">

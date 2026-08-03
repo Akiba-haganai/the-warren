@@ -14,9 +14,6 @@ import Cookies from "./pages/Cookies";
 import Ecosystem from "./pages/Ecosystem";
 import Products from "./pages/Products";
 import Podcasts from "./pages/Podcasts";
-import { RequireAdmin } from "./components/admin/RequireAdmin";
-import { AdminInbox } from "./pages/admin/AdminInbox";
-import { AdminComposer } from "./pages/admin/AdminComposer";
 import { Toaster } from "./components/layout/Toaster";
 import { ScrollToTopOnNavigate } from "./lib/ScrollToTopOnNavigate";
 import { LegacyAnchorRedirect } from "./components/routing/LegacyAnchorRedirect";
@@ -47,22 +44,6 @@ function App() {
         <Route path="/ecosystem" element={<Ecosystem />} />
         <Route path="/products" element={<Products />} />
         <Route path="/podcasts" element={<Podcasts />} />
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <AdminInbox />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/new"
-          element={
-            <RequireAdmin>
-              <AdminComposer />
-            </RequireAdmin>
-          }
-        />
       </Routes>
       <MiniPlayer />
       <WhatsAppFAB />
