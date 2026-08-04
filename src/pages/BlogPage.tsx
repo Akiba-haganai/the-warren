@@ -5,6 +5,9 @@ import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBlog } from "@/hooks/useBlog";
+import { useRelatedBlogs } from "@/hooks/useRelatedBlogs";
+import { BlogCard } from "@/components/blog/BlogCard";
+import { Comments } from "@/components/blog/Comments";
 import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 
@@ -12,12 +15,16 @@ export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
   const { blog, loading, notFound } = useBlog(slug || "");
 
+  const topicSlugs = blog?.topics?.map((t) => t.slug) || [];
+  const { blogs: relatedBlogs, loading: relatedLoading } = useRelatedBlogs(
+    slug || "",
+    topicSlugs
+  );
+
   // Build cover image URL from Sanity image asset
   const coverSrc = blog?.mainImage
     ? (() => {
         try {
-          // Changed to not forcefully crop to aspect-video (630 height)
-          // Just resize width and let height be auto to respect aspect ratio
           return urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
             .width(1200)
             .url();
@@ -86,7 +93,13 @@ export default function BlogPage() {
 
                 {/* Meta */}
                 <p className="mt-4 text-base text-muted-foreground">
-                  By <span className="font-medium text-foreground">{blog.author}</span>
+                  By{" "}
+                  <Link
+                    to={`/authors/${encodeURIComponent(blog.author)}`}
+                    className="font-medium text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
+                  >
+                    {blog.author}
+                  </Link>
                   {blog.publishedAt && (
                     <>
                       {" "}
@@ -140,6 +153,23 @@ export default function BlogPage() {
                       ))
                     : null}
                 </div>
+
+                {/* Related Blogs Section */}
+                {!relatedLoading && relatedBlogs.length > 0 && (
+                  <div className="mt-16 pt-8 border-t border-border">
+                    <h2 className="text-2xl font-semibold mb-6">More like this</h2>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {relatedBlogs.map((b, i) => (
+                        <Reveal key={b.id} delay={i * 0.05}>
+                          <BlogCard blog={b} />
+                        </Reveal>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments Section */}
+                <Comments blogSlug={blog.slug} />
 
                 {/* Footer nav */}
                 <div className="mt-16 pt-8 border-t border-border flex justify-between items-center text-sm">

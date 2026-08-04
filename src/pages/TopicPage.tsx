@@ -15,6 +15,42 @@ export default function TopicPage() {
     <>
       <Header />
       <main className="pt-32 pb-24 min-h-screen">
+        {/* Hero banner */}
+        <section className="bg-muted/30 border-b -mt-8 mb-12">
+          <div className="mx-auto max-w-7xl px-6 py-16 text-center">
+            {loading ? (
+              <div className="flex flex-col items-center">
+                <Skeleton className="h-4 w-16 mb-4" />
+                <Skeleton className="h-10 w-64 mb-4" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            ) : !topic ? (
+              <div className="py-8">
+                <Hash className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                <h1 className="text-2xl font-semibold">Topic not found</h1>
+                <p className="text-muted-foreground mt-2">
+                  This topic doesn't exist or has been removed.
+                </p>
+              </div>
+            ) : (
+              <Reveal>
+                <SectionLabel>Topic</SectionLabel>
+                <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight capitalize">
+                  {topic.title}
+                </h1>
+                {topic.description && (
+                  <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                    {topic.description}
+                  </p>
+                )}
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {blogs.length} blog{blogs.length !== 1 ? "s" : ""} in this topic
+                </p>
+              </Reveal>
+            )}
+          </div>
+        </section>
+
         <section className="mx-auto max-w-7xl px-6">
           <Link
             to="/explore"
@@ -23,40 +59,13 @@ export default function TopicPage() {
             <ArrowLeft className="h-4 w-4" /> Explore Topics
           </Link>
 
-          {loading ? (
-            <div className="mb-12">
-              <Skeleton className="h-10 w-64 mb-4" />
-              <Skeleton className="h-4 w-full max-w-2xl" />
-            </div>
-          ) : !topic ? (
-            <div className="py-24 text-center">
-              <Hash className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h1 className="text-2xl font-semibold">Topic not found</h1>
-              <p className="text-muted-foreground mt-2">
-                This topic doesn't exist or has been removed.
-              </p>
-            </div>
-          ) : (
-            <Reveal>
-              <div className="mb-12">
-                <SectionLabel>Topic</SectionLabel>
-                <h1 className="mt-2 font-display text-4xl sm:text-5xl font-semibold tracking-tight capitalize">
-                  {topic.title}
-                </h1>
-                {topic.description && (
-                  <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-                    {topic.description}
-                  </p>
-                )}
-              </div>
-            </Reveal>
-          )}
-
           {!loading && topic && (
-            <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-6">Blogs about {topic.title}</h2>
+            <div>
               {blogs.length === 0 ? (
-                <p className="text-muted-foreground">No blogs in this topic yet.</p>
+                <div className="text-center py-16">
+                  <p className="text-lg text-muted-foreground">No blogs in this topic yet.</p>
+                  <p className="text-muted-foreground mt-2">Check back soon for new posts.</p>
+                </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {blogs.map((blog, i) => (
@@ -77,6 +86,19 @@ export default function TopicPage() {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {loading && (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton className="aspect-video w-full rounded-2xl" />
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
             </div>
           )}
         </section>

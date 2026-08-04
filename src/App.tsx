@@ -6,6 +6,7 @@ import BlogPreview from "./pages/BlogPreview";
 import BlogsList from "./pages/BlogsList";
 import BlogPage from "./pages/BlogPage";
 import TopicPage from "./pages/TopicPage";
+import AuthorPage from "./pages/AuthorPage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
@@ -54,6 +55,7 @@ function App() {
         <Route path="/stories/preview/:token" element={<StoryPreviewToBlogRedirect />} />
 
         <Route path="/topics/:slug" element={<TopicPage />} />
+        <Route path="/authors/:name" element={<AuthorPage />} />
         
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
