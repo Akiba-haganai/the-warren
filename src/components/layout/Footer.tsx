@@ -19,7 +19,7 @@ export function Footer() {
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
               <img
                 src={warrenLogo}
-                alt="Warren Hub logo"
+                alt="Warren logo"
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>

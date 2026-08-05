@@ -49,8 +49,8 @@ function MediaHero() {
     <section className="relative pt-32 pb-20 bg-hero overflow-hidden">
       <div className="mx-auto max-w-4xl px-6 text-center">
         <Reveal>
-          <Badge className="mb-4 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-            <Sparkles className="mr-1 h-3.5 w-3.5" /> Warren Media
+          <Badge variant="outline" className="px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-400 bg-blue-500/10 backdrop-blur-sm">
+            <Sparkles className="mr-1 h-3.5 w-3.5" /> Media
           </Badge>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
             CBU, beyond the classroom.
@@ -483,7 +483,7 @@ function DiscoverWarren() {
           </p>
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
             <Link to="/explore">
-              Explore Warren <ArrowRight className="ml-2 h-4 w-4" />
+              Explore <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </Reveal>

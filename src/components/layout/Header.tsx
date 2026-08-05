@@ -34,7 +34,7 @@ import {
 const nav = [
   { to: "/", label: "Media" },
   { to: "/podcasts", label: "Podcasts" },
-  { to: "/explore", label: "Explore Warren" },
+  { to: "/explore", label: "Explore" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
@@ -42,11 +42,11 @@ const nav = [
 const EXTERNAL_APPS = [
   {
     href: "https://warren-campus.vercel.app",
-    label: "Warren Campus",
+    label: "Campus",
   },
   {
     href: "https://warren-market.vercel.app",
-    label: "Warren Connect",
+    label: "Market",
   },
 ];
 

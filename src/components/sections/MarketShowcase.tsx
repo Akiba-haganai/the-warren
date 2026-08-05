@@ -15,7 +15,7 @@ export function MarketShowcase() {
     <section className="py-24 bg-secondary/20">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
-          <SectionLabel>Warren Market</SectionLabel>
+          <SectionLabel>Market</SectionLabel>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
             Buy, sell, work—without the chaos.
           </h2>
@@ -44,7 +44,7 @@ export function MarketShowcase() {
         <div className="mt-12 flex justify-center">
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow font-semibold">
             <a href="https://warren-market.vercel.app" target="_blank" rel="noreferrer">
-              Visit Warren Connect
+              Visit Market
             </a>
           </Button>
         </div>

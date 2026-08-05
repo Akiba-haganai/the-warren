@@ -16,7 +16,7 @@ export function FounderNote() {
                 Built by a student. For students.
               </h2>
               <p className="mt-6 text-base text-muted-foreground leading-relaxed">
-                Warren Hub exists because the “right info” shouldn’t take months to discover. I built this space so every
+                Warren exists because the “right info” shouldn’t take months to discover. I built this space so every
                 CBU student can move faster—toward community, opportunities, and real support.
               </p>
             </Reveal>

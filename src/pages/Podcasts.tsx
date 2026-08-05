@@ -66,7 +66,6 @@ export default function Podcasts() {
             <SectionLabel>Podcasts</SectionLabel>
             <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
               Podcasts
-              <span className="ml-3 align-middle text-sm font-normal text-muted-foreground tracking-normal">by Warren</span>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
               Conversations about student life, faith, career, and everything in
@@ -259,7 +258,7 @@ export default function Podcasts() {
                 <CardContent className="p-8 sm:p-10 text-center">
                   <Mic className="h-10 w-10 mx-auto mb-4 text-white/80" />
                   <h2 className="font-display text-2xl sm:text-3xl font-semibold">
-                    Want to be part of Warren Podcasts?
+                    Want to be featured on a Podcast?
                   </h2>
                   <p className="mt-3 text-white/80 max-w-xl mx-auto">
                     Whether you have an idea for an episode, want to co‑host a

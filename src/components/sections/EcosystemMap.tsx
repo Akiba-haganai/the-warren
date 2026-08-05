@@ -9,11 +9,12 @@ type EcoNode = {
 };
 
 const nodes: EcoNode[] = [
-  { title: "Warren", desc: "Community, events, podcasts and updates.", badge: "Live" },
-  { title: "Warren Market", desc: "Accommodation, services, jobs and student businesses.", badge: "Live" },
-  { title: "Warren Homes", desc: "Verified student accommodation pathways.", badge: "Soon" },
-  { title: "Warren Jobs", desc: "Opportunities, internships and gigs.", badge: "Soon" },
-  { title: "Warren Alumni", desc: "A network that lasts after graduation.", badge: "Soon" },
+  { title: "Media", desc: "Community, events, podcasts and updates.", badge: "Live" },
+  { title: "Market", desc: "Accommodation, services, jobs and student businesses.", badge: "Live" },
+  { title: "Campus", desc: "Social networking, study materials, tutoring and campus map.", badge: "Live" },
+  { title: "Homes", desc: "Verified student accommodation pathways.", badge: "Soon" },
+  { title: "Jobs", desc: "Opportunities, internships and gigs.", badge: "Soon" },
+  { title: "Alumni", desc: "A network that lasts after graduation.", badge: "Soon" },
 ];
 
 export function EcosystemMap() {
