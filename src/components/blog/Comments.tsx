@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import Turnstile from "react-turnstile";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Reply, CornerDownRight, ShieldAlert } from "lucide-react";
+import { toast } from "sonner";
 
 interface Comment {
   id: string;
@@ -24,6 +26,9 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyName, setReplyName] = useState("");
   const [replyContent, setReplyContent] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
   useEffect(() => {
     fetchComments();
@@ -56,10 +61,18 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
     e.preventDefault();
     if (!supabase) return;
 
+    if (siteKey && !turnstileToken) {
+      toast.error("Please complete the security check.");
+      return;
+    }
+
     const author = parentId ? replyName.trim() : name.trim();
     const commentText = parentId ? replyContent.trim() : content.trim();
 
-    if (!author || !commentText) return;
+    if (!author || !commentText) {
+      toast.error("Name and comment are required.");
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -68,10 +81,12 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
         author_name: author,
         content: commentText,
         parent_id: parentId,
-        is_approved: true, // Default to true, moderation is done via manual deletion/disapproval
+        is_approved: true,
       });
 
       if (error) throw error;
+
+      toast.success("Comment posted!");
 
       // Reset forms
       if (parentId) {
@@ -82,12 +97,13 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
         setName("");
         setContent("");
       }
+      setTurnstileToken(null);
 
-      // Re-fetch comments to display the new one
+      // Re-fetch comments
       await fetchComments();
     } catch (err) {
       console.error("Failed to post comment:", err);
-      alert("Something went wrong. Please try again.");
+      toast.error("Comment failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -132,7 +148,6 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
               {comment.content}
             </p>
             
-            {/* Reply Button (Max depth check to prevent infinite nested UI layout issues) */}
             {depth < 3 && (
               <button
                 onClick={() => setReplyingTo(isReplying ? null : comment.id)}
@@ -169,6 +184,15 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
                 disabled={submitting}
                 className="bg-background min-h-[80px]"
               />
+              {siteKey && (
+                <div className="my-2">
+                  <Turnstile
+                    sitekey={siteKey}
+                    onVerify={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken(null)}
+                  />
+                </div>
+              )}
               <div className="flex gap-2">
                 <Button type="submit" size="sm" disabled={submitting}>
                   Submit Reply
@@ -234,6 +258,15 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
           disabled={submitting}
           className="bg-background min-h-[100px]"
         />
+        {siteKey && (
+          <div className="my-2">
+            <Turnstile
+              sitekey={siteKey}
+              onVerify={(token) => setTurnstileToken(token)}
+              onExpire={() => setTurnstileToken(null)}
+            />
+          </div>
+        )}
         <Button type="submit" disabled={submitting}>
           {submitting ? "Posting..." : "Post Comment"}
         </Button>

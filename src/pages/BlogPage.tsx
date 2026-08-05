@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -14,6 +15,15 @@ import { ArrowLeft } from "lucide-react";
 export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
   const { blog, loading, notFound } = useBlog(slug || "");
+
+  useEffect(() => {
+    if (blog?.title) {
+      document.title = `${blog.title} — Warren Media`;
+    }
+    return () => {
+      document.title = "Warren — The Digital Home of CBU";
+    };
+  }, [blog]);
 
   const topicSlugs = blog?.topics?.map((t) => t.slug) || [];
   const { blogs: relatedBlogs, loading: relatedLoading } = useRelatedBlogs(

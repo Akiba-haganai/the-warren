@@ -1,9 +1,31 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@sanity/client";
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
+const sanity = createClient({
+  projectId: process.env.VITE_SANITY_PROJECT_ID || "7yislksr",
+  dataset: process.env.VITE_SANITY_DATASET || "production",
+  apiVersion: "2024-01-01",
+  useCdn: true,
+});
+
+function getSanityImageUrl(mainImage) {
+  if (!mainImage) return null;
+  if (mainImage.asset?.url) return mainImage.asset.url;
+  const ref = mainImage.asset?._ref;
+  if (!ref) return null;
+  
+  // Format of ref: "image-a1b2c3d4e5f6-1200x800-jpg"
+  const parts = ref.split("-");
+  if (parts.length < 4) return null;
+  
+  const id = parts[1];
+  const dimensions = parts[2];
+  const extension = parts[3];
+  
+  const projectId = process.env.VITE_SANITY_PROJECT_ID || "7yislksr";
+  const dataset = process.env.VITE_SANITY_DATASET || "production";
+  
+  return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${extension}`;
+}
 
 export default async function handler(req, res) {
   const { slug } = req.query;
@@ -12,24 +34,28 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { data: story } = await supabase
-    .from("stories")
-    .select("title, excerpt, image_url, author_name")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .single();
+  try {
+    const story = await sanity.fetch(
+      `*[_type == "story" && slug.current == $slug && defined(publishedAt)][0]{
+        title,
+        excerpt,
+        mainImage,
+        author
+      }`,
+      { slug }
+    );
 
-  if (!story) {
-    res.status(404).send("Story not found");
-    return;
-  }
+    if (!story) {
+      res.status(404).send("Blog not found");
+      return;
+    }
 
-  const baseUrl = "https://the-warren-hub.vercel.app";
-  const title = `${story.title} — Warren Media`;
-  const description = story.excerpt || "Read this story on Warren Media.";
-  const image = story.image_url || `${baseUrl}/warren-preview.png`;
+    const baseUrl = "https://the-warren-hub.vercel.app";
+    const title = `${story.title} — Warren Media`;
+    const description = story.excerpt || "Read this blog on Warren Media.";
+    const image = getSanityImageUrl(story.mainImage) || `${baseUrl}/warren-preview.png`;
 
-  const html = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -38,19 +64,23 @@ export default async function handler(req, res) {
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
   <meta property="og:image" content="${image}" />
-  <meta property="og:url" content="${baseUrl}/stories/${slug}" />
+  <meta property="og:url" content="${baseUrl}/blogs/${slug}" />
   <meta property="og:type" content="article" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />
   <meta name="twitter:image" content="${image}" />
-  <meta http-equiv="refresh" content="0;url=${baseUrl}/stories/${slug}" />
+  <meta http-equiv="refresh" content="0;url=${baseUrl}/blogs/${slug}" />
 </head>
 <body>
-  <p>Redirecting to <a href="${baseUrl}/stories/${slug}">${title}</a></p>
+  <p>Redirecting to <a href="${baseUrl}/blogs/${slug}">${title}</a></p>
 </body>
 </html>`;
 
-  res.setHeader("Content-Type", "text/html");
-  res.status(200).send(html);
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(html);
+  } catch (err) {
+    console.error("OG tags handler error:", err);
+    res.status(500).send("Error generating preview card");
+  }
 }

@@ -1,9 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@sanity/client";
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
+const sanity = createClient({
+  projectId: process.env.VITE_SANITY_PROJECT_ID || "7yislksr",
+  dataset: process.env.VITE_SANITY_DATASET || "production",
+  apiVersion: "2024-01-01",
+  useCdn: true,
+});
 
 const BASE_URL = "https://the-warren-hub.vercel.app";
 
@@ -11,7 +13,7 @@ const STATIC_PATHS = [
   "/",
   "/explore",
   "/podcasts",
-  "/stories",
+  "/blogs",
   "/submit",
   "/about",
   "/contact",
@@ -23,21 +25,43 @@ const STATIC_PATHS = [
 ];
 
 export default async function handler(req, res) {
-  const { data: stories } = await supabase
-    .from("stories")
-    .select("slug")
-    .eq("status", "published");
+  try {
+    // Fetch all published stories (blogs)
+    const stories = await sanity.fetch(
+      `*[_type == "story" && defined(publishedAt)]{ "slug": slug.current }`
+    );
 
-  const storyUrls = (stories || []).map(
-    (s) => `${BASE_URL}/stories/${s.slug}`
-  );
-  const allUrls = [...STATIC_PATHS.map((p) => BASE_URL + p), ...storyUrls];
+    // Fetch all topics
+    const topics = await sanity.fetch(
+      `*[_type == "topic"]{ "slug": slug.current }`
+    );
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    // Fetch distinct authors
+    const authors = await sanity.fetch(
+      `array::unique(*[_type == "story" && defined(publishedAt)].author)`
+    );
+
+    const storyUrls = (stories || []).map((s) => `${BASE_URL}/blogs/${s.slug}`);
+    const topicUrls = (topics || []).map((t) => `${BASE_URL}/topics/${t.slug}`);
+    const authorUrls = (authors || []).map((a) => `${BASE_URL}/authors/${encodeURIComponent(a)}`);
+
+    const allUrls = [
+      ...STATIC_PATHS.map((p) => BASE_URL + p),
+      ...storyUrls,
+      ...topicUrls,
+      ...authorUrls,
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${allUrls.map((url) => `<url><loc>${url}</loc></url>`).join("\n")}
 </urlset>`;
 
-  res.setHeader("Content-Type", "application/xml");
-  res.status(200).send(xml);
+    res.setHeader("Content-Type", "application/xml");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.status(200).send(xml);
+  } catch (err) {
+    console.error("Sitemap generation error:", err);
+    res.status(500).send("Error generating sitemap");
+  }
 }
