@@ -89,6 +89,7 @@ export function Header() {
   });
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const cleanup = initThemeFromStorage();
@@ -238,7 +239,7 @@ export function Header() {
               <Search className="h-4 w-4" />
             </Button>
 
-            <Sheet>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="h-5 w-5" />
@@ -255,9 +256,7 @@ export function Header() {
                       key={n.to}
                       to={n.to}
                       className={navLinkClass(n.to)}
-                      onClick={() => {
-                        navigate(n.to);
-                      }}
+                      onClick={() => setMobileMenuOpen(false)}
                     >
                       {n.label}
                     </Link>
