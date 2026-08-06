@@ -22,6 +22,7 @@ import { MiniPlayer } from "./components/player/MiniPlayer";
 import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
+import { UpdatePrompt } from "./components/layout/UpdatePrompt";
 
 function StoryToBlogRedirect() {
   const params = useParams();
@@ -69,6 +70,7 @@ function App() {
       <MiniPlayer />
       <WhatsAppFAB />
       <InstallPWA />
+      <UpdatePrompt />
       <Toaster />
     </>
   );
