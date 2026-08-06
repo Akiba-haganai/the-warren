@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
  * Reveal — lightweight fade+slide-up on scroll.
@@ -13,6 +13,7 @@ export function Reveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -21,8 +22,10 @@ export function Reveal({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.style.opacity = "1";
-          el.style.transform = "translateY(0)";
+          // Use setState — never mutate el.style directly inside an
+          // IntersectionObserver callback. Direct DOM mutations bypass React's
+          // reconciler and cause NotFoundError on iOS Safari during unmount.
+          setVisible(true);
           observer.unobserve(el);
         }
       },
@@ -37,8 +40,8 @@ export function Reveal({
     <div
       ref={ref}
       style={{
-        opacity: 0,
-        transform: "translateY(24px)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
         transition: `opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
       }}
     >

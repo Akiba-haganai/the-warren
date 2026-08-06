@@ -11,8 +11,10 @@ export function UpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(_swUrl: string, registration: ServiceWorkerRegistration | undefined) {
       if (registration) {
-        // Poll every 60 seconds so open tabs detect new deploys quickly
-        setInterval(() => registration.update(), 60_000);
+        // Poll every 60 seconds so open tabs detect new deploys quickly.
+        // Swallow errors — iOS Safari throws InvalidStateError: newestWorker is null
+        // when registration.update() is called during a SW lifecycle transition.
+        setInterval(() => registration.update().catch(() => {}), 60_000);
       }
     },
   });
