@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Send, CheckCircle } from "lucide-react";
-import Turnstile from "react-turnstile";
+import TurnstileRaw, { Turnstile as NamedTurnstile } from "react-turnstile";
+const Turnstile = (NamedTurnstile || (TurnstileRaw as any)?.default || TurnstileRaw) as typeof NamedTurnstile;
 
 export default function SubmitBlog() {
   const [title, setTitle] = useState("");

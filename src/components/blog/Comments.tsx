@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Turnstile from "react-turnstile";
+import TurnstileRaw, { Turnstile as NamedTurnstile } from "react-turnstile";
+const Turnstile = (NamedTurnstile || (TurnstileRaw as any)?.default || TurnstileRaw) as typeof NamedTurnstile;
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
