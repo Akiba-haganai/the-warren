@@ -9,13 +9,14 @@ export function UpdatePrompt() {
     needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegisteredSW(_swUrl, registration) {
+    onRegisteredSW(_swUrl: string, registration: ServiceWorkerRegistration | undefined) {
       if (registration) {
         // Poll every 60 seconds so open tabs detect new deploys quickly
         setInterval(() => registration.update(), 60_000);
       }
     },
   });
+
 
   if (!needRefresh || dismissed) return null;
 
