@@ -12,6 +12,7 @@ import { Comments } from "@/components/blog/Comments";
 import { StoryBody } from "@/components/StoryBody";
 import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
+import { ShareRow } from "@/components/blog/ShareRow";
 
 export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -123,6 +124,13 @@ export default function BlogPage() {
                     </>
                   )}
                 </p>
+
+                {/* Share row */}
+                <ShareRow
+                  title={blog.title}
+                  excerpt={blog.excerpt}
+                  slug={blog.slug}
+                />
 
                 {/* Excerpt / standfirst */}
                 {blog.excerpt && (
