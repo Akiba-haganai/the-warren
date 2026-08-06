@@ -9,6 +9,7 @@ import { useBlog } from "@/hooks/useBlog";
 import { useRelatedBlogs } from "@/hooks/useRelatedBlogs";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Comments } from "@/components/blog/Comments";
+import { StoryBody } from "@/components/StoryBody";
 import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 
@@ -146,23 +147,7 @@ export default function BlogPage() {
 
               {/* Body — Constrained for reading */}
               <div className="max-w-[750px] mx-auto">
-                <div className="prose prose-lg dark:prose-invert max-w-none">
-                  {Array.isArray(blog.body)
-                    ? (blog.body as Array<{ _type: string; children?: Array<{ text: string }> }>)
-                        .filter((block) => block._type === "block")
-                        .map((block, i) => (
-                          <p key={i} className="leading-relaxed text-[17px] md:text-[18px]">
-                            {block.children?.map((span) => span.text).join("")}
-                          </p>
-                        ))
-                    : typeof blog.body === "string"
-                    ? blog.body.split("\n").map((line, i) => (
-                        <p key={i} className="leading-relaxed text-[17px] md:text-[18px]">
-                          {line}
-                        </p>
-                      ))
-                    : null}
-                </div>
+                <StoryBody value={blog.body} />
 
                 {/* Related Blogs Section */}
                 {!relatedLoading && relatedBlogs.length > 0 && (
