@@ -120,7 +120,14 @@ function LatestBlogs() {
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionLabel>Read</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-8">Latest Blogs</h2>
+          <div className="flex items-center justify-between mt-2 mb-8">
+            <h2 className="text-2xl font-semibold">Latest Blogs</h2>
+            <Button asChild variant="ghost" className="text-blue-600">
+              <Link to="/blogs">
+                All Blogs <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </Reveal>
 
         {loading ? (
