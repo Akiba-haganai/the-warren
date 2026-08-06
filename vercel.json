@@ -10,7 +10,25 @@
       ]
     },
     {
-      "source": "/(.*).html",
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -26,7 +44,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|WhatsApp|Discordbot|telegrambot|Googlebot|bingbot|DuckDuckBot)"
+          "value": "(facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|WhatsApp|Discordbot|telegrambot)"
         }
       ],
       "destination": "/api/og?slug=:slug"
@@ -37,7 +55,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|WhatsApp|Discordbot|telegrambot|Googlebot|bingbot|DuckDuckBot)"
+          "value": "(facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|WhatsApp|Discordbot|telegrambot)"
         }
       ],
       "destination": "/api/og?slug=:slug"

@@ -1,30 +1,25 @@
 import { createClient } from "@sanity/client";
+import imageUrlBuilder from "@sanity/image-url";
+
+const projectId = process.env.VITE_SANITY_PROJECT_ID || "7yislksr";
+const dataset = process.env.VITE_SANITY_DATASET || "production";
 
 const sanity = createClient({
-  projectId: process.env.VITE_SANITY_PROJECT_ID || "7yislksr",
-  dataset: process.env.VITE_SANITY_DATASET || "production",
-  apiVersion: "2024-01-01",
+  projectId,
+  dataset,
+  apiVersion: "2026-01-01",
   useCdn: true,
 });
 
+const builder = imageUrlBuilder(sanity);
+
 function getSanityImageUrl(mainImage) {
   if (!mainImage) return null;
-  if (mainImage.asset?.url) return mainImage.asset.url;
-  const ref = mainImage.asset?._ref;
-  if (!ref) return null;
-  
-  // Format of ref: "image-a1b2c3d4e5f6-1200x800-jpg"
-  const parts = ref.split("-");
-  if (parts.length < 4) return null;
-  
-  const id = parts[1];
-  const dimensions = parts[2];
-  const extension = parts[3];
-  
-  const projectId = process.env.VITE_SANITY_PROJECT_ID || "7yislksr";
-  const dataset = process.env.VITE_SANITY_DATASET || "production";
-  
-  return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${extension}`;
+  try {
+    return builder.image(mainImage).width(1200).url();
+  } catch {
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -33,6 +28,8 @@ export default async function handler(req, res) {
     res.status(400).send("Missing slug");
     return;
   }
+
+  const baseUrl = "https://the-warren-hub.vercel.app";
 
   try {
     const story = await sanity.fetch(
@@ -46,16 +43,42 @@ export default async function handler(req, res) {
     );
 
     if (!story) {
-      res.status(404).send("Blog not found");
-      return;
+      // Graceful fallback: return a generic preview card instead of a bare 404
+      const html = buildHtml({
+        title: "Warren — The Digital Home of CBU",
+        description: "Read the latest stories and blogs from your campus.",
+        image: `${baseUrl}/warren-preview.png`,
+        url: `${baseUrl}/blogs`,
+      });
+      res.setHeader("Content-Type", "text/html");
+      return res.status(200).send(html);
     }
 
-    const baseUrl = "https://the-warren-hub.vercel.app";
-    const title = `${story.title} — Warren Media`;
-    const description = story.excerpt || "Read this blog on Warren Media.";
-    const image = getSanityImageUrl(story.mainImage) || `${baseUrl}/warren-preview.png`;
+    const title = story.title;
+    const description =
+      story.excerpt || "Read this story on your campus platform.";
+    const image =
+      getSanityImageUrl(story.mainImage) || `${baseUrl}/warren-preview.png`;
+    const url = `${baseUrl}/blogs/${slug}`;
 
-    const html = `<!DOCTYPE html>
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(buildHtml({ title, description, image, url }));
+  } catch (err) {
+    console.error("OG tags handler error:", err);
+    // Graceful fallback on Sanity error — return generic preview, not a broken page
+    const html = buildHtml({
+      title: "Warren — The Digital Home of CBU",
+      description: "Read the latest stories and blogs from your campus.",
+      image: `${baseUrl}/warren-preview.png`,
+      url: baseUrl,
+    });
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(html);
+  }
+}
+
+function buildHtml({ title, description, image, url }) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -64,23 +87,17 @@ export default async function handler(req, res) {
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
   <meta property="og:image" content="${image}" />
-  <meta property="og:url" content="${baseUrl}/blogs/${slug}" />
+  <meta property="og:url" content="${url}" />
   <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Warren" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />
   <meta name="twitter:image" content="${image}" />
-  <meta http-equiv="refresh" content="0;url=${baseUrl}/blogs/${slug}" />
+  <meta http-equiv="refresh" content="0;url=${url}" />
 </head>
 <body>
-  <p>Redirecting to <a href="${baseUrl}/blogs/${slug}">${title}</a></p>
+  <p>Redirecting to <a href="${url}">${title}</a></p>
 </body>
 </html>`;
-
-    res.setHeader("Content-Type", "text/html");
-    res.status(200).send(html);
-  } catch (err) {
-    console.error("OG tags handler error:", err);
-    res.status(500).send("Error generating preview card");
-  }
 }
