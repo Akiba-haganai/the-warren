@@ -40,6 +40,9 @@ export default function BlogPage() {
         try {
           return urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
             .width(1200)
+            .height(600)
+            .fit("crop")
+            .auto("format")
             .url();
         } catch {
           return null;
@@ -105,40 +108,47 @@ export default function BlogPage() {
                 </h1>
 
                 {/* Meta */}
-                <p className="mt-4 text-base text-muted-foreground">
-                  By{" "}
-                  <Link
-                    to={`/authors/${encodeURIComponent(blog.author)}`}
-                    className="font-medium text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
-                  >
-                    {blog.author}
-                  </Link>
-                  {blog.publishedAt && (
-                    <>
-                      {" "}
-                      &middot;{" "}
-                      {new Date(blog.publishedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </>
-                  )}
-                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-display text-lg font-semibold uppercase">
+                    {(blog.author || "W").charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-base font-medium">
+                      By{" "}
+                      <Link
+                        to={`/authors/${encodeURIComponent(blog.author || "Warren Team")}`}
+                        className="text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
+                      >
+                        {blog.author || "Warren Team"}
+                      </Link>
+                    </div>
+                    {blog.publishedAt && (
+                      <div className="text-sm text-muted-foreground mt-0.5">
+                        {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Engagement row */}
-                <div className="flex flex-wrap items-start gap-3 mt-6">
+                <div className="mt-8 flex flex-wrap items-center gap-4">
                   <LikeButton blogSlug={blog.slug} />
+                  <div className="h-6 w-px bg-border hidden sm:block" />
+                  <ShareRow
+                    title={blog.title}
+                    excerpt={blog.excerpt}
+                    slug={blog.slug}
+                    compact
+                  />
                 </div>
-                <ShareRow
-                  title={blog.title}
-                  excerpt={blog.excerpt}
-                  slug={blog.slug}
-                />
 
                 {/* Excerpt / standfirst */}
                 {blog.excerpt && (
-                  <p className="mt-6 text-xl text-muted-foreground italic border-l-4 border-blue-400 pl-4 leading-relaxed">
+                  <p className="mt-8 text-xl md:text-2xl font-medium text-muted-foreground leading-relaxed">
                     {blog.excerpt}
                   </p>
                 )}
@@ -150,8 +160,7 @@ export default function BlogPage() {
                   <img
                     src={coverSrc}
                     alt={blog.title}
-                    className="w-full rounded-2xl shadow-lg mx-auto"
-                    style={{ maxHeight: "70vh", objectFit: "contain" }}
+                    className="w-full rounded-2xl shadow-lg mx-auto aspect-[2/1] object-cover"
                     loading="eager"
                   />
                 </div>
@@ -160,6 +169,20 @@ export default function BlogPage() {
               {/* Body — Constrained for reading */}
               <div className="max-w-[750px] mx-auto">
                 <StoryBody value={blog.body} />
+
+                {/* Bottom Engagement Row */}
+                <div className="mt-12 flex flex-col sm:flex-row sm:items-center gap-4 py-6 border-y border-border">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <LikeButton blogSlug={blog.slug} />
+                    <div className="h-6 w-px bg-border hidden sm:block" />
+                    <ShareRow
+                      title={blog.title}
+                      excerpt={blog.excerpt}
+                      slug={blog.slug}
+                      compact
+                    />
+                  </div>
+                </div>
 
                 {/* Related Blogs Section */}
                 {!relatedLoading && relatedBlogs.length > 0 && (
@@ -176,7 +199,9 @@ export default function BlogPage() {
                 )}
 
                 {/* Comments Section */}
-                <Comments blogSlug={blog.slug} />
+                <div className="mt-12 rounded-3xl bg-muted/30 p-6 sm:p-8 border border-border/50">
+                  <Comments blogSlug={blog.slug} />
+                </div>
 
                 {/* Footer nav */}
                 <div className="mt-16 pt-8 border-t border-border flex justify-between items-center text-sm">

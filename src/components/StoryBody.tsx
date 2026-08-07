@@ -16,7 +16,7 @@ const components: PortableTextComponents = {
 
 export function StoryBody({ value }: { value: unknown }) {
   return (
-    <div className="prose prose-sm dark:prose-invert max-w-none">
+    <div className="prose prose-lg dark:prose-invert max-w-none prose-p:leading-loose prose-p:text-[17px] dark:prose-p:text-slate-300 prose-headings:font-display prose-headings:tracking-tight prose-a:text-blue-600 hover:prose-a:text-blue-500">
       <PortableText value={value as never} components={components} />
     </div>
   );

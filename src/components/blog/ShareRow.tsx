@@ -33,6 +33,7 @@ interface ShareRowProps {
   title: string;
   excerpt?: string;
   slug: string;
+  compact?: boolean;
 }
 
 // ─── Share button config ──────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ interface ShareTarget {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function ShareRow({ title, excerpt = "", slug }: ShareRowProps) {
+export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRowProps) {
   const [copied, setCopied] = useState<"link" | "instagram" | null>(null);
   const [igTooltip, setIgTooltip] = useState(false);
 
@@ -141,11 +142,13 @@ export function ShareRow({ title, excerpt = "", slug }: ShareRowProps) {
     typeof navigator !== "undefined" && !!navigator.share;
 
   return (
-    <div className="my-8">
+    <div className={compact ? "flex items-center gap-2" : "my-8"}>
       {/* Label */}
-      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-        Share this story
-      </p>
+      {!compact && (
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+          Share this story
+        </p>
+      )}
 
       {/* Button row */}
       <div className="flex flex-wrap items-center gap-3">
@@ -158,21 +161,20 @@ export function ShareRow({ title, excerpt = "", slug }: ShareRowProps) {
                 target.action({ url, title, excerpt })
               }
               aria-label={`Share on ${target.label}`}
-              className={`
-                group relative flex items-center gap-2 rounded-xl px-4 py-2.5
-                text-sm font-semibold text-white
-                ${target.color} ${target.hoverColor}
-                shadow-lg ${target.glowColor}
-                active:scale-95
-                transition-all duration-200
-              `}
+              className={
+                compact
+                  ? `group relative flex items-center justify-center rounded-full h-9 w-9 text-muted-foreground hover:text-white transition-colors duration-200 ${target.hoverColor}`
+                  : `group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white ${target.color} ${target.hoverColor} shadow-lg ${target.glowColor} active:scale-95 transition-all duration-200`
+              }
             >
-              {/* Shimmer on hover */}
-              <span className="pointer-events-none absolute inset-0 rounded-xl overflow-hidden">
-                <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              </span>
+              {/* Shimmer on hover (only for non-compact) */}
+              {!compact && (
+                <span className="pointer-events-none absolute inset-0 rounded-xl overflow-hidden">
+                  <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                </span>
+              )}
               {target.icon}
-              <span>{target.label}</span>
+              {!compact && <span>{target.label}</span>}
             </button>
 
             {/* Instagram tooltip — appears after copy */}
@@ -186,31 +188,28 @@ export function ShareRow({ title, excerpt = "", slug }: ShareRowProps) {
         ))}
 
         {/* Divider */}
-        <div className="h-8 w-px bg-border hidden sm:block" />
+        {!compact && <div className="h-8 w-px bg-border hidden sm:block" />}
 
         {/* Copy link */}
         <button
           id="share-copy-link"
           onClick={() => handleCopy(url, "link")}
           aria-label="Copy blog link"
-          className="
-            group relative flex items-center gap-2 rounded-xl px-4 py-2.5
-            text-sm font-semibold
-            bg-secondary hover:bg-accent text-secondary-foreground
-            border border-border
-            active:scale-95
-            transition-all duration-200
-          "
+          className={
+            compact
+              ? "group relative flex items-center justify-center rounded-full h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors duration-200"
+              : "group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-secondary hover:bg-accent text-secondary-foreground border border-border active:scale-95 transition-all duration-200"
+          }
         >
           {copied === "link" ? (
             <>
               <Check className="h-4 w-4 text-green-500" />
-              <span className="text-green-600 dark:text-green-400">Copied!</span>
+              {!compact && <span className="text-green-600 dark:text-green-400">Copied!</span>}
             </>
           ) : (
             <>
               <Link2 className="h-4 w-4" />
-              <span>Copy link</span>
+              {!compact && <span>Copy link</span>}
             </>
           )}
         </button>
@@ -221,17 +220,14 @@ export function ShareRow({ title, excerpt = "", slug }: ShareRowProps) {
             id="share-native"
             onClick={handleNativeShare}
             aria-label="Share via device"
-            className="
-              group relative flex items-center gap-2 rounded-xl px-4 py-2.5
-              text-sm font-semibold
-              bg-blue-600 hover:bg-blue-500 text-white
-              shadow-lg shadow-blue-600/30
-              active:scale-95
-              transition-all duration-200
-            "
+            className={
+              compact
+                ? "group relative flex items-center justify-center rounded-full h-9 w-9 text-muted-foreground hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors duration-200"
+                : "group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 active:scale-95 transition-all duration-200"
+            }
           >
             <Share2 className="h-4 w-4" />
-            <span>More</span>
+            {!compact && <span>More</span>}
           </button>
         )}
       </div>
