@@ -64,7 +64,7 @@ export function BlogCard({ blog }: { blog: BlogCardProps }) {
           )}
           <div className="mt-auto pt-4 flex items-center justify-between">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <span className="text-foreground">{blog.author}</span>
+              <span className="text-foreground">{blog.author || "Warren Team"}</span>
               {blog.publishedAt && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-border" />

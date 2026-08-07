@@ -11,6 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
@@ -33,6 +34,7 @@ import {
 
 const nav = [
   { to: "/", label: "Media" },
+  { to: "/blogs", label: "Blogs" },
   { to: "/podcasts", label: "Podcasts" },
   { to: "/explore", label: "Explore" },
   { to: "/about", label: "About" },
@@ -252,14 +254,14 @@ export function Header() {
                 </SheetHeader>
                 <nav className="flex flex-col gap-2">
                   {items.map((n) => (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      className={navLinkClass(n.to)}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {n.label}
-                    </Link>
+                    <SheetClose key={n.to} asChild>
+                      <Link
+                        to={n.to}
+                        className={navLinkClass(n.to)}
+                      >
+                        {n.label}
+                      </Link>
+                    </SheetClose>
                   ))}
 
                   <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3">

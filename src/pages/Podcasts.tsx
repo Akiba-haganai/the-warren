@@ -36,14 +36,15 @@ export default function Podcasts() {
     "Academics",
   ];
 
-  // Filter and search logic
+  // Filter and search logic with defensive null checks
   const filtered = podcasts
     .filter((ep) => filter === "All" || ep.category === filter)
-    .filter(
-      (ep) =>
-        ep.title.toLowerCase().includes(search.toLowerCase()) ||
-        ep.description.toLowerCase().includes(search.toLowerCase()),
-    );
+    .filter((ep) => {
+      const q = search.toLowerCase();
+      const titleMatch = ep.title ? ep.title.toLowerCase().includes(q) : false;
+      const descMatch = ep.description ? ep.description.toLowerCase().includes(q) : false;
+      return titleMatch || descMatch;
+    });
 
   // Featured episodes (first 3, from the full unfiltered list)
   const featured = podcasts.slice(0, 3);

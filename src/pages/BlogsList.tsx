@@ -22,13 +22,14 @@ export default function BlogsList() {
     selectedTopic
   );
 
-  // Client-side text search over current page items
-  const filteredBlogs = blogs.filter(
-    (b) =>
-      b.title.toLowerCase().includes(search.toLowerCase()) ||
-      (b.excerpt && b.excerpt.toLowerCase().includes(search.toLowerCase())) ||
-      b.author.toLowerCase().includes(search.toLowerCase())
-  );
+  // Client-side text search over current page items with defensive null checks
+  const filteredBlogs = blogs.filter((b) => {
+    const q = search.toLowerCase();
+    const titleMatch = b.title ? b.title.toLowerCase().includes(q) : false;
+    const excerptMatch = b.excerpt ? b.excerpt.toLowerCase().includes(q) : false;
+    const authorMatch = b.author ? b.author.toLowerCase().includes(q) : false;
+    return titleMatch || excerptMatch || authorMatch;
+  });
 
   const totalPages = Math.ceil(total / pageSize);
 
