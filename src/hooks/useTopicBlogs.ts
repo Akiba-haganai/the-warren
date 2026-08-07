@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
 import type { BlogCard } from "./useLatestBlogs";
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
 
 export interface TopicInfo {
   _id: string;
@@ -21,7 +22,7 @@ const BLOGS_QUERY = `*[_type == "story" && defined(publishedAt) && $slug in topi
   title,
   "slug": slug.current,
   excerpt,
-  author,
+  ${AUTHOR_PROJECTION},
   mainImage,
   publishedAt,
   "topics": topics[]->{ _id, title, "slug": slug.current }

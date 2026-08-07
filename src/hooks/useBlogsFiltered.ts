@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
 import { supabase } from "@/lib/supabase";
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
 
 const PAGE_SIZE = 12;
 
@@ -9,7 +10,11 @@ export interface BlogItem {
   title: string;
   slug: string;
   excerpt?: string;
-  author: string;
+  author: {
+    name: string;
+    image?: any;
+    slug: string;
+  };
   mainImage?: unknown;
   publishedAt?: string;
   topics: { _id: string; title: string; slug: string }[];
@@ -60,7 +65,7 @@ export function useBlogsFiltered(
         title,
         "slug": slug.current,
         excerpt,
-        author,
+        ${AUTHOR_PROJECTION},
         mainImage,
         publishedAt,
         "topics": topics[]->{ _id, title, "slug": slug.current }
@@ -126,7 +131,7 @@ export function useBlogsFiltered(
           title,
           "slug": slug.current,
           excerpt,
-          author,
+          ${AUTHOR_PROJECTION},
           mainImage,
           publishedAt,
           "topics": topics[]->{ _id, title, "slug": slug.current }

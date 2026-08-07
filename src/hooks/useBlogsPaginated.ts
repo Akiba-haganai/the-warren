@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
 
 const PAGE_SIZE = 12;
 
@@ -8,7 +9,11 @@ export interface BlogItem {
   title: string;
   slug: string;
   excerpt?: string;
-  author: string;
+  author: {
+    name: string;
+    image?: any;
+    slug: string;
+  };
   mainImage?: unknown;
   publishedAt?: string;
   topics: { _id: string; title: string; slug: string }[];
@@ -31,17 +36,17 @@ export function useBlogsPaginated(page: number) {
     // So [from...to+1] fetches the right amount.
     const query = `{
       "total": count(*[_type == "story" && defined(publishedAt)]),
-      "items": *[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [$from...$end] {
-        _id,
-        title,
-        "slug": slug.current,
-        excerpt,
-        author,
-        mainImage,
-        publishedAt,
-        "topics": topics[]->{ _id, title, "slug": slug.current }
-      }
-    }`;
+        "items": *[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [$from...$end] {
+          _id,
+          title,
+          "slug": slug.current,
+          excerpt,
+          ${AUTHOR_PROJECTION},
+          mainImage,
+          publishedAt,
+          "topics": topics[]->{ _id, title, "slug": slug.current }
+        }
+      }`;
 
     sanityClient
       .fetch<{ total: number; items: BlogItem[] }>(query, {

@@ -82,7 +82,7 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
   );
 
   const whatsappMessage = encodeURIComponent(
-    `📰 New story from your campus\n\n"${title}"\n${excerpt ? excerpt.slice(0, 120) + "…" : ""}\n\nRead here → ${url}`
+    `📰 New story from your campus\n\n"${title}"\n${typeof excerpt === "string" && excerpt ? excerpt.slice(0, 120) + "…" : ""}\n\nRead here → ${url}`
   );
 
   const instagramCaption = `New read just dropped 🔥\n"${title}"\n\nLink in bio → the-warren-hub.vercel.app`;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -14,6 +14,9 @@ import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 import { ShareRow } from "@/components/blog/ShareRow";
 import { LikeButton } from "@/components/blog/LikeButton";
+import { ReadingProgress } from "@/components/blog/ReadingProgress";
+import { calculateReadingTime } from "@/lib/readingTime";
+import { UpNextToast } from "@/components/blog/UpNextToast";
 
 export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -28,7 +31,34 @@ export default function BlogPage() {
     };
   }, [blog]);
 
-  const topicSlugs = blog?.topics?.map((t) => t.slug) || [];
+  const endOfArticleRef = useRef<HTMLDivElement>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const hasTriggered = useRef(false);
+
+  useEffect(() => {
+    if (!endOfArticleRef.current) return;
+    
+    // Reset trigger when slug changes
+    hasTriggered.current = false;
+    setToastVisible(false);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasTriggered.current) {
+          setToastVisible(true);
+          hasTriggered.current = true;
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(endOfArticleRef.current);
+
+    return () => observer.disconnect();
+  }, [slug, loading]);
+
+  const topicSlugs = useMemo(() => blog?.topics?.map((t) => t.slug) || [], [blog?.topics]);
   const { blogs: relatedBlogs, loading: relatedLoading } = useRelatedBlogs(
     slug || "",
     topicSlugs
@@ -53,6 +83,7 @@ export default function BlogPage() {
   return (
     <>
       <Header />
+      <ReadingProgress />
       <main className="pt-32 pb-24 bg-background min-h-screen">
         <article className="mx-auto max-w-4xl px-6">
           {loading ? (
@@ -109,17 +140,25 @@ export default function BlogPage() {
 
                 {/* Meta */}
                 <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-display text-lg font-semibold uppercase">
-                    {(blog.author || "W").charAt(0)}
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-display text-lg font-semibold uppercase overflow-hidden">
+                    {blog.author?.image ? (
+                      <img
+                        src={urlForImage(blog.author.image).width(88).height(88).fit("crop").url()}
+                        alt={blog.author.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      (blog.author?.name || "W").charAt(0)
+                    )}
                   </div>
                   <div>
                     <div className="text-base font-medium">
                       By{" "}
                       <Link
-                        to={`/authors/${encodeURIComponent(blog.author || "Warren Team")}`}
+                        to={`/authors/${encodeURIComponent(blog.author?.slug || "warren-team")}`}
                         className="text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
                       >
-                        {blog.author || "Warren Team"}
+                        {blog.author?.name || "Warren Team"}
                       </Link>
                     </div>
                     {blog.publishedAt && (
@@ -129,6 +168,8 @@ export default function BlogPage() {
                           month: "long",
                           day: "numeric",
                         })}
+                        <span className="mx-1.5">•</span>
+                        {calculateReadingTime(blog.body as any[])} min read
                       </div>
                     )}
                   </div>
@@ -171,7 +212,10 @@ export default function BlogPage() {
                 <StoryBody value={blog.body} />
 
                 {/* Bottom Engagement Row */}
-                <div className="mt-12 flex flex-col sm:flex-row sm:items-center gap-4 py-6 border-y border-border">
+                <div 
+                  ref={endOfArticleRef}
+                  className="mt-12 flex flex-col sm:flex-row sm:items-center gap-4 py-6 border-y border-border"
+                >
                   <div className="flex flex-wrap items-center gap-4">
                     <LikeButton blogSlug={blog.slug} />
                     <div className="h-6 w-px bg-border hidden sm:block" />
@@ -219,6 +263,14 @@ export default function BlogPage() {
             </Reveal>
           )}
         </article>
+        
+        {!relatedLoading && relatedBlogs.length > 0 && (
+          <UpNextToast 
+            blog={relatedBlogs[0]} 
+            visible={toastVisible} 
+            onDismiss={() => setToastVisible(false)} 
+          />
+        )}
       </main>
       <Footer />
     </>

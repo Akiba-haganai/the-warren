@@ -1,16 +1,62 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
-import { ArrowLeft, User } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useAuthorBlogs } from "@/hooks/useAuthorBlogs";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { sanityClient } from "@/lib/sanity";
+import { urlForImage } from "@/lib/sanityImage";
+
+interface AuthorDetails {
+  name: string;
+  image?: any;
+  bio?: string;
+}
 
 export default function AuthorPage() {
-  const { name } = useParams<{ name: string }>();
-  const decodedName = name ? decodeURIComponent(name) : "";
-  const { blogs, loading } = useAuthorBlogs(decodedName);
+  const { name: authorSlug } = useParams<{ name: string }>();
+  const decodedSlug = authorSlug ? decodeURIComponent(authorSlug) : "";
+  const { blogs, loading: blogsLoading } = useAuthorBlogs(decodedSlug);
+
+  const [authorProfile, setAuthorProfile] = useState<AuthorDetails | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    if (!decodedSlug) {
+      setProfileLoading(false);
+      return;
+    }
+    let active = true;
+    setProfileLoading(true);
+
+    sanityClient
+      .fetch<AuthorDetails | null>(
+        `*[_type == "author" && slug.current == $slug][0] { name, image, bio }`,
+        { slug: decodedSlug }
+      )
+      .then((data) => {
+        if (active) {
+          setAuthorProfile(data);
+          setProfileLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch author profile:", err);
+        if (active) {
+          setProfileLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [decodedSlug]);
+
+  const loading = blogsLoading || profileLoading;
+  const displayName = authorProfile?.name || blogs[0]?.author.name || decodedSlug.replace(/-/g, " ");
 
   return (
     <>
@@ -18,19 +64,36 @@ export default function AuthorPage() {
       <main className="pt-32 pb-24 min-h-screen">
         {/* Hero banner */}
         <section className="bg-muted/30 border-b -mt-8 mb-12">
-          <div className="mx-auto max-w-7xl px-6 py-16 text-center">
+          <div className="mx-auto max-w-7xl px-6 py-16 text-center flex flex-col items-center">
             <Reveal>
-              <div className="flex justify-center mb-4">
-                <div className="h-16 w-16 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center">
-                  <User className="h-8 w-8" />
-                </div>
+              <div className="flex justify-center mb-6">
+                {authorProfile?.image ? (
+                  <img
+                    src={urlForImage(authorProfile.image).width(160).height(160).fit("crop").url()}
+                    alt={displayName}
+                    className="h-24 w-24 rounded-full object-cover border-2 border-border shadow-md"
+                  />
+                ) : (
+                  <div className="h-24 w-24 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center font-display text-3xl font-semibold uppercase">
+                    {displayName.charAt(0)}
+                  </div>
+                )}
               </div>
+              
               <SectionLabel>Author</SectionLabel>
+              
               <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-                {decodedName}
+                {displayName}
               </h1>
+              
+              {authorProfile?.bio && (
+                <p className="mt-4 max-w-xl mx-auto text-base text-muted-foreground leading-relaxed">
+                  {authorProfile.bio}
+                </p>
+              )}
+
               {!loading && (
-                <p className="mt-4 text-muted-foreground">
+                <p className="mt-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   {blogs.length} blog{blogs.length !== 1 ? "s" : ""} published
                 </p>
               )}

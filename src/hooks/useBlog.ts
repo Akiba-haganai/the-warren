@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
 
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
+
 export interface Blog {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  author: string;
+  author: {
+    name: string;
+    image?: any;
+    slug: string;
+  };
   mainImage?: unknown;
   publishedAt?: string;
   body: unknown; // Portable Text blocks
@@ -20,7 +26,7 @@ const QUERY = `*[_type == "story" && slug.current == $slug && defined(publishedA
   title,
   "slug": slug.current,
   excerpt,
-  author,
+  ${AUTHOR_PROJECTION},
   mainImage,
   publishedAt,
   body,

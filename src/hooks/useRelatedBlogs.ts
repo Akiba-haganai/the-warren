@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import { sanityClient } from "@/lib/sanity";
 import type { BlogCardProps } from "@/components/blog/BlogCard";
 
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
+
 export function useRelatedBlogs(currentSlug: string, topicSlugs: string[]) {
   const [blogs, setBlogs] = useState<BlogCardProps[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const topicSlugsKey = (topicSlugs || []).join(",");
 
   useEffect(() => {
     if (!currentSlug || !topicSlugs || topicSlugs.length === 0) {
@@ -21,7 +25,7 @@ export function useRelatedBlogs(currentSlug: string, topicSlugs: string[]) {
         title,
         excerpt,
         mainImage,
-        author,
+        ${AUTHOR_PROJECTION},
         publishedAt,
         "slug": slug.current,
         "topics": topics[]->{ _id, title, "slug": slug.current }
@@ -48,7 +52,8 @@ export function useRelatedBlogs(currentSlug: string, topicSlugs: string[]) {
         setBlogs([]);
         setLoading(false);
       });
-  }, [currentSlug, topicSlugs]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlug, topicSlugsKey]);
 
   return { blogs, loading };
 }

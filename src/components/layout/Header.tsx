@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User } from "lucide-react";
+import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Loader2 } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
+import { urlForImage } from "@/lib/sanityImage";
+import { useSanitySearch } from "@/hooks/useSanitySearch";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -92,6 +94,8 @@ export function Header() {
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { loading: searchLoading, stories, topics, debouncedQuery } = useSanitySearch(searchQuery);
 
   useEffect(() => {
     const cleanup = initThemeFromStorage();
@@ -124,6 +128,13 @@ export function Header() {
       document.head.appendChild(tag);
     }
   }, [resolvedDark]);
+
+  // Reset search state when dialog closes
+  useEffect(() => {
+    if (!searchOpen) {
+      setSearchQuery("");
+    }
+  }, [searchOpen]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -306,22 +317,85 @@ export function Header() {
 
       {/* Command search dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Search pages..." />
+        <CommandInput 
+          placeholder="Search stories, topics, or pages..." 
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+        />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Pages">
-            {items.map((n) => (
-              <CommandItem
-                key={n.to}
-                onSelect={() => {
-                  navigate(n.to);
-                  setSearchOpen(false);
-                }}
-              >
-                {n.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          {searchLoading && (
+            <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Searching...
+            </div>
+          )}
+          
+          {!searchLoading && debouncedQuery.length > 0 && stories.length === 0 && topics.length === 0 && (
+            <CommandEmpty>No results found.</CommandEmpty>
+          )}
+
+          {!searchLoading && debouncedQuery.length > 0 && (
+            <>
+              {stories.length > 0 && (
+                <CommandGroup heading="Stories">
+                  {stories.map((story) => (
+                    <CommandItem
+                      key={story._id}
+                      onSelect={() => {
+                        navigate(`/blog/${story.slug}`);
+                        setSearchOpen(false);
+                      }}
+                      className="flex items-center gap-3 py-2 cursor-pointer"
+                    >
+                      {story.mainImage && (
+                        <img 
+                          src={urlForImage(story.mainImage).width(60).height(60).fit("crop").url()}
+                          alt=""
+                          className="w-8 h-8 rounded object-cover shrink-0"
+                        />
+                      )}
+                      <span className="line-clamp-1">{story.title}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+
+              {topics.length > 0 && (
+                <CommandGroup heading="Topics">
+                  {topics.map((topic) => (
+                    <CommandItem
+                      key={topic._id}
+                      onSelect={() => {
+                        navigate(`/explore?topic=${topic.slug}`);
+                        setSearchOpen(false);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+                      {topic.title}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+            </>
+          )}
+
+          {!searchLoading && debouncedQuery.length === 0 && (
+            <CommandGroup heading="Pages">
+              {nav.map((n) => (
+                <CommandItem
+                  key={n.to}
+                  onSelect={() => {
+                    navigate(n.to);
+                    setSearchOpen(false);
+                  }}
+                  className="cursor-pointer"
+                >
+                  {n.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
         </CommandList>
       </CommandDialog>
     </header>

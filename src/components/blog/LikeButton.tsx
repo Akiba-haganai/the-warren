@@ -6,13 +6,13 @@ interface LikeButtonProps {
 }
 
 export function LikeButton({ blogSlug }: LikeButtonProps) {
-  const { likeCount, liked, toggleLike, loading } = useBlogLikes(blogSlug);
+  const { likeCount, liked, toggleLike, loading, isToggling } = useBlogLikes(blogSlug);
 
   return (
     <button
       id="blog-like-button"
       onClick={toggleLike}
-      disabled={loading}
+      disabled={loading || isToggling}
       aria-label={liked ? "Unlike this blog" : "Like this blog"}
       className={`
         group relative inline-flex items-center gap-2 rounded-xl px-4 py-2.5

@@ -23,6 +23,7 @@ export function useBlogLikes(blogSlug: string) {
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isToggling, setIsToggling] = useState(false);
 
   // Initialise from localStorage synchronously so we don't flash an empty heart
   useEffect(() => {
@@ -57,57 +58,62 @@ export function useBlogLikes(blogSlug: string) {
   }, [blogSlug]);
 
   const toggleLike = useCallback(async () => {
-    if (!supabase) return;
+    if (!supabase || isToggling) return;
+    setIsToggling(true);
 
-    const browserId = getBrowserId();
-    const likedSet = getLikedSet();
-    const isCurrentlyLiked = likedSet.has(blogSlug);
+    try {
+      const browserId = getBrowserId();
+      const likedSet = getLikedSet();
+      const isCurrentlyLiked = likedSet.has(blogSlug);
 
-    if (isCurrentlyLiked) {
-      // Optimistic update — unlike
-      setLiked(false);
-      setLikeCount((c) => Math.max(0, c - 1));
-      likedSet.delete(blogSlug);
-      saveLikedSet(likedSet);
-
-      const { error } = await supabase
-        .from("blog_likes")
-        .delete()
-        .eq("blog_slug", blogSlug)
-        .eq("browser_id", browserId);
-
-      if (error) {
-        // Revert on failure
-        setLiked(true);
-        setLikeCount((c) => c + 1);
-        likedSet.add(blogSlug);
-        saveLikedSet(likedSet);
-      }
-    } else {
-      // Optimistic update — like
-      setLiked(true);
-      setLikeCount((c) => c + 1);
-      likedSet.add(blogSlug);
-      saveLikedSet(likedSet);
-
-      const { error } = await supabase
-        .from("blog_likes")
-        .insert({ blog_slug: blogSlug, browser_id: browserId });
-
-      if (error) {
-        // Revert on failure (includes unique-constraint duplicates, which
-        // means the DB already has our like — leave UI as "liked")
-        if (error.code === "23505") {
-          // Unique violation — we already liked, keep state as liked
-          return;
-        }
+      if (isCurrentlyLiked) {
+        // Optimistic update — unlike
         setLiked(false);
         setLikeCount((c) => Math.max(0, c - 1));
         likedSet.delete(blogSlug);
         saveLikedSet(likedSet);
-      }
-    }
-  }, [blogSlug]);
 
-  return { likeCount, liked, toggleLike, loading };
+        const { error } = await supabase
+          .from("blog_likes")
+          .delete()
+          .eq("blog_slug", blogSlug)
+          .eq("browser_id", browserId);
+
+        if (error) {
+          // Revert on failure
+          setLiked(true);
+          setLikeCount((c) => c + 1);
+          likedSet.add(blogSlug);
+          saveLikedSet(likedSet);
+        }
+      } else {
+        // Optimistic update — like
+        setLiked(true);
+        setLikeCount((c) => c + 1);
+        likedSet.add(blogSlug);
+        saveLikedSet(likedSet);
+
+        const { error } = await supabase
+          .from("blog_likes")
+          .insert({ blog_slug: blogSlug, browser_id: browserId });
+
+        if (error) {
+          // Revert on failure (includes unique-constraint duplicates, which
+          // means the DB already has our like — leave UI as "liked")
+          if (error.code === "23505") {
+            // Unique violation — we already liked, keep state as liked
+            return;
+          }
+          setLiked(false);
+          setLikeCount((c) => Math.max(0, c - 1));
+          likedSet.delete(blogSlug);
+          saveLikedSet(likedSet);
+        }
+      }
+    } finally {
+      setIsToggling(false);
+    }
+  }, [blogSlug, isToggling]);
+
+  return { likeCount, liked, toggleLike, loading, isToggling };
 }

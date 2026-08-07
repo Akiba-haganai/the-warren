@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { sanityClient } from "@/lib/sanity";
 
+import { AUTHOR_PROJECTION } from "@/lib/groq-fragments";
+
 export interface BlogCard {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  author: string;
+  author: {
+    name: string;
+    image?: any;
+    slug: string;
+  };
   mainImage?: unknown;
   publishedAt?: string;
   topics: { _id: string; title: string; slug: string }[];
@@ -23,7 +29,7 @@ const QUERY = `*[_type == "story" && defined(publishedAt)] | order(publishedAt d
   title,
   "slug": slug.current,
   excerpt,
-  author,
+  ${AUTHOR_PROJECTION},
   mainImage,
   publishedAt,
   "topics": topics[]->{ _id, title, "slug": slug.current }

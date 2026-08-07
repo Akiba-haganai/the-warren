@@ -27,7 +27,7 @@ export default function BlogsList() {
     const q = search.toLowerCase();
     const titleMatch = b.title ? b.title.toLowerCase().includes(q) : false;
     const excerptMatch = b.excerpt ? b.excerpt.toLowerCase().includes(q) : false;
-    const authorMatch = b.author ? b.author.toLowerCase().includes(q) : false;
+    const authorMatch = b.author?.name ? b.author.name.toLowerCase().includes(q) : false;
     return titleMatch || excerptMatch || authorMatch;
   });
 

@@ -19,9 +19,27 @@ export const storyType = defineType({
     }),
     defineField({
       name: "author",
-      title: "Author name",
+      title: "Legacy Author name",
       type: "string",
-      validation: (rule) => rule.required().min(2).max(80),
+      readOnly: true,
+      hidden: ({ document }) => !document?.author,
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const document = context.document;
+          if (!document?.authorProfile && !value) {
+            return "Either an Author profile or legacy author name is required";
+          }
+          if (value && (value.length < 2 || value.length > 80)) {
+            return "Legacy name must be between 2 and 80 characters";
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "authorProfile",
+      title: "Author Profile",
+      type: "reference",
+      to: [{ type: "author" }],
     }),
     defineField({
       name: "excerpt",
