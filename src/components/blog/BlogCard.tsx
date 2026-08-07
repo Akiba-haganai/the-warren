@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { urlForImage } from "@/lib/sanityImage";
+import { Heart } from "lucide-react";
 
 export interface BlogCardProps {
   id: string;
@@ -12,6 +13,7 @@ export interface BlogCardProps {
   mainImage?: unknown;
   publishedAt?: string;
   topic?: { _id: string; title: string; slug: string };
+  likeCount?: number;
 }
 
 export function BlogCard({ blog }: { blog: BlogCardProps }) {
@@ -74,6 +76,12 @@ export function BlogCard({ blog }: { blog: BlogCardProps }) {
                 </>
               )}
             </p>
+            {blog.likeCount != null && (
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Heart className="h-3 w-3" />
+                {blog.likeCount}
+              </span>
+            )}
           </div>
         </CardContent>
       </Card>

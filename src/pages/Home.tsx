@@ -21,6 +21,8 @@ import { useCulturePhotos } from "@/hooks/useCulturePhotos";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { supabase } from "@/lib/supabase";
 import { BlogCard } from "@/components/blog/BlogCard";
+import { useBlogLikeCounts } from "@/hooks/useBlogLikeCounts";
+import { getBrowserId } from "@/lib/browserId";
 
 export default function Home() {
   return (
@@ -114,6 +116,8 @@ function TrendingTopics() {
 /* ------------------------------------------------------------------ */
 function LatestBlogs() {
   const { blogs, loading } = useLatestBlogs();
+  const slugs = blogs.slice(0, 4).map((b) => b.slug);
+  const { counts: likeCounts } = useBlogLikeCounts(slugs);
 
   return (
     <section className="py-16">
@@ -161,6 +165,7 @@ function LatestBlogs() {
                     mainImage: blog.mainImage,
                     publishedAt: blog.publishedAt,
                     topic: blog.topics?.[0],
+                    likeCount: likeCounts.get(blog.slug) ?? 0,
                   }}
                 />
               </Reveal>
@@ -184,12 +189,7 @@ function StudentVoicePoll() {
   const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
-    let vid = localStorage.getItem("warren_voter_id");
-    if (!vid) {
-      vid = crypto.randomUUID();
-      localStorage.setItem("warren_voter_id", vid);
-    }
-    setVoterId(vid);
+    setVoterId(getBrowserId());
   }, []);
 
   useEffect(() => {

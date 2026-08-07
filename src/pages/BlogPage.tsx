@@ -13,6 +13,7 @@ import { StoryBody } from "@/components/StoryBody";
 import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 import { ShareRow } from "@/components/blog/ShareRow";
+import { LikeButton } from "@/components/blog/LikeButton";
 
 export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -125,7 +126,10 @@ export default function BlogPage() {
                   )}
                 </p>
 
-                {/* Share row */}
+                {/* Engagement row */}
+                <div className="flex flex-wrap items-start gap-3 mt-6">
+                  <LikeButton blogSlug={blog.slug} />
+                </div>
                 <ShareRow
                   title={blog.title}
                   excerpt={blog.excerpt}

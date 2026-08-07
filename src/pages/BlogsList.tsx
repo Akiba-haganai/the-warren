@@ -6,17 +6,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useBlogsFiltered } from "@/hooks/useBlogsFiltered";
+import { useBlogsFiltered, type BlogSort } from "@/hooks/useBlogsFiltered";
 import { BlogCard } from "@/components/blog/BlogCard";
-import { ChevronLeft, ChevronRight, Search, Clock, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Clock, Calendar, Heart } from "lucide-react";
 
 export default function BlogsList() {
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState<"recent" | "oldest">("recent");
+  const [sort, setSort] = useState<BlogSort>("recent");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  const { blogs, total, topics, loading, pageSize } = useBlogsFiltered(
+  const { blogs, total, topics, loading, pageSize, likeCounts } = useBlogsFiltered(
     page,
     sort,
     selectedTopic
@@ -37,7 +37,7 @@ export default function BlogsList() {
     setPage(1);
   };
 
-  const handleSortChange = (newSort: "recent" | "oldest") => {
+  const handleSortChange = (newSort: BlogSort) => {
     setSort(newSort);
     setPage(1);
   };
@@ -92,6 +92,14 @@ export default function BlogsList() {
                   className="rounded-full gap-1.5"
                 >
                   <Calendar className="h-3.5 w-3.5" /> Oldest
+                </Button>
+                <Button
+                  variant={sort === "most_liked" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSortChange("most_liked")}
+                  className="rounded-full gap-1.5"
+                >
+                  <Heart className="h-3.5 w-3.5" /> Most Liked
                 </Button>
               </div>
             </div>
@@ -183,6 +191,7 @@ export default function BlogsList() {
                       mainImage: blog.mainImage,
                       publishedAt: blog.publishedAt,
                       topic: blog.topics?.[0],
+                      likeCount: likeCounts.get(blog.slug) ?? 0,
                     }}
                   />
                 ))}
