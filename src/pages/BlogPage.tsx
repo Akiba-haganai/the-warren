@@ -111,13 +111,21 @@ export default function BlogPage() {
           ) : (
             <Reveal>
               <div className="max-w-[750px] mx-auto">
-                {/* Back link */}
-                <Link
-                  to="/blogs"
-                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition mb-8"
-                >
-                  <ArrowLeft className="h-4 w-4" /> All Blogs
-                </Link>
+                {/* Top Nav (Back / Submit) */}
+                <div className="flex items-center justify-between mb-8">
+                  <Link
+                    to="/blogs"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> All Blogs
+                  </Link>
+                  <Link
+                    to="/submit"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+                  >
+                    Share your story
+                  </Link>
+                </div>
 
                 {/* Topic badges */}
                 {blog.topics?.length > 0 && (

@@ -50,13 +50,22 @@ export default function BlogsList() {
         <section className="mx-auto max-w-7xl px-6">
           {/* Header section */}
           <Reveal>
-            <SectionLabel>Blogs</SectionLabel>
-            <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-              All <span className="text-gradient-blue">Blogs</span>
-            </h1>
-            <p className="mt-3 text-lg text-muted-foreground max-w-xl">
-              Explore stories, opinions, and campus culture written by CBU students.
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+              <div>
+                <SectionLabel>Blogs</SectionLabel>
+                <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
+                  All <span className="text-gradient-blue">Blogs</span>
+                </h1>
+                <p className="mt-3 text-lg text-muted-foreground max-w-xl">
+                  Explore stories, opinions, and campus culture written by CBU students.
+                </p>
+              </div>
+              <a href="/submit" className="shrink-0">
+                <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 transition-all active:scale-95">
+                  Share your story
+                </Button>
+              </a>
+            </div>
           </Reveal>
 
           {/* Search & Filters Controls */}
