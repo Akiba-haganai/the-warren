@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@sanity/client";
 
 const sanity = createClient({
@@ -24,7 +25,7 @@ const STATIC_PATHS = [
   "/ecosystem",
 ];
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Fetch all published stories (blogs)
     const stories = await sanity.fetch(
@@ -41,9 +42,9 @@ export default async function handler(req, res) {
       `array::unique(*[_type == "story" && defined(publishedAt)].author)`
     );
 
-    const storyUrls = (stories || []).map((s) => `${BASE_URL}/blogs/${s.slug}`);
-    const topicUrls = (topics || []).map((t) => `${BASE_URL}/topics/${t.slug}`);
-    const authorUrls = (authors || []).map((a) => `${BASE_URL}/authors/${encodeURIComponent(a)}`);
+    const storyUrls = (stories || []).map((s: any) => `${BASE_URL}/blogs/${s.slug}`);
+    const topicUrls = (topics || []).map((t: any) => `${BASE_URL}/topics/${t.slug}`);
+    const authorUrls = (authors || []).map((a: string) => `${BASE_URL}/authors/${encodeURIComponent(a)}`);
 
     const allUrls = [
       ...STATIC_PATHS.map((p) => BASE_URL + p),

@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 
@@ -13,7 +14,7 @@ const sanity = createClient({
 
 const builder = imageUrlBuilder(sanity);
 
-function getSanityImageUrl(mainImage) {
+function getSanityImageUrl(mainImage: any) {
   if (!mainImage) return null;
   try {
     return builder.image(mainImage).width(1200).url();
@@ -22,7 +23,7 @@ function getSanityImageUrl(mainImage) {
   }
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { slug } = req.query;
   if (!slug) {
     res.status(400).send("Missing slug");
@@ -77,7 +78,7 @@ export default async function handler(req, res) {
   }
 }
 
-function buildHtml({ title, description, image, url }) {
+function buildHtml({ title, description, image, url }: { title: string; description: string; image: string; url: string }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
