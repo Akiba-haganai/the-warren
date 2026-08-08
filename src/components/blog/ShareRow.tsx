@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Link2, Share2, Check } from "lucide-react";
+import { Link2, Share2, Check, MessageSquareText } from "lucide-react";
 
 // ─── Platform SVG icons ───────────────────────────────────────────────────────
 
@@ -82,6 +82,10 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
     []
   );
 
+  const shareText = `📰 ${title}\n\n${
+    typeof excerpt === "string" && excerpt ? excerpt.slice(0, 160) + "…" : ""
+  }\n\nRead here → ${url}`;
+
   const whatsappMessage = encodeURIComponent(
     `📰 New story from your campus\n\n"${title}"\n${typeof excerpt === "string" && excerpt ? excerpt.slice(0, 120) + "…" : ""}\n\nRead here → ${url}`
   );
@@ -153,6 +157,30 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
 
       {/* Button row */}
       <div className="flex flex-wrap items-center gap-3">
+        {/* Copy share text */}
+        <button
+          id="share-copy-text"
+          onClick={() => handleCopy(shareText, "instagram")}
+          aria-label="Copy share text"
+          className={
+            compact
+              ? "group relative flex items-center justify-center rounded-full h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors duration-200"
+              : "group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-secondary hover:bg-accent text-secondary-foreground border border-border active:scale-95 transition-all duration-200"
+          }
+        >
+          {copied === "instagram" ? (
+            <>
+              <Check className="h-4 w-4 text-green-500" />
+              {!compact && <span className="text-green-600 dark:text-green-400">Copied!</span>}
+            </>
+          ) : (
+            <>
+              <MessageSquareText className="h-4 w-4" />
+              {!compact && <span>Copy text</span>}
+            </>
+          )}
+        </button>
+
         {/* Platform buttons */}
         {shareTargets.map((target) => (
           <div key={target.id} className="relative">
@@ -181,7 +209,7 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
             {/* Instagram tooltip — appears after copy */}
             {target.id === "instagram" && igTooltip && (
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap rounded-lg bg-popover border border-border text-popover-foreground text-xs px-3 py-1.5 shadow-xl pointer-events-none z-10">
-                Caption copied — paste it in your post!
+                Copied — paste it in WhatsApp Status, a chat, or anywhere!
                 <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover" />
               </div>
             )}
