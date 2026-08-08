@@ -60,7 +60,7 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
   );
   
   const whatsappStatusMsg = encodeURIComponent(
-    `📰 ${title}\n\nRead here → ${strippedUrl}`
+    `📰 ${title}\n${typeof excerpt === "string" && excerpt ? excerpt.slice(0, 120) + "…" : ""}\n\nRead here → ${strippedUrl}`
   );
 
   const instagramCaption = `New read just dropped 🔥\n"${title}"\n\nLink in bio → ${strippedUrl}`;

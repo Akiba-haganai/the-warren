@@ -162,9 +162,14 @@ export function Footer() {
       </div>
 
       <div className="border-t border-border/60">
-        <div className="mx-auto max-w-7xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Campus Voices. All rights reserved.</p>
-          <p>Built with care in Kitwe, Zambia. <span className="opacity-0 select-none" aria-hidden="true">Voice of the unheard.</span></p>
+        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 text-xs text-muted-foreground">
+          <p className="max-w-4xl opacity-80 leading-relaxed">
+            <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of Campus Voices, its creators, or Copperbelt University. Campus Voices is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
+          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-2 border-t border-border/40 pt-4">
+            <p>© {new Date().getFullYear()} Campus Voices. All rights reserved.</p>
+            <p>Built with care in Kitwe, Zambia. <span className="opacity-0 select-none" aria-hidden="true">Voice of the unheard.</span></p>
+          </div>
         </div>
       </div>
     </footer>
