@@ -54,7 +54,8 @@ export function ShareRow({ title, excerpt = "", slug, compact = false }: ShareRo
   const [copied, setCopied] = useState<"link" | "instagram" | null>(null);
   const [igTooltip, setIgTooltip] = useState(false);
 
-  const url = `https://the-warren-hub.vercel.app/blogs/${slug}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://the-warren-hub.vercel.app";
+  const url = `${origin}/blogs/${slug}`;
 
   const handleCopy = useCallback(
     async (text: string, type: "link" | "instagram") => {
