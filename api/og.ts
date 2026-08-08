@@ -34,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const story = await sanity.fetch(
-      `*[_type == "story" && slug.current == $slug && defined(publishedAt)][0]{
+      `*[_type == "story" && slug.current == $slug][0]{
         title,
         excerpt,
         mainImage,

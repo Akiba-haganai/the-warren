@@ -200,7 +200,10 @@ export function Header() {
               />
             </span>
 
-            <span className="font-display text-lg font-semibold tracking-tight">Warren</span>
+            <div className="flex flex-col">
+              <span className="font-display text-lg font-semibold tracking-tight">Campus Voices</span>
+              <span className="sr-only">voice of the unheard</span>
+            </div>
           </Link>
 
           {/* Desktop nav */}
