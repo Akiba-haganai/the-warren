@@ -444,12 +444,26 @@ function CultureSnapshot() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {photos.slice(0, 8).map((photo, i) => (
               <Reveal key={photo._id} delay={i * 0.05}>
-                <img
-                  src={urlForImage(photo.image).width(400).height(400).fit("crop").url()}
-                  alt={photo.caption || "CBU culture"}
-                  className="aspect-square object-cover rounded-xl"
-                  loading="lazy"
-                />
+                <Link to="/culture" className="group relative block overflow-hidden rounded-xl bg-muted aspect-square">
+                  <img
+                    src={urlForImage(photo.image).width(400).height(400).fit("crop").url()}
+                    alt={photo.caption || "CBU culture"}
+                    className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-3 flex flex-col justify-between">
+                    {photo.category ? (
+                      <Badge className="bg-blue-600/90 text-[10px] text-white w-fit border-none">
+                        {photo.category}
+                      </Badge>
+                    ) : <div />}
+                    {photo.caption && (
+                      <p className="text-xs text-white font-medium line-clamp-1">
+                        {photo.caption}
+                      </p>
+                    )}
+                  </div>
+                </Link>
               </Reveal>
             ))}
           </div>

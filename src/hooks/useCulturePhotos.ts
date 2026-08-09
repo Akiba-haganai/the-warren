@@ -5,9 +5,10 @@ export interface CulturePhoto {
   _id: string;
   image: any;
   caption?: string;
+  category?: string;
 }
 
-const QUERY = `*[_type == "culturePhoto"] | order(order asc) { _id, image, caption }`;
+const QUERY = `*[_type == "culturePhoto"] | order(order asc) { _id, image, caption, category }`;
 
 export function useCulturePhotos() {
   const [photos, setPhotos] = useState<CulturePhoto[]>([]);

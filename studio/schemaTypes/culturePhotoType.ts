@@ -13,6 +13,22 @@ export const culturePhotoType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "category",
+      title: "Category",
+      type: "string",
+      options: {
+        list: [
+          { title: "Campus Life", value: "Campus Life" },
+          { title: "Events", value: "Events" },
+          { title: "Faith & Community", value: "Faith & Community" },
+          { title: "People", value: "People" },
+          { title: "Academics", value: "Academics" },
+          { title: "Sports & Recreation", value: "Sports & Recreation" },
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "caption",
       title: "Caption",
       type: "string",
