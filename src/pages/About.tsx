@@ -1,4 +1,5 @@
 import { PageShell } from "../components/layout/PageShell";
+import { ForceRefreshButton } from "@/components/layout/ForceRefreshButton";
 
 export default function About() {
   return (
@@ -20,6 +21,8 @@ export default function About() {
           </div>
         ))}
       </div>
+      
+      <ForceRefreshButton />
     </PageShell>
   );
 }

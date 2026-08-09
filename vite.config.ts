@@ -10,11 +10,12 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     VitePWA({
-      registerType: "prompt",
+      registerType: "autoUpdate",
       workbox: {
-        clientsClaim: false,
-        skipWaiting: false,
+        clientsClaim: true,
+        skipWaiting: true,
         cleanupOutdatedCaches: true,
+        navigateFallback: "/index.html",
       },
       includeAssets: ["favicon.png"],
       manifest: {

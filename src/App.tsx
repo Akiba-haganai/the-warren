@@ -8,6 +8,7 @@ import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
 import { UpdatePrompt } from "./components/layout/UpdatePrompt";
+import { RebrandBanner } from "./components/layout/RebrandBanner";
 
 // Lazy-load every page so only the current route's code is downloaded on first visit.
 // This splits the 1.35 MB monolithic bundle into small per-route chunks.
@@ -51,6 +52,7 @@ function App() {
       <ScrollToTopOnNavigate />
       <LegacyAnchorRedirect />
       <ScrollToTopButton />
+      <RebrandBanner />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
