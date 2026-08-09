@@ -201,7 +201,7 @@ export function Header() {
             </span>
 
             <div className="flex flex-col">
-              <span className="font-display text-lg font-semibold tracking-tight">Campus Voices</span>
+              <span className="font-display text-lg font-semibold tracking-tight">Commons</span>
               <span className="sr-only">voice of the unheard</span>
             </div>
           </Link>

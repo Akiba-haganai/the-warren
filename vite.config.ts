@@ -18,8 +18,8 @@ export default defineConfig({
       },
       includeAssets: ["favicon.png"],
       manifest: {
-        name: "Warren",
-        short_name: "Warren",
+        name: "Commons",
+        short_name: "Commons",
         description: "The digital home of CBU.",
         theme_color: "#1e40af",
         background_color: "#ffffff",

@@ -4,7 +4,6 @@ import {
   ArrowRight,
   GraduationCap,
   Store,
-  Home,
   Briefcase,
   Podcast,
   UserPlus,
@@ -17,46 +16,40 @@ import { Button } from "@/components/ui/button";
 const products = [
   {
     icon: GraduationCap,
-    name: "Warren Campus",
+    name: "Campus",
     desc: "Social networking, study hub, tutoring marketplace, quiz battles, campus map, and AMA sessions.",
     url: "https://warren-campus.vercel.app",
     status: "Live",
   },
   {
     icon: Store,
-    name: "Warren Connect",
+    name: "Market",
     desc: "Marketplace, housing, roommate finder, landlord dashboard, verified seller tiers, and escrow (coming soon).",
     url: "https://warren-market.vercel.app",
     status: "Live",
   },
   {
     icon: Podcast,
-    name: "Warren Podcasts",
-    desc: "Student‑led audio conversations – faith, career, relationships, campus stories. Listen inside Warren Hub.",
+    name: "Podcasts",
+    desc: "Student‑led audio conversations – faith, career, relationships, campus stories. Listen inside Commons.",
     url: "/podcasts",
     status: "Live",
   },
   {
-    icon: Home,
-    name: "Warren Homes",
-    desc: "Verified student accommodation pathways, integrated with the Connect marketplace.",
-    status: "Soon",
-  },
-  {
     icon: Briefcase,
-    name: "Warren Jobs",
+    name: "Jobs",
     desc: "Student gigs, internships, and part‑time opportunities – curated for CBU.",
     status: "Soon",
   },
   {
     icon: UserPlus,
-    name: "Warren Alumni",
+    name: "Alumni",
     desc: "A network that lasts – connect with graduates, mentors, and career opportunities.",
     status: "Soon",
   },
   {
     icon: Building2,
-    name: "Warren Business",
+    name: "Business",
     desc: "Tools for student founders: storefronts, analytics, and promotion.",
     status: "Soon",
   },
@@ -71,7 +64,7 @@ export default function Ecosystem() {
           One <span className="text-gradient-blue">ecosystem</span>. Every part of student life.
         </>
       }
-      subtitle="Each Warren product solves a real problem. Together, they become the digital home of student life at CBU."
+      subtitle="Each product solves a real problem. Together, they become the digital home of student life at CBU."
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((p) => (

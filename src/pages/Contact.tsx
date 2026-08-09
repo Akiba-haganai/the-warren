@@ -107,7 +107,7 @@ export default function Contact() {
             <MessageCircle className="h-5 w-5" />
           </span>
           <h3 className="mt-4 font-semibold">WhatsApp</h3>
-          <p className="text-muted-foreground text-sm">Chat with Warren</p>
+          <p className="text-muted-foreground text-sm">Chat with Us</p>
         </a>
 
         {/* ---------- Location (non-interactive, no hover) ---------- */}

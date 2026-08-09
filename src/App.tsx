@@ -27,6 +27,7 @@ const Cookies     = lazy(() => import("./pages/Cookies"));
 const Ecosystem   = lazy(() => import("./pages/Ecosystem"));
 const Products    = lazy(() => import("./pages/Products"));
 const Podcasts    = lazy(() => import("./pages/Podcasts"));
+const Culture     = lazy(() => import("./pages/Culture"));
 
 function StoryToBlogRedirect() {
   const params = useParams();
@@ -77,6 +78,7 @@ function App() {
           <Route path="/ecosystem" element={<Ecosystem />} />
           <Route path="/products" element={<Products />} />
           <Route path="/podcasts" element={<Podcasts />} />
+          <Route path="/culture" element={<Culture />} />
         </Routes>
       </Suspense>
       <MiniPlayer />

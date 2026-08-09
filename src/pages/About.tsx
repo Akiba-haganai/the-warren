@@ -3,9 +3,9 @@ import { PageShell } from "../components/layout/PageShell";
 export default function About() {
   return (
     <PageShell
-      label="About Warren Hub"
+      label="About Commons"
       title={<>We're building a <span className="text-gradient-blue">home</span> for CBU students.</>}
-      subtitle="Warren Hub started with a simple observation: student life is fragmented. We're changing that — one product, one community, one milestone at a time."
+      subtitle="Commons started with a simple observation: student life is fragmented. We're changing that — one product, one community, one milestone at a time."
     >
       <div className="grid gap-6 md:grid-cols-2">
         {[

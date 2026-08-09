@@ -23,6 +23,7 @@ import { supabase } from "@/lib/supabase";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { useBlogLikeCounts } from "@/hooks/useBlogLikeCounts";
 import { getBrowserId } from "@/lib/browserId";
+import { urlForImage } from "@/lib/sanityImage";
 
 export default function Home() {
   return (
@@ -416,9 +417,16 @@ function CultureSnapshot() {
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionLabel>See</SectionLabel>
-          <div className="flex items-center gap-2 mt-2 mb-6">
-            <Camera className="h-5 w-5 text-blue-600" />
-            <h2 className="text-xl font-semibold">CBU Culture</h2>
+          <div className="flex items-center justify-between mt-2 mb-6">
+            <div className="flex items-center gap-2">
+              <Camera className="h-5 w-5 text-blue-600" />
+              <h2 className="text-xl font-semibold">CBU Culture</h2>
+            </div>
+            <Button asChild variant="ghost" className="text-blue-600">
+              <Link to="/culture">
+                View All <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </Reveal>
 
@@ -434,10 +442,10 @@ function CultureSnapshot() {
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {photos.map((photo, i) => (
-              <Reveal key={photo.id || i} delay={i * 0.05}>
+            {photos.slice(0, 8).map((photo, i) => (
+              <Reveal key={photo._id} delay={i * 0.05}>
                 <img
-                  src={photo.image_url}
+                  src={urlForImage(photo.image).width(400).height(400).fit("crop").url()}
                   alt={photo.caption || "CBU culture"}
                   className="aspect-square object-cover rounded-xl"
                   loading="lazy"

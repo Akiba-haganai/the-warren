@@ -19,7 +19,7 @@ import { Reveal } from "@/components/layout/Reveal";
 const apps = [
   {
     icon: BookOpen,
-    title: "Warren Campus",
+    title: "Campus",
     description:
       "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions — the all‑in‑one student hub.",
     features: [
@@ -40,7 +40,7 @@ const apps = [
   },
   {
     icon: ShoppingBag,
-    title: "Warren Connect",
+    title: "Market",
     description:
       "Marketplace, housing, and roommate finder for Zambian students — buy, sell, rent, and connect safely.",
     features: [
@@ -64,7 +64,7 @@ const apps = [
   },
   {
     icon: Podcast,
-    title: "Warren Podcasts",
+    title: "Podcasts",
     description:
       "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
     features: [

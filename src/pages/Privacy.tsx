@@ -2,14 +2,14 @@ import { PageShell } from "../components/layout/PageShell";
 
 export default function Privacy() {
   return (
-    <PageShell label="Legal" title={<>Privacy <span className="text-gradient-blue">Policy</span></>} subtitle="Last updated: August 2026. This page describes what data Campus Voices collects and how it is used.">
+    <PageShell label="Legal" title={<>Privacy <span className="text-gradient-blue">Policy</span></>} subtitle="Last updated: August 2026. This page describes what data Commons collects and how it is used.">
       <div className="space-y-6 text-muted-foreground leading-relaxed">
         <Section title="Information we collect">We collect information you provide when you create an account — name, email, university details — and information generated automatically when you use our products, like device type and usage patterns.</Section>
-        <Section title="How we use it">To operate, secure, and improve Campus Voices products. To communicate about updates. To display relevant content within the platform.</Section>
-        <Section title="Sharing">We do not sell personal data. We share limited data only with service providers who help us run Campus Voices, under strict agreements.</Section>
+        <Section title="How we use it">To operate, secure, and improve Commons products. To communicate about updates. To display relevant content within the platform.</Section>
+        <Section title="Sharing">We do not sell personal data. We share limited data only with service providers who help us run Commons, under strict agreements.</Section>
         <Section title="Cookies & analytics">We use cookies to keep you signed in. We also use third-party analytics tools (like Google Analytics or Vercel Analytics) that may collect anonymous usage data using cookies to understand how the site is used. See our <a className="text-blue-600 underline" href="/cookies">Cookie Policy</a>.</Section>
         <Section title="Your rights">You may access, correct or delete your data at any time by contacting <a className="text-blue-600 underline" href="mailto:chilengawarren307@gmail.com">chilengawarren307@gmail.com</a>.</Section>
-        <Section title="Advertising">Campus Voices may serve ads via third-party providers such as Google AdSense. When enabled, those providers use cookies to serve personalized ads based on your prior visits to this or other websites.</Section>
+        <Section title="Advertising">Commons may serve ads via third-party providers such as Google AdSense. When enabled, those providers use cookies to serve personalized ads based on your prior visits to this or other websites.</Section>
         <Section title="Contact">Questions about privacy? Email <a className="text-blue-600 underline" href="mailto:chilengawarren307@gmail.com">chilengawarren307@gmail.com</a>.</Section>
       </div>
     </PageShell>

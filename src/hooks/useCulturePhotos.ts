@@ -1,24 +1,29 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { sanityClient } from "@/lib/sanity";
+
+export interface CulturePhoto {
+  _id: string;
+  image: any;
+  caption?: string;
+}
+
+const QUERY = `*[_type == "culturePhoto"] | order(order asc) { _id, image, caption }`;
 
 export function useCulturePhotos() {
-  const [photos, setPhotos] = useState<any[]>([]);
+  const [photos, setPhotos] = useState<CulturePhoto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
-    supabase
-      .from("culture_photos")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (!error && data) setPhotos(data);
+    let active = true;
+    sanityClient.fetch<CulturePhoto[]>(QUERY).then((data) => {
+      if (active) {
+        setPhotos(data);
         setLoading(false);
-      });
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   return { photos, loading };
