@@ -8,13 +8,17 @@ export interface TopicInfo {
   title: string;
   slug: string;
   description?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 const TOPIC_QUERY = `*[_type == "topic" && slug.current == $slug][0] {
   _id,
   title,
   "slug": slug.current,
-  description
+  description,
+  seoTitle,
+  seoDescription
 }`;
 
 const BLOGS_QUERY = `*[_type == "story" && defined(publishedAt) && $slug in topics[]->slug.current] | order(publishedAt desc) {

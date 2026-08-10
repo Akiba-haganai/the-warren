@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
@@ -10,6 +11,35 @@ import { BlogCard } from "@/components/blog/BlogCard";
 export default function TopicPage() {
   const { slug } = useParams<{ slug: string }>();
   const { topic, blogs, loading } = useTopicBlogs(slug || "");
+
+  useEffect(() => {
+    if (!topic) return;
+    
+    const originalTitle = document.title;
+    let metaDescription = document.querySelector('meta[name="description"]');
+    const originalDescription = metaDescription?.getAttribute("content") || "";
+
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
+      document.head.appendChild(metaDescription);
+    }
+
+    document.title = topic.seoTitle || `${topic.title} - Commons`;
+    
+    if (topic.seoDescription) {
+      metaDescription.setAttribute("content", topic.seoDescription);
+    } else if (topic.description) {
+      metaDescription.setAttribute("content", topic.description);
+    }
+
+    return () => {
+      document.title = originalTitle;
+      if (metaDescription) {
+        metaDescription.setAttribute("content", originalDescription);
+      }
+    };
+  }, [topic]);
 
   return (
     <>

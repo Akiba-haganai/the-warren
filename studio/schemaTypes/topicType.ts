@@ -16,5 +16,24 @@ export const topicType = defineType({
       options: { source: "title" },
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "isTrending",
+      title: "Show on Home Page (Trending)",
+      type: "boolean",
+      description: "Pin this topic to the trending section on the home page.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "seoTitle",
+      title: "SEO Title",
+      type: "string",
+      description: "Optional: override the page title for SEO.",
+    }),
+    defineField({
+      name: "seoDescription",
+      title: "SEO Description",
+      type: "text",
+      description: "Optional: override the meta description for SEO.",
+    }),
   ],
 });

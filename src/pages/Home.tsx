@@ -15,6 +15,7 @@ import {
   Send,
 } from "lucide-react";
 import { useTrendingTopics } from "@/hooks/useTrendingTopics";
+import { timeAgo } from "@/lib/utils";
 import { useLatestBlogs } from "@/hooks/useLatestBlogs";
 import { useActivePoll } from "@/hooks/useActivePoll";
 import { useCulturePhotos } from "@/hooks/useCulturePhotos";
@@ -89,20 +90,24 @@ function TrendingTopics() {
         {loading ? (
           <div className="flex gap-3">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-10 w-24 rounded-full" />
+              <Skeleton key={i} className="h-14 w-40 rounded-2xl" />
             ))}
           </div>
         ) : topics.length === 0 ? (
           <p className="text-muted-foreground text-sm">Trending topics will appear here soon.</p>
         ) : (
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {topics.map((topic) => (
               <Link
-                key={topic.id}
+                key={topic._id}
                 to={`/topics/${topic.slug}`}
-                className="shrink-0 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium hover:bg-accent transition"
+                className="shrink-0 flex flex-col justify-center rounded-2xl border border-border bg-card px-5 py-3 hover:bg-accent hover:border-accent-foreground/20 transition-all shadow-sm"
               >
-                {topic.name}
+                <span className="font-medium text-foreground">{topic.name}</span>
+                <span className="text-xs text-muted-foreground mt-0.5 whitespace-nowrap">
+                  {topic.postCount} article{topic.postCount !== 1 ? 's' : ''} 
+                  {topic.lastUpdated && ` · Updated ${timeAgo(topic.lastUpdated)}`}
+                </span>
               </Link>
             ))}
           </div>
@@ -498,7 +503,8 @@ function YourVoiceCTA() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Discover Warren                                                   */
+/* ------------------------------------------------------------------ */
+/*  Discover Commons                                                  */
 /* ------------------------------------------------------------------ */
 function DiscoverWarren() {
   return (
@@ -506,7 +512,7 @@ function DiscoverWarren() {
       <div className="mx-auto max-w-5xl px-6 text-center">
         <Reveal>
           <SectionLabel>Explore</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover Warren</h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover Commons</h2>
           <p className="text-muted-foreground mb-8">
             Everything CBU students need, in one place.
           </p>
