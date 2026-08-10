@@ -4,13 +4,19 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Hash } from "lucide-react";
-import { useTopicBlogs } from "@/hooks/useTopicBlogs";
+import { ArrowLeft, Hash, Clock, Play } from "lucide-react";
+import { useTopicContent } from "@/hooks/useTopicContent";
 import { BlogCard } from "@/components/blog/BlogCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { urlForImage } from "@/lib/sanityImage";
+import { usePlayer } from "@/contexts/PlayerContext";
 
 export default function TopicPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { topic, blogs, loading } = useTopicBlogs(slug || "");
+  const { topic, blogs, photos, podcasts, loading } = useTopicContent(slug || "");
+  const { playEpisode } = usePlayer();
 
   useEffect(() => {
     if (!topic) return;
@@ -90,45 +96,127 @@ export default function TopicPage() {
           </Link>
 
           {!loading && topic && (
-            <div>
-              {blogs.length === 0 ? (
-                <div className="text-center py-16">
-                  <p className="text-lg text-muted-foreground">No blogs in this topic yet.</p>
-                  <p className="text-muted-foreground mt-2">Check back soon for new posts.</p>
-                </div>
-              ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {blogs.map((blog, i) => (
-                    <Reveal key={blog._id} delay={i * 0.05}>
-                      <BlogCard
-                        blog={{
-                          id: blog._id,
-                          slug: blog.slug,
-                          title: blog.title,
-                          excerpt: blog.excerpt,
-                          author: blog.author,
-                          mainImage: blog.mainImage,
-                          publishedAt: blog.publishedAt,
-                          topic: blog.topics?.[0],
-                        }}
-                      />
-                    </Reveal>
-                  ))}
-                </div>
+            <Tabs defaultValue="blogs" className="w-full">
+              <TabsList className="mb-8">
+                <TabsTrigger value="blogs">Blogs ({blogs.length})</TabsTrigger>
+                {photos.length > 0 && (
+                  <TabsTrigger value="photos">Photos ({photos.length})</TabsTrigger>
+                )}
+                {podcasts.length > 0 && (
+                  <TabsTrigger value="podcasts">Podcasts ({podcasts.length})</TabsTrigger>
+                )}
+              </TabsList>
+
+              <TabsContent value="blogs" className="mt-0">
+                {blogs.length === 0 ? (
+                  <div className="text-center py-16 border rounded-2xl bg-muted/20">
+                    <p className="text-lg text-muted-foreground">No blogs in this topic yet.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {blogs.map((blog, i) => (
+                      <Reveal key={blog._id} delay={i * 0.05}>
+                        <BlogCard
+                          blog={{
+                            id: blog._id,
+                            slug: blog.slug,
+                            title: blog.title,
+                            excerpt: blog.excerpt,
+                            author: blog.author,
+                            mainImage: blog.mainImage,
+                            publishedAt: blog.publishedAt,
+                            topic: blog.topics?.[0],
+                          }}
+                        />
+                      </Reveal>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {photos.length > 0 && (
+                <TabsContent value="photos" className="mt-0">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {photos.map((photo, i) => (
+                      <Reveal key={photo._id} delay={i * 0.05}>
+                        <figure className="group relative overflow-hidden rounded-2xl bg-muted/40 aspect-square shadow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
+                          <img
+                            src={urlForImage(photo.image).width(600).height(600).fit("crop").url()}
+                            alt={photo.caption || "CBU culture photo"}
+                            className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-4 flex flex-col justify-end">
+                            {photo.caption && (
+                              <figcaption className="text-xs text-white/90 font-medium line-clamp-2">
+                                {photo.caption}
+                              </figcaption>
+                            )}
+                          </div>
+                        </figure>
+                      </Reveal>
+                    ))}
+                  </div>
+                </TabsContent>
               )}
-            </div>
+
+              {podcasts.length > 0 && (
+                <TabsContent value="podcasts" className="mt-0">
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {podcasts.map((ep, i) => (
+                      <Reveal key={ep.id} delay={i * 0.05}>
+                        <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition h-full flex flex-col">
+                          <div className="relative">
+                            <img
+                              src={ep.thumbnail}
+                              alt={ep.title}
+                              className="w-full aspect-video object-cover"
+                              loading="lazy"
+                            />
+                            <button
+                              onClick={() => playEpisode(ep, podcasts)}
+                              className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
+                              aria-label={`Play ${ep.title}`}
+                            >
+                              <Play className="h-12 w-12 text-white fill-white" />
+                            </button>
+                            <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                              <Clock className="h-3 w-3" /> {ep.duration}
+                            </span>
+                          </div>
+                          <CardContent className="p-4 flex-1">
+                            <Badge variant="secondary" className="mb-2">
+                              {ep.category}
+                            </Badge>
+                            <h3 className="font-semibold text-base leading-snug line-clamp-2">
+                              {ep.title}
+                            </h3>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {ep.date}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </Reveal>
+                    ))}
+                  </div>
+                </TabsContent>
+              )}
+            </Tabs>
           )}
 
           {loading && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="aspect-video w-full rounded-2xl" />
-                  <Skeleton className="h-4 w-1/4" />
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-              ))}
+            <div className="space-y-8">
+              <Skeleton className="h-10 w-64 rounded-full" />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-4">
+                    <Skeleton className="aspect-video w-full rounded-2xl" />
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>

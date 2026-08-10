@@ -24,6 +24,27 @@ export const topicType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "matchedCategories",
+      title: "Matched Categories (For Photos & Podcasts)",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Campus Life", value: "Campus Life" },
+          { title: "Events", value: "Events" },
+          { title: "Faith & Community", value: "Faith & Community" },
+          { title: "People", value: "People" },
+          { title: "Academics", value: "Academics" },
+          { title: "Sports & Recreation", value: "Sports & Recreation" },
+          { title: "Technology", value: "Technology" },
+          { title: "Career", value: "Career" },
+          { title: "Entertainment", value: "Entertainment" },
+          { title: "Music", value: "Music" },
+        ]
+      },
+      description: "Map this topic to existing hardcoded categories used by Culture Photos (Sanity) and Podcasts (Supabase). This ensures those items appear on this topic's page.",
+    }),
+    defineField({
       name: "seoTitle",
       title: "SEO Title",
       type: "string",
