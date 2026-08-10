@@ -3,9 +3,26 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { VitePWA } from "vite-plugin-pwa";
+import { writeFileSync } from "fs";
+import { resolve } from "path";
+
+const buildVersion = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) 
+  ?? new Date().toISOString();
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(buildVersion),
+  },
   plugins: [
+    {
+      name: "emit-version-json",
+      writeBundle() {
+        writeFileSync(
+          resolve(__dirname, "dist/version.json"),
+          JSON.stringify({ version: buildVersion })
+        );
+      },
+    },
     react(),
     tailwindcss(),
     tsconfigPaths(),
@@ -16,6 +33,7 @@ export default defineConfig({
         skipWaiting: true,
         cleanupOutdatedCaches: true,
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/version\.json$/],
       },
       includeAssets: ["favicon.png"],
       manifest: {
