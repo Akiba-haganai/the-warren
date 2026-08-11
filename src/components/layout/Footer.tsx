@@ -29,7 +29,7 @@ export function Footer() {
             The digital home of CBU.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
-            Built with ❤️ for CBU.
+            Built with ❤️ for students.
           </p>
         </div>
 

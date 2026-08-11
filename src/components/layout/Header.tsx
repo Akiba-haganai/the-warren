@@ -261,7 +261,7 @@ export function Header() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[260px] sm:w-[320px] pt-10">
+              <SheetContent side="right" className="w-[260px] sm:w-[320px] pt-10 overflow-y-auto pb-20">
                 <SheetHeader className="sr-only">
                   <SheetTitle>Menu</SheetTitle>
                   <SheetDescription>Site navigation and theme settings</SheetDescription>
