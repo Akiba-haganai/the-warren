@@ -23,10 +23,10 @@ export function Footer() {
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>
-            <span className="font-display text-xl font-semibold">Commons</span>
+            <span className="font-display text-xl font-semibold">Weave</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            The digital home of CBU.
+            Stories. Culture. What's happening.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
             Built with ❤️ for students.
@@ -167,7 +167,7 @@ export function Footer() {
             <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of Commons, its creators, or Copperbelt University. Commons is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
           </p>
           <div className="flex flex-col md:flex-row items-center justify-between gap-2 border-t border-border/40 pt-4">
-            <p>© {new Date().getFullYear()} Commons. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Weave. All rights reserved.</p>
             <p>Built with care in Kitwe, Zambia. <span className="opacity-0 select-none" aria-hidden="true">Voice of the unheard.</span></p>
           </div>
         </div>

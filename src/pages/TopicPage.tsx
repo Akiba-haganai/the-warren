@@ -31,7 +31,7 @@ export default function TopicPage() {
       document.head.appendChild(metaDescription);
     }
 
-    document.title = topic.seoTitle || `${topic.title} - Commons`;
+    document.title = topic.seoTitle || `${topic.title} - Weave`;
     
     if (topic.seoDescription) {
       metaDescription.setAttribute("content", topic.seoDescription);

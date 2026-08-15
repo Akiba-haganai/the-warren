@@ -512,7 +512,7 @@ function DiscoverWarren() {
       <div className="mx-auto max-w-5xl px-6 text-center">
         <Reveal>
           <SectionLabel>Explore</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover Commons</h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover Weave</h2>
           <p className="text-muted-foreground mb-8">
             Everything CBU students need, in one place.
           </p>

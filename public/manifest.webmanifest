@@ -1,16 +1,15 @@
 {
-  "name": "Warren",
-  "short_name": "Warren",
-  "description": "The digital home of student life at Copperbelt University.",
-  "start_url": "/",
+  "name": "Weave",
+  "short_name": "Weave",
+  "description": "Stories. Culture. What's happening.",
+  "theme_color": "#FF6D00",
+  "background_color": "#FF6D00",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1e40af",
+  "start_url": "/",
   "icons": [
-    {
-      "src": "/favicon.png",
-      "sizes": "any",
-      "type": "image/png"
-    }
+    { "src": "/icon-72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

@@ -20,7 +20,7 @@ export function UpdatePrompt() {
 
   useEffect(() => {
     if (needRefresh) {
-      toast("Commons updated — refreshing…", {
+      toast("Weave updated — refreshing…", {
         duration: 2000,
         action: {
           label: "Trouble updating? →",

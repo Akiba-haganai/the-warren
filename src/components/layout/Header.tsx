@@ -118,7 +118,7 @@ export function Header() {
 
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
-    const color = resolvedDark ? "#0f1420" : "#ffffff";
+    const color = resolvedDark ? "#0f1420" : "#FF6D00";
     if (meta) {
       meta.setAttribute("content", color);
     } else {
@@ -201,8 +201,8 @@ export function Header() {
             </span>
 
             <div className="flex flex-col">
-              <span className="font-display text-lg font-semibold tracking-tight">Commons</span>
-              <span className="sr-only">voice of the unheard</span>
+              <span className="font-display text-lg font-semibold tracking-tight">Weave</span>
+              <span className="sr-only">Stories. Culture. What's happening.</span>
             </div>
           </Link>
 
