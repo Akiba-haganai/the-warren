@@ -63,15 +63,23 @@ const THEME_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }
 ];
 
 function InstallAppButton() {
-  const { canInstall, promptInstall } = useInstallPrompt();
+  const { canInstall, isIOS, promptInstall } = useInstallPrompt();
   if (!canInstall) return null;
+
+  const handleClick = () => {
+    if (isIOS) {
+      alert("To install Weave on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+    } else {
+      promptInstall();
+    }
+  };
 
   return (
     <Button
       size="sm"
       variant="outline"
-      onClick={promptInstall}
-      className="rounded-full"
+      onClick={handleClick}
+      className="rounded-full border-orange-500/30 text-orange-600 dark:text-orange-400 hover:bg-orange-500/10"
     >
       Install App
     </Button>

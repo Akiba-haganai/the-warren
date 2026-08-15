@@ -8,30 +8,49 @@ export function UpdatePrompt() {
     updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(_swUrl, registration) {
+      // Re-check for updates whenever user returns to the app / foregrounds on mobile
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
           registration?.update().catch(() => {});
         }
       });
-      // Fallback polling (mostly for Android, as iOS suspends this)
+      // Fallback background check every 60 seconds
       setInterval(() => registration?.update().catch(() => {}), 60_000);
     },
   });
 
   useEffect(() => {
+    // Listen for service worker controller replacement (autoUpdate takeover)
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      let refreshing = false;
+      const handleControllerChange = () => {
+        if (refreshing) return;
+        refreshing = true;
+        toast("Weave updated — refreshing...", { duration: 2000 });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      };
+
+      navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+      return () => {
+        navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     if (needRefresh) {
-      toast("Weave updated — refreshing…", {
+      toast("Weave updated — refreshing...", {
         duration: 2000,
         action: {
           label: "Trouble updating? →",
           onClick: () => {
-            // Usually this clicks through to the About page automatically if they intercept it in time,
-            // but the timeout will force a reload shortly anyway.
             window.location.href = "/about";
           },
         },
       });
-      setTimeout(() => updateServiceWorker(true), 1500);
+      setTimeout(() => updateServiceWorker(true), 1200);
     }
   }, [needRefresh, updateServiceWorker]);
 
