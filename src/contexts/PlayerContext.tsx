@@ -16,6 +16,9 @@ interface PlayerContextType {
   hasPrevious: boolean;
   resumePosition: number;
   shouldAutoplay: boolean;
+  isExpanded: boolean;
+  setIsExpanded: (expanded: boolean) => void;
+  toggleExpanded: () => void;
   playEpisode: (episode: Episode, queue?: Episode[]) => void;
   closePlayer: () => void;
   playNext: () => void;
@@ -31,6 +34,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [queue, setQueue] = useState<Episode[]>([]);
   const [resumePosition, setResumePosition] = useState(0);
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded((prev) => !prev);
+  }, []);
 
   const playEpisode = useCallback((episode: Episode, newQueue?: Episode[]) => {
     setCurrentEpisode(episode);
@@ -42,6 +50,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const closePlayer = useCallback(() => {
     setCurrentEpisode(null);
+    setIsExpanded(false);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
@@ -106,6 +115,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         hasPrevious,
         resumePosition,
         shouldAutoplay,
+        isExpanded,
+        setIsExpanded,
+        toggleExpanded,
         playEpisode,
         closePlayer,
         playNext,
