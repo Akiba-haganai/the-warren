@@ -6,10 +6,11 @@ import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, Clock, Search, Mic, ArrowRight } from "lucide-react";
+import { Play, Clock, Search, Mic, ArrowRight, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
+import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,11 +30,18 @@ export default function Podcasts() {
 
   const categories = [
     "All",
-    "Entrepreneurship",
-    "Faith",
-    "Career",
-    "Relationships",
+    "Campus Life",
+    "Faith & Community",
     "Academics",
+    "Sports & Recreation",
+    "Technology",
+    "Career",
+    "Entrepreneurship",
+    "Relationships",
+    "Events",
+    "People",
+    "Entertainment",
+    "Music",
   ];
 
   // Filter and search logic with defensive null checks
@@ -111,10 +119,20 @@ export default function Podcasts() {
                           </span>
                         </div>
                         <CardContent className="p-4">
-                          <Badge variant="secondary" className="mb-2">
-                            {ep.category}
-                          </Badge>
-                          <h3 className="font-semibold text-base leading-snug">
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <Badge variant="secondary">
+                              {ep.category}
+                            </Badge>
+                            <div className="flex items-center gap-1">
+                              <PodcastShareModal episode={ep} />
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild title="Open in YouTube (background playback)">
+                                <a href={`https://www.youtube.com/watch?v=${ep.youtubeId}`} target="_blank" rel="noopener noreferrer" aria-label="Open in YouTube">
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                          <h3 className="font-semibold text-base leading-snug line-clamp-2">
                             {ep.title}
                           </h3>
                           <p className="mt-1 text-xs text-muted-foreground">
@@ -236,10 +254,20 @@ export default function Podcasts() {
                           </span>
                         </div>
                         <CardContent className="p-4">
-                          <Badge variant="secondary" className="mb-2">
-                            {ep.category}
-                          </Badge>
-                          <h3 className="font-semibold text-base leading-snug">
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <Badge variant="secondary">
+                              {ep.category}
+                            </Badge>
+                            <div className="flex items-center gap-1">
+                              <PodcastShareModal episode={ep} />
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild title="Open in YouTube (background playback)">
+                                <a href={`https://www.youtube.com/watch?v=${ep.youtubeId}`} target="_blank" rel="noopener noreferrer" aria-label="Open in YouTube">
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                          <h3 className="font-semibold text-base leading-snug line-clamp-2">
                             {ep.title}
                           </h3>
                           <p className="mt-1 text-xs text-muted-foreground">

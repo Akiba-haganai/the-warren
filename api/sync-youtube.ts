@@ -6,17 +6,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
-// Converts YouTube's ISO 8601 duration (e.g. "PT18M24S") to "18:24"
-function formatDuration(iso: string): string {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return "0:00";
-  const hours = parseInt(match[1] || "0", 10);
-  const minutes = parseInt(match[2] || "0", 10);
-  const seconds = parseInt(match[3] || "0", 10);
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  return hours > 0
-    ? `${hours}:${pad(minutes)}:${pad(seconds)}`
-    : `${minutes}:${pad(seconds)}`;
+// Helper to parse hashtags from YouTube descriptions into Weave categories
+function extractCategory(description: string): string {
+  if (!description) return "Uncategorized";
+  const desc = description.toLowerCase();
+  if (desc.includes("#campuslife") || desc.includes("#campus")) return "Campus Life";
+  if (desc.includes("#faith") || desc.includes("#community")) return "Faith & Community";
+  if (desc.includes("#academics") || desc.includes("#academic")) return "Academics";
+  if (desc.includes("#sports") || desc.includes("#recreation")) return "Sports & Recreation";
+  if (desc.includes("#technology") || desc.includes("#tech")) return "Technology";
+  if (desc.includes("#career") || desc.includes("#jobs")) return "Career";
+  if (desc.includes("#entertainment")) return "Entertainment";
+  if (desc.includes("#music")) return "Music";
+  if (desc.includes("#entrepreneurship") || desc.includes("#business")) return "Entrepreneurship";
+  if (desc.includes("#relationships")) return "Relationships";
+  if (desc.includes("#events")) return "Events";
+  if (desc.includes("#people")) return "People";
+  return "Uncategorized";
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -60,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         video.snippet.thumbnails?.high?.url ||
         `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
       duration: formatDuration(video.contentDetails.duration),
-      category: "Uncategorized", // no reliable category from YouTube; see note below
+      category: extractCategory(video.snippet.description || ""),
       published_date: video.snippet.publishedAt.split("T")[0],
     }));
 

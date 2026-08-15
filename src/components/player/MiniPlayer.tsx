@@ -1,9 +1,10 @@
 // src/components/player/MiniPlayer.tsx
 import YouTube from "react-youtube";
 import { usePlayer } from "@/contexts/PlayerContext";
-import { X, Play, Pause, SkipForward, SkipBack } from "lucide-react";
+import { X, Play, Pause, SkipForward, SkipBack, ExternalLink } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
@@ -121,6 +122,23 @@ export function MiniPlayer() {
             aria-label="Next episode"
           >
             <SkipForward className="h-4 w-4" />
+          </Button>
+          <PodcastShareModal episode={currentEpisode} />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hidden sm:flex"
+            asChild
+            title="Open in YouTube (background playback)"
+          >
+            <a
+              href={`https://www.youtube.com/watch?v=${currentEpisode.youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open in YouTube"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
           </Button>
           <Button variant="ghost" size="icon" onClick={closePlayer} className="h-8 w-8" aria-label="Close player">
             <X className="h-4 w-4" />
