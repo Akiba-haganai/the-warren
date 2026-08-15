@@ -21,7 +21,7 @@ function isIOSDevice(): boolean {
 export function useInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(isStandaloneDisplay());
-  const [isIOS, setIsIOS] = useState(isIOSDevice());
+  const [isIOS] = useState(isIOSDevice());
 
   useEffect(() => {
     if (isStandaloneDisplay()) {
