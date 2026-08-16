@@ -12,11 +12,20 @@ import {
   ChevronDown,
   RotateCcw,
   RotateCw,
+  Gauge,
+  Moon,
 } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 
 function formatTime(seconds: number): string {
@@ -26,9 +35,20 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 1.75, 2];
+const SLEEP_OPTIONS: { label: string; value: number | "end" | null }[] = [
+  { label: "Off", value: null },
+  { label: "15 minutes", value: 15 },
+  { label: "30 minutes", value: 30 },
+  { label: "45 minutes", value: 45 },
+  { label: "60 minutes", value: 60 },
+  { label: "End of episode", value: "end" },
+];
+
 export function MiniPlayer() {
   const {
     currentEpisode,
+    queue,
     closePlayer,
     hasNext,
     hasPrevious,
@@ -38,14 +58,22 @@ export function MiniPlayer() {
     savePosition,
     isExpanded,
     setIsExpanded,
-    toggleExpanded,
+    playbackSpeed,
+    setPlaybackSpeed,
+    sleepTimerMinutes,
+    sleepTimerEndsAt,
+    setSleepTimer,
+    cancelSleepTimer,
   } = usePlayer();
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [sleepRemainingSec, setSleepRemainingSec] = useState<number | null>(null);
+
   const pollRef = useRef<number | null>(null);
+  const autoAdvanceTimeoutRef = useRef<number | null>(null);
 
   const onReady = useCallback(
     (event: { target: any }) => {
@@ -53,22 +81,97 @@ export function MiniPlayer() {
       if (resumePosition > 0) {
         event.target.seekTo(resumePosition, true);
       }
+      try {
+        event.target.setPlaybackRate(playbackSpeed);
+      } catch {}
       event.target.playVideo();
       setIsPlaying(true);
       setDuration(event.target.getDuration());
     },
-    [resumePosition],
+    [resumePosition, playbackSpeed],
   );
+
+  // Sync playback speed whenever user changes it
+  useEffect(() => {
+    if (player && player.setPlaybackRate) {
+      try {
+        player.setPlaybackRate(playbackSpeed);
+      } catch {}
+    }
+  }, [player, playbackSpeed]);
+
+  // Sleep timer countdown & audio fade-out
+  useEffect(() => {
+    if (!sleepTimerEndsAt || !player || !isPlaying) {
+      setSleepRemainingSec(null);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      const remainingMs = sleepTimerEndsAt - Date.now();
+      const remSec = Math.max(0, Math.ceil(remainingMs / 1000));
+      setSleepRemainingSec(remSec);
+
+      // Fade volume down in the last 5 seconds
+      if (remainingMs <= 5000 && remainingMs > 0) {
+        try {
+          const fadeVol = Math.max(0, Math.floor((remainingMs / 5000) * 100));
+          player.setVolume(fadeVol);
+        } catch {}
+      }
+
+      if (remainingMs <= 0) {
+        try {
+          player.pauseVideo();
+          player.setVolume(100);
+        } catch {}
+        cancelSleepTimer();
+        toast("Sleep timer finished — playback paused");
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [sleepTimerEndsAt, player, isPlaying, cancelSleepTimer]);
 
   const onStateChange = useCallback(
     (event: { data: number }) => {
       setIsPlaying(event.data === 1);
-      if (event.data === 0 && hasNext) {
-        // Video ended, auto-advance
-        playNext();
+
+      // Video ended
+      if (event.data === 0) {
+        if (sleepTimerMinutes === "end") {
+          cancelSleepTimer();
+          toast("Sleep timer finished — playback ended");
+          return;
+        }
+
+        if (hasNext) {
+          const currentIndex = currentEpisode ? queue.findIndex((e) => e.id === currentEpisode.id) : -1;
+          const nextEpisode = queue[currentIndex + 1];
+
+          if (nextEpisode) {
+            const toastId = toast(`Up next: ${nextEpisode.title}`, {
+              duration: 5000,
+              action: {
+                label: "Cancel",
+                onClick: () => {
+                  if (autoAdvanceTimeoutRef.current) {
+                    clearTimeout(autoAdvanceTimeoutRef.current);
+                    autoAdvanceTimeoutRef.current = null;
+                  }
+                  toast.dismiss(toastId);
+                },
+              },
+            });
+
+            autoAdvanceTimeoutRef.current = window.setTimeout(() => {
+              playNext();
+            }, 5000);
+          }
+        }
       }
     },
-    [hasNext, playNext],
+    [hasNext, playNext, currentEpisode, queue, sleepTimerMinutes, cancelSleepTimer],
   );
 
   // Poll playback position for seek bar + periodic localStorage save
@@ -165,6 +268,26 @@ export function MiniPlayer() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Published on {currentEpisode.date}
                 </p>
+
+                {/* Sleep Timer Indicator Pill */}
+                {(sleepRemainingSec !== null || sleepTimerMinutes === "end") && (
+                  <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-medium text-primary">
+                    <Moon className="h-3.5 w-3.5" />
+                    <span>
+                      {sleepTimerMinutes === "end"
+                        ? "Pauses at end of episode"
+                        : `Sleep timer: ${formatTime(sleepRemainingSec || 0)}`}
+                    </span>
+                    <button
+                      onClick={cancelSleepTimer}
+                      className="ml-1 hover:text-foreground text-xs"
+                      title="Cancel timer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+
                 {currentEpisode.description && (
                   <p className="mt-3 text-xs text-muted-foreground/90 line-clamp-2 leading-relaxed">
                     {currentEpisode.description}
@@ -249,15 +372,57 @@ export function MiniPlayer() {
               </div>
             </div>
 
-            {/* Bottom Actions Row */}
-            <div className="flex items-center justify-center gap-4 pt-4 border-t border-border/40">
+            {/* Bottom Actions Row: Speed Selector, Sleep Timer, Share, YouTube Link */}
+            <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-4 pt-4 border-t border-border/40">
+              {/* Speed Selector Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs">
+                    <Gauge className="h-3.5 w-3.5" />
+                    <span>{playbackSpeed}x</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  {SPEED_OPTIONS.map((speed) => (
+                    <DropdownMenuItem
+                      key={speed}
+                      onClick={() => setPlaybackSpeed(speed)}
+                      className={playbackSpeed === speed ? "font-bold text-primary" : ""}
+                    >
+                      {speed}x {playbackSpeed === speed ? "✓" : ""}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Sleep Timer Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={sleepTimerMinutes !== null ? "default" : "outline"}
+                    size="sm"
+                    className="rounded-full gap-1.5 text-xs"
+                  >
+                    <Moon className="h-3.5 w-3.5" />
+                    <span>{sleepTimerMinutes !== null ? "Timer Active" : "Sleep Timer"}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  {SLEEP_OPTIONS.map((opt) => (
+                    <DropdownMenuItem
+                      key={opt.label}
+                      onClick={() => setSleepTimer(opt.value)}
+                      className={sleepTimerMinutes === opt.value ? "font-bold text-primary" : ""}
+                    >
+                      {opt.label} {sleepTimerMinutes === opt.value ? "✓" : ""}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <PodcastShareModal episode={currentEpisode} />
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full gap-2 text-xs"
-                asChild
-              >
+
+              <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs" asChild>
                 <a
                   href={`https://www.youtube.com/watch?v=${currentEpisode.youtubeId}`}
                   target="_blank"
@@ -306,9 +471,16 @@ export function MiniPlayer() {
                   </p>
                   <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 group-hover:text-primary transition" />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                  {sleepRemainingSec !== null && (
+                    <span className="text-primary font-medium flex items-center gap-0.5">
+                      <Moon className="h-3 w-3" /> {formatTime(sleepRemainingSec)}
+                    </span>
+                  )}
+                </div>
               </div>
             </button>
 

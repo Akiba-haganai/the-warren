@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Episode } from "@/data/podcasts";
 
 const STORAGE_KEY = "warren-player-state";
+const SPEED_KEY = "weave-podcast-speed";
 
 interface StoredState {
   episodeId: string;
@@ -17,8 +18,14 @@ interface PlayerContextType {
   resumePosition: number;
   shouldAutoplay: boolean;
   isExpanded: boolean;
+  playbackSpeed: number;
+  sleepTimerMinutes: number | "end" | null;
+  sleepTimerEndsAt: number | null;
   setIsExpanded: (expanded: boolean) => void;
   toggleExpanded: () => void;
+  setPlaybackSpeed: (speed: number) => void;
+  setSleepTimer: (minutes: number | "end" | null) => void;
+  cancelSleepTimer: () => void;
   playEpisode: (episode: Episode, queue?: Episode[]) => void;
   closePlayer: () => void;
   playNext: () => void;
@@ -35,9 +42,37 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [resumePosition, setResumePosition] = useState(0);
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [playbackSpeed, setPlaybackSpeedState] = useState<number>(() => {
+    if (typeof window === "undefined") return 1;
+    const saved = localStorage.getItem(SPEED_KEY);
+    return saved ? parseFloat(saved) : 1;
+  });
+  const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | "end" | null>(null);
+  const [sleepTimerEndsAt, setSleepTimerEndsAt] = useState<number | null>(null);
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded((prev) => !prev);
+  }, []);
+
+  const setPlaybackSpeed = useCallback((speed: number) => {
+    setPlaybackSpeedState(speed);
+    try {
+      localStorage.setItem(SPEED_KEY, speed.toString());
+    } catch {}
+  }, []);
+
+  const setSleepTimer = useCallback((minutes: number | "end" | null) => {
+    setSleepTimerMinutes(minutes);
+    if (typeof minutes === "number") {
+      setSleepTimerEndsAt(Date.now() + minutes * 60 * 1000);
+    } else {
+      setSleepTimerEndsAt(null);
+    }
+  }, []);
+
+  const cancelSleepTimer = useCallback(() => {
+    setSleepTimerMinutes(null);
+    setSleepTimerEndsAt(null);
   }, []);
 
   const playEpisode = useCallback((episode: Episode, newQueue?: Episode[]) => {
@@ -51,6 +86,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const closePlayer = useCallback(() => {
     setCurrentEpisode(null);
     setIsExpanded(false);
+    setSleepTimerMinutes(null);
+    setSleepTimerEndsAt(null);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
@@ -99,11 +136,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         setCurrentEpisode(match);
         setQueue(episodes);
         setResumePosition(parsed.positionSeconds || 0);
-        setShouldAutoplay(false); // silent restore — don't force playback without a user gesture
+        setShouldAutoplay(false);
       }
-    } catch {
-      // ignore corrupt storage
-    }
+    } catch {}
   }, []);
 
   return (
@@ -116,8 +151,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         resumePosition,
         shouldAutoplay,
         isExpanded,
+        playbackSpeed,
+        sleepTimerMinutes,
+        sleepTimerEndsAt,
         setIsExpanded,
         toggleExpanded,
+        setPlaybackSpeed,
+        setSleepTimer,
+        cancelSleepTimer,
         playEpisode,
         closePlayer,
         playNext,
