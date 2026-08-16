@@ -198,6 +198,58 @@ export function MiniPlayer() {
     };
   }, [player, isPlaying, currentEpisode, duration, savePosition]);
 
+  // Phase 4 — Media Session API for Lock Screen Controls
+  useEffect(() => {
+    if (!currentEpisode || typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentEpisode.title,
+        artist: "Weave",
+        album: "Weave Podcasts",
+        artwork: [
+          { src: currentEpisode.thumbnail, sizes: "512x512", type: "image/jpeg" },
+          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+        ],
+      });
+
+      const actionHandlers: [MediaSessionAction, MediaSessionActionHandler | null][] = [
+        ["play", () => player?.playVideo()],
+        ["pause", () => player?.pauseVideo()],
+        ["previoustrack", () => hasPrevious && playPrevious()],
+        ["nexttrack", () => hasNext && playNext()],
+        ["seekbackward", () => skipSeconds(-15)],
+        ["seekforward", () => skipSeconds(15)],
+        ["stop", () => closePlayer()],
+      ];
+
+      for (const [action, handler] of actionHandlers) {
+        try {
+          navigator.mediaSession.setActionHandler(action, handler);
+        } catch {}
+      }
+    } catch {}
+  }, [currentEpisode, player, hasPrevious, hasNext, playPrevious, playNext, closePlayer]);
+
+  // Sync position state with Media Session
+  useEffect(() => {
+    if (
+      typeof navigator !== "undefined" &&
+      "mediaSession" in navigator &&
+      "setPositionState" in navigator.mediaSession &&
+      duration > 0
+    ) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: Math.max(1, duration),
+          playbackRate: playbackSpeed || 1,
+          position: Math.min(currentTime, duration),
+        });
+      } catch {}
+    }
+  }, [currentTime, duration, playbackSpeed]);
+
   const togglePlay = () => {
     if (isPlaying) player?.pauseVideo();
     else player?.playVideo();
