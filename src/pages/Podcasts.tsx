@@ -48,7 +48,7 @@ export default function Podcasts() {
     "Music",
   ];
 
-  const { offlineMap, downloadingIds, downloadEpisode, removeDownload, isDownloaded } =
+  const { downloadingIds, downloadEpisode, removeDownload, isDownloaded } =
     useOfflinePodcasts();
 
   // Filter and search logic with defensive null checks

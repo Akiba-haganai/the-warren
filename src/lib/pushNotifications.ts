@@ -55,6 +55,7 @@ export async function subscribeToEpisodePushNotifications(): Promise<boolean> {
     }
 
     // Store subscription in Supabase
+    if (!supabase) return true;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session?.user?.id || null;
 

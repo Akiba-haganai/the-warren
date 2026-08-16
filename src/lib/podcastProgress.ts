@@ -49,9 +49,10 @@ export function saveEpisodeProgress(
   } catch {}
 
   // 2. Sync to Supabase if user is logged in
+  if (!supabase) return;
   try {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
+      if (session?.user && supabase) {
         supabase
           .from("user_episode_progress")
           .upsert({
