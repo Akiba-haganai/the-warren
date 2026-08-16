@@ -12,6 +12,8 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { getLocalProgressMap, getInProgressEpisodes } from "@/lib/podcastProgress";
+import { useOfflinePodcasts } from "@/lib/offlineAudio";
+import { Download, Check, Trash2, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,6 +33,7 @@ export default function Podcasts() {
 
   const categories = [
     "All",
+    "Downloads",
     "Campus Life",
     "Faith & Community",
     "Academics",
@@ -45,9 +48,16 @@ export default function Podcasts() {
     "Music",
   ];
 
+  const { offlineMap, downloadingIds, downloadEpisode, removeDownload, isDownloaded } =
+    useOfflinePodcasts();
+
   // Filter and search logic with defensive null checks
   const filtered = podcasts
-    .filter((ep) => filter === "All" || ep.category === filter)
+    .filter((ep) => {
+      if (filter === "All") return true;
+      if (filter === "Downloads") return isDownloaded(ep.id);
+      return ep.category === filter;
+    })
     .filter((ep) => {
       const q = search.toLowerCase();
       const titleMatch = ep.title ? ep.title.toLowerCase().includes(q) : false;
@@ -172,13 +182,53 @@ export default function Podcasts() {
                         </div>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <Badge variant="secondary">
-                              {ep.category}
-                            </Badge>
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="secondary">{ep.category}</Badge>
+                              {isDownloaded(ep.id) && (
+                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 gap-1 text-[10px]">
+                                  <Check className="h-2.5 w-2.5" /> Offline
+                                </Badge>
+                              )}
+                            </div>
                             <div className="flex items-center gap-1">
+                              {downloadingIds[ep.id] ? (
+                                <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                </Button>
+                              ) : isDownloaded(ep.id) ? (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  onClick={() => removeDownload(ep.id)}
+                                  title="Remove download"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  onClick={() => downloadEpisode(ep)}
+                                  title="Download for offline listening"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
                               <PodcastShareModal episode={ep} />
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild title="Open in YouTube (background playback)">
-                                <a href={`https://www.youtube.com/watch?v=${ep.youtubeId}`} target="_blank" rel="noopener noreferrer" aria-label="Open in YouTube">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                asChild
+                                title="Open in YouTube"
+                              >
+                                <a
+                                  href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </a>
                               </Button>
@@ -307,13 +357,53 @@ export default function Podcasts() {
                         </div>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <Badge variant="secondary">
-                              {ep.category}
-                            </Badge>
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="secondary">{ep.category}</Badge>
+                              {isDownloaded(ep.id) && (
+                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 gap-1 text-[10px]">
+                                  <Check className="h-2.5 w-2.5" /> Offline
+                                </Badge>
+                              )}
+                            </div>
                             <div className="flex items-center gap-1">
+                              {downloadingIds[ep.id] ? (
+                                <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                </Button>
+                              ) : isDownloaded(ep.id) ? (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  onClick={() => removeDownload(ep.id)}
+                                  title="Remove download"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  onClick={() => downloadEpisode(ep)}
+                                  title="Download for offline listening"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
                               <PodcastShareModal episode={ep} />
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild title="Open in YouTube (background playback)">
-                                <a href={`https://www.youtube.com/watch?v=${ep.youtubeId}`} target="_blank" rel="noopener noreferrer" aria-label="Open in YouTube">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                asChild
+                                title="Open in YouTube"
+                              >
+                                <a
+                                  href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </a>
                               </Button>

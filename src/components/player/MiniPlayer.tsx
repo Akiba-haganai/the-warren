@@ -28,6 +28,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { saveEpisodeProgress } from "@/lib/podcastProgress";
+import { extractDominantColor } from "@/lib/colorExtractor";
+import { WaveformProgressBar } from "@/components/podcast/WaveformProgressBar";
+import { PodcastComments } from "@/components/podcast/PodcastComments";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
@@ -73,6 +76,14 @@ export function MiniPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [sleepRemainingSec, setSleepRemainingSec] = useState<number | null>(null);
+  const [tintColor, setTintColor] = useState<string>("rgba(255, 109, 0, 0.15)");
+
+  // Extract cover art dominant color tint for Phase 7
+  useEffect(() => {
+    if (currentEpisode) {
+      extractDominantColor(currentEpisode.thumbnail, currentEpisode.id).then(setTintColor);
+    }
+  }, [currentEpisode]);
 
   const pollRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
@@ -280,7 +291,10 @@ export function MiniPlayer() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-2xl flex flex-col justify-between p-6 overflow-y-auto"
+            style={{
+              background: `radial-gradient(circle at 50% 20%, ${tintColor} 0%, rgba(15, 15, 18, 0.98) 80%)`,
+            }}
+            className="fixed inset-0 z-50 backdrop-blur-2xl flex flex-col justify-between p-6 overflow-y-auto text-foreground"
           >
             {/* Top Navigation Bar */}
             <div className="flex items-center justify-between">
@@ -358,18 +372,18 @@ export function MiniPlayer() {
                 )}
               </div>
 
-              {/* Progress & Scrubbing Bar */}
+              {/* Waveform Progress & Scrubbing Bar (Phase 7) */}
               <div className="w-full mt-6">
-                <input
-                  type="range"
-                  min={0}
-                  max={duration || 0}
-                  value={currentTime}
-                  onChange={handleSeek}
-                  className="w-full h-1.5 accent-primary bg-muted rounded-lg cursor-pointer"
-                  aria-label="Seek time"
+                <WaveformProgressBar
+                  episodeId={currentEpisode.id}
+                  currentTime={currentTime}
+                  duration={duration}
+                  onSeek={(t) => {
+                    player?.seekTo(t, true);
+                    setCurrentTime(t);
+                  }}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground mt-2 font-mono">
+                <div className="flex justify-between text-xs text-muted-foreground mt-1 font-mono">
                   <span>{formatTime(currentTime)}</span>
                   <span>{formatTime(duration)}</span>
                 </div>
@@ -494,6 +508,18 @@ export function MiniPlayer() {
                   <ExternalLink className="h-3.5 w-3.5" /> Open in YouTube
                 </a>
               </Button>
+            </div>
+
+            {/* Timestamped Comments (Phase 8) */}
+            <div className="max-w-md mx-auto w-full">
+              <PodcastComments
+                episodeId={currentEpisode.id}
+                currentTime={currentTime}
+                onSeek={(t) => {
+                  player?.seekTo(t, true);
+                  setCurrentTime(t);
+                }}
+              />
             </div>
           </motion.div>
         )}
