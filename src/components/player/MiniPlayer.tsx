@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
+import { saveEpisodeProgress } from "@/lib/podcastProgress";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
@@ -175,18 +176,27 @@ export function MiniPlayer() {
     [hasNext, playNext, currentEpisode, queue, sleepTimerMinutes, cancelSleepTimer],
   );
 
-  // Poll playback position for seek bar + periodic localStorage save
+  // Poll playback position for seek bar + throttled progress save (every 10s)
+  const lastSaveRef = useRef<number>(0);
   useEffect(() => {
-    if (!player || !isPlaying) return;
+    if (!player || !isPlaying || !currentEpisode) return;
     pollRef.current = window.setInterval(() => {
       const t = player.getCurrentTime?.() ?? 0;
+      const d = player.getDuration?.() ?? duration;
       setCurrentTime(t);
       savePosition(t);
+
+      // Throttle database / progress saves to every 10 seconds
+      const now = Date.now();
+      if (now - lastSaveRef.current > 10_000) {
+        lastSaveRef.current = now;
+        saveEpisodeProgress(currentEpisode.id, t, d);
+      }
     }, 1000);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [player, isPlaying, savePosition]);
+  }, [player, isPlaying, currentEpisode, duration, savePosition]);
 
   const togglePlay = () => {
     if (isPlaying) player?.pauseVideo();

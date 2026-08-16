@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
+import { getLocalProgressMap, getInProgressEpisodes } from "@/lib/podcastProgress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -65,6 +66,11 @@ export default function Podcasts() {
     }
   }, [loading, podcasts, currentEpisode, restoreFromEpisodes]);
 
+  // Compute in-progress episodes for Continue Listening section
+  const progressMap = getLocalProgressMap();
+  const inProgressMap = getInProgressEpisodes(progressMap);
+  const continueListening = podcasts.filter((ep) => Boolean(inProgressMap[ep.id]));
+
   return (
     <>
       <Header />
@@ -81,6 +87,52 @@ export default function Podcasts() {
               between.
             </p>
           </Reveal>
+
+          {/* Continue Listening Section (if progress exists) */}
+          {continueListening.length > 0 && !loading && (
+            <div className="mt-10">
+              <h2 className="text-2xl font-semibold mb-4">Continue Listening</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {continueListening.map((ep) => {
+                  const prog = inProgressMap[ep.id];
+                  return (
+                    <Card
+                      key={`continue-${ep.id}`}
+                      className="overflow-hidden border-primary/30 bg-card hover:shadow-glow transition cursor-pointer"
+                      onClick={() => playEpisode(ep, podcasts)}
+                    >
+                      <div className="relative">
+                        <img
+                          src={ep.thumbnail}
+                          alt={ep.title}
+                          className="w-full aspect-video object-cover"
+                        />
+                        <button
+                          className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/20 transition"
+                          aria-label={`Resume ${ep.title}`}
+                        >
+                          <Play className="h-10 w-10 text-white fill-white" />
+                        </button>
+                        {/* Progress Bar overlay at bottom edge of thumbnail */}
+                        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/50">
+                          <div
+                            className="h-full bg-[#FF6D00]"
+                            style={{ width: `${prog?.progressPercent || 0}%` }}
+                          />
+                        </div>
+                      </div>
+                      <CardContent className="p-3">
+                        <p className="font-semibold text-sm line-clamp-1">{ep.title}</p>
+                        <p className="text-xs text-primary font-medium mt-1">
+                          {prog?.progressPercent}% completed
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Featured carousel (if episodes exist) */}
           {featured.length > 0 && !loading && (
