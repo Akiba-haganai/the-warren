@@ -58,6 +58,7 @@ export function MiniPlayer() {
     savePosition,
     isExpanded,
     setIsExpanded,
+    toggleExpanded,
     playbackSpeed,
     setPlaybackSpeed,
     sleepTimerMinutes,
