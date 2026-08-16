@@ -15,6 +15,7 @@ import {
   Gauge,
   Moon,
 } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { saveEpisodeProgress } from "@/lib/podcastProgress";
+import { useSavedEpisodes } from "@/lib/savedEpisodes";
 import { extractDominantColor } from "@/lib/colorExtractor";
 import { WaveformProgressBar } from "@/components/podcast/WaveformProgressBar";
 import { PodcastComments } from "@/components/podcast/PodcastComments";
@@ -70,6 +72,8 @@ export function MiniPlayer() {
     setSleepTimer,
     cancelSleepTimer,
   } = usePlayer();
+
+  const { toggleSaveEpisode, isSaved } = useSavedEpisodes();
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState<any>(null);
@@ -496,6 +500,17 @@ export function MiniPlayer() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              {/* Bookmark / Save Episode */}
+              <Button
+                variant={isSaved(currentEpisode.id) ? "default" : "outline"}
+                size="sm"
+                className="rounded-full gap-1.5 text-xs"
+                onClick={() => toggleSaveEpisode(currentEpisode)}
+              >
+                <Bookmark className={`h-3.5 w-3.5 ${isSaved(currentEpisode.id) ? "fill-white" : ""}`} />
+                <span>{isSaved(currentEpisode.id) ? "Saved" : "Save"}</span>
+              </Button>
 
               <PodcastShareModal episode={currentEpisode} />
 

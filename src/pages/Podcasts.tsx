@@ -12,8 +12,8 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { getLocalProgressMap, getInProgressEpisodes } from "@/lib/podcastProgress";
-import { useOfflinePodcasts } from "@/lib/offlineAudio";
-import { Download, Check, Trash2, Loader2 } from "lucide-react";
+import { useSavedEpisodes } from "@/lib/savedEpisodes";
+import { Bookmark } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,7 +33,7 @@ export default function Podcasts() {
 
   const categories = [
     "All",
-    "Downloads",
+    "Saved",
     "Campus Life",
     "Faith & Community",
     "Academics",
@@ -48,14 +48,13 @@ export default function Podcasts() {
     "Music",
   ];
 
-  const { downloadingIds, downloadEpisode, removeDownload, isDownloaded } =
-    useOfflinePodcasts();
+  const { toggleSaveEpisode, isSaved } = useSavedEpisodes();
 
   // Filter and search logic with defensive null checks
   const filtered = podcasts
     .filter((ep) => {
       if (filter === "All") return true;
-      if (filter === "Downloads") return isDownloaded(ep.id);
+      if (filter === "Saved") return isSaved(ep.id);
       return ep.category === filter;
     })
     .filter((ep) => {
@@ -182,40 +181,17 @@ export default function Podcasts() {
                         </div>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <div className="flex items-center gap-1.5">
-                              <Badge variant="secondary">{ep.category}</Badge>
-                              {isDownloaded(ep.id) && (
-                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 gap-1 text-[10px]">
-                                  <Check className="h-2.5 w-2.5" /> Offline
-                                </Badge>
-                              )}
-                            </div>
+                            <Badge variant="secondary">{ep.category}</Badge>
                             <div className="flex items-center gap-1">
-                              {downloadingIds[ep.id] ? (
-                                <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                                </Button>
-                              ) : isDownloaded(ep.id) ? (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                  onClick={() => removeDownload(ep.id)}
-                                  title="Remove download"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                  onClick={() => downloadEpisode(ep)}
-                                  title="Download for offline listening"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                </Button>
-                              )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                onClick={() => toggleSaveEpisode(ep)}
+                                title={isSaved(ep.id) ? "Remove Bookmark" : "Save Episode"}
+                              >
+                                <Bookmark className={`h-3.5 w-3.5 ${isSaved(ep.id) ? "text-primary fill-primary" : ""}`} />
+                              </Button>
                               <PodcastShareModal episode={ep} />
                               <Button
                                 variant="ghost"
@@ -357,40 +333,17 @@ export default function Podcasts() {
                         </div>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <div className="flex items-center gap-1.5">
-                              <Badge variant="secondary">{ep.category}</Badge>
-                              {isDownloaded(ep.id) && (
-                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 gap-1 text-[10px]">
-                                  <Check className="h-2.5 w-2.5" /> Offline
-                                </Badge>
-                              )}
-                            </div>
+                            <Badge variant="secondary">{ep.category}</Badge>
                             <div className="flex items-center gap-1">
-                              {downloadingIds[ep.id] ? (
-                                <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                                </Button>
-                              ) : isDownloaded(ep.id) ? (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                  onClick={() => removeDownload(ep.id)}
-                                  title="Remove download"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                  onClick={() => downloadEpisode(ep)}
-                                  title="Download for offline listening"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                </Button>
-                              )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                onClick={() => toggleSaveEpisode(ep)}
+                                title={isSaved(ep.id) ? "Remove Bookmark" : "Save Episode"}
+                              >
+                                <Bookmark className={`h-3.5 w-3.5 ${isSaved(ep.id) ? "text-primary fill-primary" : ""}`} />
+                              </Button>
                               <PodcastShareModal episode={ep} />
                               <Button
                                 variant="ghost"
