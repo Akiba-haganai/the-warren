@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const baseUrl = "https://the-warren-hub.vercel.app";
+  const baseUrl = "https://warren-wave.vercel.app";
 
   try {
     const story = await sanity.fetch(
@@ -90,7 +90,7 @@ function buildHtml({ title, description, image, url }: { title: string; descript
   <meta property="og:image" content="${image}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:type" content="article" />
-  <meta property="og:site_name" content="Warren" />
+  <meta property="og:site_name" content="WAVE" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />

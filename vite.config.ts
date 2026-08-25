@@ -37,8 +37,8 @@ export default defineConfig({
       },
       includeAssets: ["favicon.ico", "favicon-32.png", "favicon-16.png", "icon-72.png"],
       manifest: {
-        name: "Weave",
-        short_name: "Weave",
+        name: "WAVE",
+        short_name: "WAVE",
         description: "Stories. Culture. What's happening.",
         theme_color: "#FF6D00",
         background_color: "#FF6D00",

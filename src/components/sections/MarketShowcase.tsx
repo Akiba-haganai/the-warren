@@ -43,8 +43,8 @@ export function MarketShowcase() {
 
         <div className="mt-12 flex justify-center">
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow font-semibold">
-            <a href="https://warren-market.vercel.app" target="_blank" rel="noreferrer">
-              Visit Market
+            <a href="https://warren-plawza.vercel.app" target="_blank" rel="noreferrer">
+              Visit PLAWZA
             </a>
           </Button>
         </div>

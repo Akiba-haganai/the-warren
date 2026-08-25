@@ -22,7 +22,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://the-warren-hub.vercel.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://warren-wave.vercel.app";
   const url = `${origin}/podcasts?episode=${episode.id}`;
   const youtubeUrl = `https://www.youtube.com/watch?v=${episode.youtubeId}`;
   const strippedUrl = url.replace(/^https?:\/\//, "");
@@ -45,11 +45,11 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   }, [url]);
 
   const whatsappStatusMsg = encodeURIComponent(
-    `🎙️ Listen to "${episode.title}" on Weave\n\n${episode.description ? episode.description.slice(0, 100) + "..." : ""}\n\n${strippedUrl}`
+    `🎙️ Listen to "${episode.title}" on WAVE\n\n${episode.description ? episode.description.slice(0, 100) + "..." : ""}\n\n${strippedUrl}`
   );
 
   const whatsappChatMsg = encodeURIComponent(
-    `🎙️ "${episode.title}"\n\nListen on Weave: ${url}`
+    `🎙️ "${episode.title}"\n\nListen on WAVE: ${url}`
   );
 
   const handleNativeShare = async () => {

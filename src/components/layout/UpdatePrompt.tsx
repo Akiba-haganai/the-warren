@@ -26,7 +26,7 @@ export function UpdatePrompt() {
       const handleControllerChange = () => {
         if (refreshing) return;
         refreshing = true;
-        toast("Weave updated — refreshing...", { duration: 2000 });
+        toast("WAVE updated — refreshing...", { duration: 2000 });
         setTimeout(() => {
           window.location.reload();
         }, 1200);
@@ -41,7 +41,7 @@ export function UpdatePrompt() {
 
   useEffect(() => {
     if (needRefresh) {
-      toast("Weave updated — refreshing...", {
+      toast("WAVE updated — refreshing...", {
         duration: 2000,
         action: {
           label: "Trouble updating? →",

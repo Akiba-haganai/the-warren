@@ -19,7 +19,7 @@ import { Reveal } from "@/components/layout/Reveal";
 const apps = [
   {
     icon: BookOpen,
-    title: "Campus",
+    title: "WAVE",
     description:
       "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions — the all‑in‑one student hub.",
     features: [
@@ -34,13 +34,13 @@ const apps = [
       { text: "Interactive campus map", icon: Map, soon: false },
       { text: "Verified student badges", icon: Shield, soon: false },
     ],
-    url: "https://warren-campus.vercel.app",
+    url: "https://warren-wave.vercel.app",
     color: "bg-blue-600",
     gradient: "from-blue-600 to-blue-800",
   },
   {
     icon: ShoppingBag,
-    title: "Market",
+    title: "PLAWZA",
     description:
       "Marketplace, housing, and roommate finder for Zambian students — buy, sell, rent, and connect safely.",
     features: [
@@ -58,7 +58,7 @@ const apps = [
       },
       { text: "Mobile money escrow", icon: Clock, soon: true },
     ],
-    url: "https://warren-market.vercel.app",
+    url: "https://warren-plawza.vercel.app",
     color: "bg-teal-600",
     gradient: "from-teal-600 to-teal-800",
   },

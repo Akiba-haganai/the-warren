@@ -16,16 +16,16 @@ import { Button } from "@/components/ui/button";
 const products = [
   {
     icon: GraduationCap,
-    name: "Campus",
+    name: "WAVE",
     desc: "Social networking, study hub, tutoring marketplace, quiz battles, campus map, and AMA sessions.",
-    url: "https://warren-campus.vercel.app",
+    url: "https://warren-wave.vercel.app",
     status: "Live",
   },
   {
     icon: Store,
-    name: "Market",
+    name: "PLAWZA",
     desc: "Marketplace, housing, roommate finder, landlord dashboard, verified seller tiers, and escrow (coming soon).",
-    url: "https://warren-market.vercel.app",
+    url: "https://warren-plawza.vercel.app",
     status: "Live",
   },
   {

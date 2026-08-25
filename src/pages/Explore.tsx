@@ -34,8 +34,8 @@ import {
   PlaySquare,
 } from "lucide-react";
 
-const WARREN_CAMPUS_URL = "https://warren-campus.vercel.app";
-const WARREN_CONNECT_URL = "https://warren-market.vercel.app";
+const WARREN_CAMPUS_URL = "https://warren-wave.vercel.app";
+const WARREN_CONNECT_URL = "https://warren-plawza.vercel.app";
 
 export default function Explore() {
   return (

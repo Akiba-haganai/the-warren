@@ -45,16 +45,16 @@ const nav = [
 
 const EXTERNAL_APPS = [
   {
-    href: "https://warren-campus.vercel.app",
-    label: "Campus",
+    href: "https://warren-wave.vercel.app",
+    label: "WAVE",
   },
   {
-    href: "https://warren-market.vercel.app",
-    label: "Market",
+    href: "https://warren-plawza.vercel.app",
+    label: "PLAWZA",
   },
 ];
 
-const GET_STARTED_URL = "https://warren-campus.vercel.app";
+const GET_STARTED_URL = "https://warren-wave.vercel.app";
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
   { value: "light", label: "Light", icon: Sun },
@@ -68,7 +68,7 @@ function InstallAppButton() {
 
   const handleClick = () => {
     if (isIOS) {
-      alert("To install Weave on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+      alert("To install WAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
     } else {
       promptInstall();
     }
@@ -209,7 +209,7 @@ export function Header() {
             </span>
 
             <div className="flex flex-col">
-              <span className="font-display text-lg font-semibold tracking-tight">Weave</span>
+              <span className="font-display text-lg font-semibold tracking-tight">WAVE</span>
               <span className="sr-only">Stories. Culture. What's happening.</span>
             </div>
           </Link>

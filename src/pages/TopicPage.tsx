@@ -31,7 +31,7 @@ export default function TopicPage() {
       document.head.appendChild(metaDescription);
     }
 
-    document.title = topic.seoTitle || `${topic.title} - Weave`;
+    document.title = topic.seoTitle || `${topic.title} - WAVE`;
     
     if (topic.seoDescription) {
       metaDescription.setAttribute("content", topic.seoDescription);

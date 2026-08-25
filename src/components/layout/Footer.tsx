@@ -23,7 +23,7 @@ export function Footer() {
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>
-            <span className="font-display text-xl font-semibold">Weave</span>
+            <span className="font-display text-xl font-semibold">WAVE</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
             Stories. Culture. What's happening.
@@ -137,37 +137,37 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://warren-campus.vercel.app"
+                href="https://warren-wave.vercel.app"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Campus
+                WAVE
               </a>
             </li>
             <li>
               <a
-                href="https://warren-market.vercel.app"
+                href="https://warren-plawza.vercel.app"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Market
+                PLAWZA
               </a>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-border/60">
+      <div className="border-t border-border/40 bg-background/50">
         <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 text-xs text-muted-foreground">
           <p className="max-w-4xl opacity-80 leading-relaxed">
-            <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of Commons, its creators, or Copperbelt University. Commons is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
+            <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of WAVE, its creators, or Copperbelt University. WAVE is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
           </p>
           <div className="flex flex-col md:flex-row items-center justify-between gap-2 border-t border-border/40 pt-4">
-            <p>© {new Date().getFullYear()} Weave. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} WAVE. All rights reserved.</p>
             <p>Built with care in Kitwe, Zambia. <span className="opacity-0 select-none" aria-hidden="true">Voice of the unheard.</span></p>
           </div>
         </div>

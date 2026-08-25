@@ -7,9 +7,9 @@ export default function About() {
 
   return (
     <PageShell
-      label="About Weave"
+      label="About WAVE"
       title={<>We're building a <span className="text-gradient-blue">home</span> for CBU students.</>}
-      subtitle="Weave started with a simple observation: student life is fragmented. We're changing that — one product, one community, one milestone at a time."
+      subtitle="WAVE started with a simple observation: student life is fragmented. We're changing that — one product, one community, one milestone at a time."
     >
       <div className="grid gap-6 md:grid-cols-2 mb-12">
         {[

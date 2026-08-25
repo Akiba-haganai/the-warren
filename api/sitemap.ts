@@ -8,7 +8,7 @@ const sanity = createClient({
   useCdn: true,
 });
 
-const BASE_URL = "https://the-warren-hub.vercel.app";
+const BASE_URL = "https://warren-wave.vercel.app";
 
 const STATIC_PATHS = [
   "/",

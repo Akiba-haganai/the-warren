@@ -220,8 +220,8 @@ export function MiniPlayer() {
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentEpisode.title,
-        artist: "Weave",
-        album: "Weave Podcasts",
+        artist: "WAVE",
+        album: "WAVE Podcasts",
         artwork: [
           { src: currentEpisode.thumbnail, sizes: "512x512", type: "image/jpeg" },
           { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -314,7 +314,7 @@ export function MiniPlayer() {
 
               <div className="flex flex-col items-center">
                 <span className="text-xs uppercase font-semibold tracking-wider text-primary">
-                  Weave Podcasts
+                  WAVE Podcasts
                 </span>
                 <span className="text-xs text-muted-foreground">Now Playing</span>
               </div>
