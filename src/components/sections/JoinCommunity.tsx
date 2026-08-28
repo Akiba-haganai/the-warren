@@ -74,7 +74,7 @@ export function JoinCommunity() {
             className="rounded-full border-2 border-pink-500 text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950 font-semibold"
           >
             <a
-              href="https://instagram.com/warrenpodcasts_cbu"
+              href="https://instagram.com/warrenpodcasts"
               target="_blank"
               rel="noreferrer"
             >

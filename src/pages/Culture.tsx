@@ -50,11 +50,11 @@ export default function Culture() {
             <div className="flex items-center gap-2 mt-2">
               <Camera className="h-6 w-6 text-blue-600" />
               <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-                CBU Culture
+                Campus Culture
               </h1>
             </div>
             <p className="mt-4 text-lg text-muted-foreground max-w-xl">
-              Real moments from campus — submitted and captured by CBU students.
+              Real moments from campus — submitted and captured by students.
             </p>
           </Reveal>
 
@@ -128,7 +128,7 @@ export default function Culture() {
                     >
                       <img
                         src={urlForImage(photo.image).width(600).height(600).fit("crop").url()}
-                        alt={photo.caption || "CBU culture photo"}
+                        alt={photo.caption || "Campus culture photo"}
                         className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
                         loading="lazy"
                       />
@@ -181,7 +181,7 @@ export default function Culture() {
           >
             <img
               src={urlForImage(activePhoto.image).width(1200).fit("max").url()}
-              alt={activePhoto.caption || "CBU Culture"}
+              alt={activePhoto.caption || "Campus Culture"}
               className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
             />
 

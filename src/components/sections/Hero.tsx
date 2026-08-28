@@ -27,7 +27,7 @@ export function Hero() {
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-card/70 backdrop-blur px-4 py-1.5 text-xs font-medium text-blue-600">
             <Sparkles className="h-3.5 w-3.5" />
-            Built for Copperbelt University
+            Built for university students
           </div>
         </Reveal>
 
@@ -37,14 +37,14 @@ export function Hero() {
             <span className="text-gradient-blue">Student Life</span>
             <br className="hidden sm:inline" />
             <span className="text-muted-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal">
-              at Copperbelt University
+              at your university
             </span>
           </h1>
         </Reveal>
 
         <Reveal delay={0.2}>
           <p className="mt-6 mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground">
-            Hi, I’m <span className="font-semibold text-blue-600">Warren</span> — a CBU student who built this space to make university life easier, connected, and a little more fun.
+            Hi, I’m <span className="font-semibold text-blue-600">Warren</span> — a university student who built this space to make university life easier, connected, and a little more fun.
           </p>
         </Reveal>
 

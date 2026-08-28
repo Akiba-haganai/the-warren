@@ -27,7 +27,7 @@ export default function BlogPage() {
       document.title = `${blog.title} — Warren Media`;
     }
     return () => {
-      document.title = "Warren — The Digital Home of CBU";
+      document.title = "Warren — The Digital Home for Students";
     };
   }, [blog]);
 

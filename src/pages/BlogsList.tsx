@@ -57,7 +57,7 @@ export default function BlogsList() {
                   All <span className="text-gradient-blue">Blogs</span>
                 </h1>
                 <p className="mt-3 text-lg text-muted-foreground max-w-xl">
-                  Explore stories, opinions, and campus culture written by CBU students.
+                  Explore stories, opinions, and campus culture written by university students.
                 </p>
               </div>
               <a href="/submit" className="shrink-0">

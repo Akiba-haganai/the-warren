@@ -17,7 +17,7 @@ export function FounderNote() {
               </h2>
               <p className="mt-6 text-base text-muted-foreground leading-relaxed">
                 Warren exists because the “right info” shouldn’t take months to discover. I built this space so every
-                CBU student can move faster—toward community, opportunities, and real support.
+                university student can move faster—toward community, opportunities, and real support.
               </p>
             </Reveal>
             <Reveal delay={0.15}>

@@ -142,7 +142,7 @@ export default function TopicPage() {
                         <figure className="group relative overflow-hidden rounded-2xl bg-muted/40 aspect-square shadow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
                           <img
                             src={urlForImage(photo.image).width(600).height(600).fit("crop").url()}
-                            alt={photo.caption || "CBU culture photo"}
+                            alt={photo.caption || "campus culture photo"}
                             className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
                             loading="lazy"
                           />

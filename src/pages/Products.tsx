@@ -42,7 +42,7 @@ const apps = [
     icon: ShoppingBag,
     title: "PLAWZA",
     description:
-      "Marketplace, housing, and roommate finder for Zambian students — buy, sell, rent, and connect safely.",
+      "Marketplace, housing, and roommate finder for students — buy, sell, rent, and connect safely.",
     features: [
       { text: "Buy & sell new/used items", icon: Check, soon: false },
       { text: "Find accommodation & roommates", icon: Map, soon: false },
@@ -68,7 +68,7 @@ const apps = [
     description:
       "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
     features: [
-      { text: "Exclusive CBU student content", icon: Check, soon: false },
+      { text: "Exclusive student content", icon: Check, soon: false },
       { text: "Play directly in the app", icon: Zap, soon: false },
       { text: "Bookmark & continue listening", icon: Check, soon: false },
       { text: "New episodes added automatically", icon: Zap, soon: false },
@@ -90,7 +90,7 @@ export default function Products() {
           Made for the way <span className="text-gradient-blue">students live</span>.
         </>
       }
-      subtitle="Three powerful platforms – one connected ecosystem for Copperbelt University."
+      subtitle="Three powerful platforms – one connected ecosystem for university students."
     >
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {apps.map((app, i) => (

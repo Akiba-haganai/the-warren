@@ -57,7 +57,7 @@ function MediaHero() {
             <Sparkles className="mr-1 h-3.5 w-3.5" /> Media
           </Badge>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
-            CBU, beyond the classroom.
+            University, beyond the classroom.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
             Stories &bull; Conversations &bull; Culture
@@ -425,7 +425,7 @@ function CultureSnapshot() {
           <div className="flex items-center justify-between mt-2 mb-6">
             <div className="flex items-center gap-2">
               <Camera className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold">CBU Culture</h2>
+              <h2 className="text-xl font-semibold">Campus Culture</h2>
             </div>
             <Button asChild variant="ghost" className="text-blue-600">
               <Link to="/culture">
@@ -452,7 +452,7 @@ function CultureSnapshot() {
                 <Link to="/culture" className="group relative block overflow-hidden rounded-xl bg-muted aspect-square">
                   <img
                     src={urlForImage(photo.image).width(400).height(400).fit("crop").url()}
-                    alt={photo.caption || "CBU culture"}
+                    alt={photo.caption || "campus culture"}
                     className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
@@ -489,7 +489,7 @@ function YourVoiceCTA() {
           <SectionLabel>Create</SectionLabel>
           <h2 className="text-2xl font-semibold mt-2 mb-4">Have something to say?</h2>
           <p className="text-muted-foreground mb-6">
-            Share your blog, opinion, or experience with the CBU community.
+            Share your blog, opinion, or experience with the student community.
           </p>
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
             <Link to="/submit">
@@ -514,7 +514,7 @@ function DiscoverWarren() {
           <SectionLabel>Explore</SectionLabel>
           <h2 className="text-2xl font-semibold mt-2 mb-2">Discover WAVE</h2>
           <p className="text-muted-foreground mb-8">
-            Everything CBU students need, in one place.
+            Everything university students need, in one place.
           </p>
           <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
             <Link to="/explore">

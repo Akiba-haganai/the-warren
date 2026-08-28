@@ -38,7 +38,7 @@ const products = [
   {
     icon: Briefcase,
     name: "Jobs",
-    desc: "Student gigs, internships, and part‑time opportunities – curated for CBU.",
+    desc: "Student gigs, internships, and part‑time opportunities – curated for students.",
     status: "Soon",
   },
   {
@@ -64,7 +64,7 @@ export default function Ecosystem() {
           One <span className="text-gradient-blue">ecosystem</span>. Every part of student life.
         </>
       }
-      subtitle="Each product solves a real problem. Together, they become the digital home of student life at CBU."
+      subtitle="Each product solves a real problem. Together, they become the digital home of student life."
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((p) => (

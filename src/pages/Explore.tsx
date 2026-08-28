@@ -86,7 +86,7 @@ function OurApps() {
       icon: ShoppingBag,
       title: "Market",
       description:
-        "Marketplace, housing, and roommate finder for Zambian students — buy, sell, rent, and connect safely.",
+        "Marketplace, housing, and roommate finder for students — buy, sell, rent, and connect safely.",
       features: [
         { text: "Buy & sell new/used items", icon: Check },
         { text: "Find accommodation & roommates", icon: Map },
@@ -105,7 +105,7 @@ function OurApps() {
       description:
         "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
       features: [
-        { text: "Exclusive CBU student content", icon: Check },
+        { text: "Exclusive student content", icon: Check },
         { text: "Play directly in the app", icon: Zap },
         { text: "Bookmark & continue listening", icon: Check },
         { text: "New episodes added automatically", icon: Zap },
@@ -128,7 +128,7 @@ function OurApps() {
               Three powerful apps, <span className="text-gradient-blue">one hub</span>
             </h2>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything a CBU student needs — social, study, marketplace, housing, and podcasts — all in one place.
+              Everything a university student needs — social, study, marketplace, housing, and podcasts — all in one place.
             </p>
           </div>
         </Reveal>
@@ -263,7 +263,7 @@ function JoinCommunity() {
             className="rounded-full border-2 border-pink-500 text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950 font-semibold"
           >
             <a
-              href="https://instagram.com/warrenpodcasts_cbu"
+              href="https://instagram.com/warrenpodcasts"
               target="_blank"
               rel="noreferrer"
             >

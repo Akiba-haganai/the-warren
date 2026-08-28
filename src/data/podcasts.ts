@@ -12,7 +12,7 @@ export interface Episode {
 export const episodes: Episode[] = [
   {
     id: "1",
-    title: "Campus Hustle – How to Make Money as a CBU Student",
+    title: "Campus Hustle – How to Make Money as a University Student",
     description: "We talk to three students who are running side businesses while studying.",
     youtubeId: "dQw4w9WgXcQ",
     thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
@@ -23,7 +23,7 @@ export const episodes: Episode[] = [
   {
     id: "2",
     title: "Faith & Focus – Staying Grounded in First Year",
-    description: "A conversation with the CBU Christian Union about balancing faith and academics.",
+    description: "A conversation with the Campus Christian Union about balancing faith and academics.",
     youtubeId: "9bZkp7q19f0",
     thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg",
     duration: "22:10",
