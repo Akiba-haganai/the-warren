@@ -27,13 +27,57 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     VitePWA({
-      registerType: "autoUpdate",
+      // generateSW with skipWaiting: false — Workbox generates the SW but
+      // will NOT auto-promote. Our pwa-register.ts sends a SKIP_WAITING
+      // postMessage only when the user taps the update toast.
+      strategies: "generateSW",
+      registerType: "prompt",
       workbox: {
+        skipWaiting: false,
         clientsClaim: true,
-        skipWaiting: true,
         cleanupOutdatedCaches: true,
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/version\.json$/],
+        navigateFallbackDenylist: [/^\/version\.json$/, /^\/api\//],
+        globIgnores: ["**/*.map", "**/version.json"],
+        runtimeCaching: [
+          // Google Fonts stylesheets
+          {
+            urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.googleapis.com",
+            handler: "StaleWhileRevalidate" as const,
+            options: { cacheName: "wave-google-fonts-stylesheets" },
+          },
+          // Google Fonts webfont files
+          {
+            urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.gstatic.com",
+            handler: "CacheFirst" as const,
+            options: {
+              cacheName: "wave-google-fonts-webfonts",
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // YouTube thumbnails
+          {
+            urlPattern: ({ url }: { url: URL }) =>
+              url.hostname === "img.youtube.com" || url.hostname === "i.ytimg.com",
+            handler: "CacheFirst" as const,
+            options: {
+              cacheName: "wave-yt-thumbnails",
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Supabase storage images
+          {
+            urlPattern: ({ url }: { url: URL }) => url.hostname.endsWith(".supabase.co"),
+            handler: "NetworkFirst" as const,
+            options: {
+              cacheName: "wave-supabase-images",
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 3 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
       includeAssets: ["favicon.ico", "favicon-32.png", "favicon-16.png", "icon-72.png"],
       manifest: {

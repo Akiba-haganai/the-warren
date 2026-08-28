@@ -1,58 +1,38 @@
-import { useRegisterSW } from "virtual:pwa-register/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { useVersionCheck } from "@/hooks/useVersionCheck";
 
+/**
+ * UpdatePrompt
+ *
+ * Renders nothing visually — works entirely through Sonner toasts.
+ * Shows a persistent "Update available" toast whenever a new Service Worker
+ * is waiting. The user must tap it to reload — we never auto-reload silently,
+ * which prevents the mid-session chunk-mismatch crash.
+ */
 export function UpdatePrompt() {
-  const {
-    needRefresh: [needRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegisteredSW(_swUrl, registration) {
-      // Re-check for updates whenever user returns to the app / foregrounds on mobile
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") {
-          registration?.update().catch(() => {});
-        }
-      });
-      // Fallback background check every 60 seconds
-      setInterval(() => registration?.update().catch(() => {}), 60_000);
-    },
-  });
+  const { updateReady, isStale, applyUpdate } = useVersionCheck();
+  const toastShownRef = useRef(false);
 
   useEffect(() => {
-    // Listen for service worker controller replacement (autoUpdate takeover)
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      let refreshing = false;
-      const handleControllerChange = () => {
-        if (refreshing) return;
-        refreshing = true;
-        toast("WAVE updated — refreshing...", { duration: 2000 });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1200);
-      };
+    // Only show the toast once, even if updateReady or isStale both fire
+    if ((updateReady || isStale) && !toastShownRef.current) {
+      toastShownRef.current = true;
 
-      navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
-      return () => {
-        navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    if (needRefresh) {
-      toast("WAVE updated — refreshing...", {
-        duration: 2000,
+      toast("✨ WAVE update ready", {
+        description: "A new version is available.",
+        duration: Infinity, // persist until user acts
         action: {
-          label: "Trouble updating? →",
-          onClick: () => {
-            window.location.href = "/about";
-          },
+          label: "Refresh now",
+          onClick: applyUpdate,
+        },
+        onDismiss: () => {
+          // If dismissed, try again on next visibility change
+          toastShownRef.current = false;
         },
       });
-      setTimeout(() => updateServiceWorker(true), 1200);
     }
-  }, [needRefresh, updateServiceWorker]);
+  }, [updateReady, isStale, applyUpdate]);
 
   return null;
 }

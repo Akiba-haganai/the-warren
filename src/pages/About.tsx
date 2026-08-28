@@ -3,7 +3,9 @@ import { ForceRefreshButton } from "@/components/layout/ForceRefreshButton";
 import { useVersionCheck } from "@/hooks/useVersionCheck";
 
 export default function About() {
-  const { currentVersion, latestVersion, isStale } = useVersionCheck();
+  const { isStale } = useVersionCheck();
+  const currentVersion = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev";
+
 
   return (
     <PageShell
@@ -31,9 +33,10 @@ export default function About() {
           Version: {currentVersion}
           {isStale && (
             <span className="text-amber-600">
-              {" "}· Newer version available ({latestVersion}) — try Force Refresh above
+              {" "}· Newer version available — try Force Refresh above
             </span>
           )}
+
         </p>
       </div>
     </PageShell>

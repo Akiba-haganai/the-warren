@@ -30,6 +30,35 @@ window.addEventListener("unhandledrejection", (event) => {
   renderFatalError(event.reason);
 });
 
+// ── Boot-Crash Nuclear Reset ──────────────────────────────────────────────
+// If Vite fails to load a JS chunk (e.g. a stale SW served a file whose hash
+// no longer exists on the CDN), increment a strike counter in sessionStorage.
+// After 3 consecutive crashes we perform a "nuclear reset":
+//   1. Unregister all service workers
+//   2. Delete every cache bucket
+//   3. Force a hard reload to pull a fresh build from Vercel
+// This prevents a corrupted PWA install from permanently bricking itself.
+const CRASH_STRIKE_KEY = "wave:boot_crash_strikes";
+window.addEventListener("vite:preloadError", async () => {
+  const strikes = parseInt(sessionStorage.getItem(CRASH_STRIKE_KEY) ?? "0", 10) + 1;
+  if (strikes >= 3) {
+    sessionStorage.removeItem(CRASH_STRIKE_KEY);
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    } catch {
+      // Best-effort — carry on with the reload regardless
+    }
+    window.location.reload();
+  } else {
+    sessionStorage.setItem(CRASH_STRIKE_KEY, String(strikes));
+    window.location.reload();
+  }
+});
+
+
 try {
   initThemeFromStorage();
 
