@@ -209,7 +209,7 @@ export function Header() {
             </span>
 
             <div className="flex flex-col">
-              <span className="font-display text-lg font-semibold tracking-tight">WAVE</span>
+              <span className="font-display text-lg font-semibold tracking-tight">WEAVE</span>
               <span className="sr-only">Stories. Culture. What's happening.</span>
             </div>
           </Link>

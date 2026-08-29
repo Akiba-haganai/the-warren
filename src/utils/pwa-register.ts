@@ -87,7 +87,7 @@ export function registerPWA(options: PWARegisterOptions = {}): void {
       })
       .catch((error) => {
         options.onRegisterError?.(error);
-        console.error("[WAVE SW] Registration failed:", error);
+        console.error("[WEAVE SW] Registration failed:", error);
       });
   });
 }

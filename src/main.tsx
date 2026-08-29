@@ -38,7 +38,7 @@ window.addEventListener("unhandledrejection", (event) => {
 //   2. Delete every cache bucket
 //   3. Force a hard reload to pull a fresh build from Vercel
 // This prevents a corrupted PWA install from permanently bricking itself.
-const CRASH_STRIKE_KEY = "wave:boot_crash_strikes";
+const CRASH_STRIKE_KEY = "weave:boot_crash_strikes";
 window.addEventListener("vite:preloadError", async () => {
   const strikes = parseInt(sessionStorage.getItem(CRASH_STRIKE_KEY) ?? "0", 10) + 1;
   if (strikes >= 3) {

@@ -35,7 +35,7 @@ export function useVersionCheck(): PWAUpdateState {
         setUpdateReady(true);
       },
       onRegisterError(err) {
-        console.warn("[WAVE] SW registration error:", err);
+        console.warn("[WEAVE] SW registration error:", err);
       },
     });
   }, []);

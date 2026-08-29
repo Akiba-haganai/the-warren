@@ -45,11 +45,11 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   }, [url]);
 
   const whatsappStatusMsg = encodeURIComponent(
-    `🎙️ Listen to "${episode.title}" on WAVE\n\n${episode.description ? episode.description.slice(0, 100) + "..." : ""}\n\n${strippedUrl}`
+    `🎙️ Listen to "${episode.title}" on WEAVE\n\n${episode.description ? episode.description.slice(0, 100) + "..." : ""}\n\n${strippedUrl}`
   );
 
   const whatsappChatMsg = encodeURIComponent(
-    `🎙️ "${episode.title}"\n\nListen on WAVE: ${url}`
+    `🎙️ "${episode.title}"\n\nListen on WEAVE: ${url}`
   );
 
   const handleNativeShare = async () => {

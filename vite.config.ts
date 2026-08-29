@@ -44,14 +44,14 @@ export default defineConfig({
           {
             urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.googleapis.com",
             handler: "StaleWhileRevalidate" as const,
-            options: { cacheName: "wave-google-fonts-stylesheets" },
+            options: { cacheName: "weave-google-fonts-stylesheets" },
           },
           // Google Fonts webfont files
           {
             urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.gstatic.com",
             handler: "CacheFirst" as const,
             options: {
-              cacheName: "wave-google-fonts-webfonts",
+              cacheName: "weave-google-fonts-webfonts",
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
               cacheableResponse: { statuses: [0, 200] },
             },
@@ -62,7 +62,7 @@ export default defineConfig({
               url.hostname === "img.youtube.com" || url.hostname === "i.ytimg.com",
             handler: "CacheFirst" as const,
             options: {
-              cacheName: "wave-yt-thumbnails",
+              cacheName: "weave-yt-thumbnails",
               expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 7 },
               cacheableResponse: { statuses: [0, 200] },
             },
@@ -72,7 +72,7 @@ export default defineConfig({
             urlPattern: ({ url }: { url: URL }) => url.hostname.endsWith(".supabase.co"),
             handler: "NetworkFirst" as const,
             options: {
-              cacheName: "wave-supabase-images",
+              cacheName: "weave-supabase-images",
               expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 3 },
               cacheableResponse: { statuses: [0, 200] },
             },
@@ -81,8 +81,8 @@ export default defineConfig({
       },
       includeAssets: ["favicon.ico", "favicon-32.png", "favicon-16.png", "icon-72.png"],
       manifest: {
-        name: "WAVE",
-        short_name: "WAVE",
+        name: "WEAVE",
+        short_name: "WEAVE",
         description: "Stories. Culture. What's happening.",
         theme_color: "#FF6D00",
         background_color: "#FF6D00",

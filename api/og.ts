@@ -90,7 +90,7 @@ function buildHtml({ title, description, image, url }: { title: string; descript
   <meta property="og:image" content="${image}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:type" content="article" />
-  <meta property="og:site_name" content="WAVE" />
+  <meta property="og:site_name" content="WEAVE" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />

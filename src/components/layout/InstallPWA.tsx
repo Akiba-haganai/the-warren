@@ -29,7 +29,7 @@ export function InstallPWA() {
 
   const handleInstall = async () => {
     if (isIOS) {
-      alert("To install WAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+      alert("To install WEAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
       return;
     }
     await promptInstall();
@@ -51,7 +51,7 @@ export function InstallPWA() {
   return (
     <div
       role="dialog"
-      aria-label="Install WAVE app"
+      aria-label="Install WEAVE app"
       style={{
         transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
         opacity: visible ? 1 : 0,
@@ -72,7 +72,7 @@ export function InstallPWA() {
           <div className="shrink-0 h-12 w-12 rounded-xl bg-[#FF6D00] flex items-center justify-center shadow-lg shadow-orange-600/30 overflow-hidden">
             <img
               src="/icon-192.png"
-              alt="WAVE"
+              alt="WEAVE"
               className="h-10 w-10 object-contain"
             />
           </div>
@@ -80,7 +80,7 @@ export function InstallPWA() {
           {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground leading-tight">
-              Install WAVE
+              Install WEAVE
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {isIOS ? "Tap Share → Add to Home Screen" : "Fast, offline-ready & always up to date"}
