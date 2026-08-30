@@ -1,4 +1,4 @@
-import "./lib/sentry"; // 👈 must be first — initializes Sentry before anything else
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -61,6 +61,16 @@ window.addEventListener("vite:preloadError", async () => {
 
 try {
   initThemeFromStorage();
+  
+  // Defer Sentry init until the browser is idle — it doesn't need to block rendering.
+  // Error boundary (below) still catches sync errors; Sentry captures them on its
+  // first flush after idle init.
+  const initSentry = () => import("./lib/sentry");
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(initSentry);
+  } else {
+    setTimeout(initSentry, 200);
+  }
 
   const rootEl = document.getElementById("root");
   if (!rootEl) {

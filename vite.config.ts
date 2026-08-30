@@ -27,6 +27,7 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     VitePWA({
+      injectRegister: null,
       // generateSW with skipWaiting: false — Workbox generates the SW but
       // will NOT auto-promote. Our pwa-register.ts sends a SKIP_WAITING
       // postMessage only when the user taps the update toast.
@@ -38,23 +39,20 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/version\.json$/, /^\/api\//],
+        globPatterns: [
+          "index.html",
+          "assets/index-*.{js,css}",
+          "manifest.webmanifest",
+          "fonts/*.woff2",
+        ],
         globIgnores: ["**/*.map", "**/version.json"],
         runtimeCaching: [
-          // Google Fonts stylesheets
+          // Lazy route chunks — cache on first use, revalidate in background
           {
-            urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.googleapis.com",
+            urlPattern: ({ request }: { request: Request }) =>
+              request.destination === "script" || request.destination === "style",
             handler: "StaleWhileRevalidate" as const,
-            options: { cacheName: "weave-google-fonts-stylesheets" },
-          },
-          // Google Fonts webfont files
-          {
-            urlPattern: ({ url }: { url: URL }) => url.origin === "https://fonts.gstatic.com",
-            handler: "CacheFirst" as const,
-            options: {
-              cacheName: "weave-google-fonts-webfonts",
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
+            options: { cacheName: "weave-route-chunks" },
           },
           // YouTube thumbnails
           {
@@ -115,6 +113,7 @@ export default defineConfig({
     }),
   ],
   build: {
+    target: "es2020",
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -124,8 +123,11 @@ export default defineConfig({
           if (id.includes("node_modules/@supabase")) {
             return "vendor-supabase";
           }
-          if (id.includes("node_modules/framer-motion") || id.includes("node_modules/lucide-react")) {
-            return "vendor-ui";
+          if (id.includes("node_modules/framer-motion")) {
+            return "vendor-framer";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "vendor-icons";
           }
           if (
             id.includes("node_modules/react/") ||
