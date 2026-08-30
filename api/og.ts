@@ -8,7 +8,7 @@ const dataset = process.env.VITE_SANITY_DATASET || "production";
 const sanity = createClient({
   projectId,
   dataset,
-  apiVersion: "2026-01-01",
+  apiVersion: "2024-01-01",
   useCdn: true,
 });
 
