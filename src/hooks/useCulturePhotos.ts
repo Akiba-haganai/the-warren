@@ -16,12 +16,17 @@ export function useCulturePhotos() {
 
   useEffect(() => {
     let active = true;
-    sanityClient.fetch<CulturePhoto[]>(QUERY).then((data) => {
-      if (active) {
-        setPhotos(data);
-        setLoading(false);
-      }
-    });
+    sanityClient.fetch<CulturePhoto[]>(QUERY)
+      .then((data) => {
+        if (active) {
+          setPhotos(data);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch culture photos:", error);
+        if (active) setLoading(false);
+      });
     return () => {
       active = false;
     };
