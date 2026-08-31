@@ -47,7 +47,7 @@ export function FounderNote() {
                   </Avatar>
                   <div>
                     <p className="font-display text-2xl font-semibold">Warren</p>
-                    <p className="text-sm text-muted-foreground">CBU Student • Builder</p>
+                    <p className="text-sm text-muted-foreground">University Student • Builder</p>
                   </div>
                 </div>
                 <p className="mt-6 text-sm text-muted-foreground leading-relaxed">

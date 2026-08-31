@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!story) {
       // Graceful fallback: return a generic preview card instead of a bare 404
       const html = buildHtml({
-        title: "Warren — The Digital Home of CBU",
+        title: "WEAVE — Stories. Culture. What's happening.",
         description: "Read the latest stories and blogs from your campus.",
         image: `${baseUrl}/warren-preview.png`,
         url: `${baseUrl}/blogs`,
@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error("OG tags handler error:", err);
     // Graceful fallback on Sanity error — return generic preview, not a broken page
     const html = buildHtml({
-      title: "Warren — The Digital Home of CBU",
+      title: "WEAVE — Stories. Culture. What's happening.",
       description: "Read the latest stories and blogs from your campus.",
       image: `${baseUrl}/warren-preview.png`,
       url: baseUrl,
