@@ -127,8 +127,10 @@ export default function Culture() {
                       className="group relative cursor-pointer overflow-hidden rounded-2xl bg-muted/40 aspect-square shadow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1"
                     >
                       <img
-                        src={urlForImage(photo.image).width(600).height(600).fit("crop").url()}
+                        src={urlForImage(photo.image).width(600).height(600).fit("crop").auto("format").quality(75).url()}
                         alt={photo.caption || "Campus culture photo"}
+                        width={600}
+                        height={600}
                         className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
                         loading="lazy"
                       />
@@ -180,7 +182,7 @@ export default function Culture() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={urlForImage(activePhoto.image).width(1200).fit("max").url()}
+              src={urlForImage(activePhoto.image).width(1200).fit("max").auto("format").quality(75).url()}
               alt={activePhoto.caption || "Campus Culture"}
               className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
             />

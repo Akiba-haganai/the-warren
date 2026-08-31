@@ -23,7 +23,7 @@ export function UpNextToast({ blog, visible, onDismiss }: UpNextToastProps) {
   if (!mounted) return null;
 
   const imageUrl = blog.mainImage
-    ? urlForImage(blog.mainImage as any).width(120).height(120).fit("crop").url()
+    ? urlForImage(blog.mainImage as any).width(120).height(120).fit("crop").auto("format").quality(75).url()
     : null;
 
   return (
@@ -57,6 +57,8 @@ export function UpNextToast({ blog, visible, onDismiss }: UpNextToastProps) {
           <img 
             src={imageUrl} 
             alt={blog.title} 
+            width={120}
+            height={120}
             className="w-16 h-16 rounded-xl object-cover shrink-0 bg-muted"
           />
         )}

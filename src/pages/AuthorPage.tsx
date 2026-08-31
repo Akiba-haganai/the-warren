@@ -69,8 +69,10 @@ export default function AuthorPage() {
               <div className="flex justify-center mb-6">
                 {authorProfile?.image ? (
                   <img
-                    src={urlForImage(authorProfile.image).width(160).height(160).fit("crop").url()}
+                    src={urlForImage(authorProfile.image).width(160).height(160).fit("crop").auto("format").quality(75).url()}
                     alt={displayName}
+                    width={160}
+                    height={160}
                     className="h-24 w-24 rounded-full object-cover border-2 border-border shadow-md"
                   />
                 ) : (

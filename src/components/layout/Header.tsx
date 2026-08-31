@@ -360,8 +360,10 @@ export function Header() {
                     >
                       {story.mainImage && (
                         <img 
-                          src={urlForImage(story.mainImage).width(60).height(60).fit("crop").url()}
+                          src={urlForImage(story.mainImage).width(60).height(60).fit("crop").auto("format").quality(75).url()}
                           alt=""
+                          width={60}
+                          height={60}
                           className="w-8 h-8 rounded object-cover shrink-0"
                         />
                       )}

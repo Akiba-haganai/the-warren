@@ -73,6 +73,7 @@ export default function BlogPage() {
             .height(600)
             .fit("crop")
             .auto("format")
+            .quality(75)
             .url();
         } catch {
           return null;
@@ -151,8 +152,10 @@ export default function BlogPage() {
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-display text-lg font-semibold uppercase overflow-hidden">
                     {blog.author?.image ? (
                       <img
-                        src={urlForImage(blog.author.image).width(88).height(88).fit("crop").url()}
+                        src={urlForImage(blog.author.image).width(88).height(88).fit("crop").auto("format").quality(75).url()}
                         alt={blog.author.name}
+                        width={88}
+                        height={88}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -209,6 +212,8 @@ export default function BlogPage() {
                   <img
                     src={coverSrc}
                     alt={blog.title}
+                    width={1200}
+                    height={600}
                     className="w-full rounded-2xl shadow-lg mx-auto aspect-[2/1] object-cover"
                     loading="eager"
                   />

@@ -28,6 +28,8 @@ export function BlogCard({ blog }: { blog: BlogCardProps }) {
             .width(600)
             .height(338)
             .fit("crop")
+            .auto("format")
+            .quality(75)
             .url();
         } catch {
           return null;
@@ -43,6 +45,8 @@ export function BlogCard({ blog }: { blog: BlogCardProps }) {
             <img
               src={coverSrc}
               alt={blog.title}
+              width={600}
+              height={338}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />

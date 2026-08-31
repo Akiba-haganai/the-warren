@@ -3,7 +3,12 @@ import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Toaster } from "./components/layout/Toaster";
 import { ScrollToTopOnNavigate } from "./lib/ScrollToTopOnNavigate";
 import { LegacyAnchorRedirect } from "./components/routing/LegacyAnchorRedirect";
-import { MiniPlayer } from "./components/player/MiniPlayer";
+import { usePlayer } from "./contexts/PlayerContext";
+
+// Lazy load MiniPlayer so framer-motion is only bundled when a podcast is played
+const LazyMiniPlayer = lazy(() => 
+  import("./components/player/MiniPlayer").then(module => ({ default: module.MiniPlayer }))
+);
 import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
@@ -47,6 +52,8 @@ function PageFallback() {
 }
 
 function App() {
+  const { currentEpisode } = usePlayer();
+
   return (
     <>
       <ScrollToTopOnNavigate />
@@ -83,7 +90,11 @@ function App() {
           <Route path="/culture" element={<Culture />} />
         </Routes>
       </Suspense>
-      <MiniPlayer />
+      {currentEpisode && (
+        <Suspense fallback={null}>
+          <LazyMiniPlayer />
+        </Suspense>
+      )}
       <WhatsAppFAB />
       <InstallPWA />
       <UpdatePrompt />

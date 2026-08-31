@@ -389,6 +389,8 @@ function PodcastTeaser() {
                   <img
                     src={latest.thumbnail}
                     alt={latest.title}
+                    width={640}
+                    height={360}
                     className="aspect-video object-cover"
                     loading="lazy"
                   />
@@ -451,8 +453,10 @@ function CultureSnapshot() {
               <Reveal key={photo._id} delay={i * 0.05}>
                 <Link to="/culture" className="group relative block overflow-hidden rounded-xl bg-muted aspect-square">
                   <img
-                    src={urlForImage(photo.image).width(400).height(400).fit("crop").url()}
+                    src={urlForImage(photo.image).width(400).height(400).fit("crop").auto("format").quality(75).url()}
                     alt={photo.caption || "campus culture"}
+                    width={400}
+                    height={400}
                     className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
