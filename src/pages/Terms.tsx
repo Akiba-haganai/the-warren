@@ -2,7 +2,7 @@ import { PageShell } from "../components/layout/PageShell";
 
 export default function Terms() {
   return (
-    <PageShell label="Legal" title={<>Terms of <span className="text-gradient-blue">Service</span></>} subtitle="Last updated: January 2026. By using Warren Hub you agree to these terms.">
+    <PageShell label="Legal" title={<>Terms of <span className="text-gradient-blue">Service</span></>} subtitle="Last updated: January 2026. By using WEAVE you agree to these terms.">
       <div className="space-y-6 text-muted-foreground leading-relaxed">
         <S t="Using Commons">You must be a student, alumnus, or approved partner of a university or an affiliated institution to use certain features.</S>
         <S t="Your content">You retain ownership of what you post. You grant Commons a limited license to display it within the platform. By posting, you agree that you are solely legally responsible for the content you submit.</S>

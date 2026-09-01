@@ -13,7 +13,7 @@ const nodes: EcoNode[] = [
   { title: "Market", desc: "Accommodation, services, jobs and student businesses.", badge: "Live" },
   { title: "Campus", desc: "Social networking, study materials, tutoring and campus map.", badge: "Live" },
   { title: "Homes", desc: "Verified student accommodation pathways.", badge: "Soon" },
-  { title: "Jobs", desc: "Opportunities, internships and gigs.", badge: "Soon" },
+  { title: "Jobs", desc: "Opportunities, internships and gigs.", badge: "Live" },
   { title: "Alumni", desc: "A network that lasts after graduation.", badge: "Soon" },
 ];
 
@@ -24,7 +24,7 @@ export function EcosystemMap() {
         <Reveal>
           <SectionLabel>The Ecosystem</SectionLabel>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-            Every Warren product connects to <span className="text-gradient-blue">student life</span>.
+            Every WEAVE product connects to <span className="text-gradient-blue">student life</span>.
           </h2>
         </Reveal>
 

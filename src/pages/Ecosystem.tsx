@@ -37,9 +37,10 @@ const products = [
   },
   {
     icon: Briefcase,
-    name: "Jobs",
-    desc: "Student gigs, internships, and part‑time opportunities – curated for students.",
-    status: "Soon",
+    name: "STITCH",
+    desc: "Find opportunities. Build experience. Get hired. The career hub for students.",
+    url: "https://warren-stitch.vercel.app",
+    status: "Live",
   },
   {
     icon: UserPlus,

@@ -9,9 +9,14 @@ import { resolve } from "path";
 const buildVersion = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) 
   ?? new Date().toISOString();
 
+const vercelEnv = process.env.VERCEL_ENV || "local";
+const vercelBranch = process.env.VERCEL_GIT_COMMIT_REF || "main";
+
 export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(buildVersion),
+    __APP_ENV__: JSON.stringify(vercelEnv),
+    __APP_BRANCH__: JSON.stringify(vercelBranch),
   },
   plugins: [
     {

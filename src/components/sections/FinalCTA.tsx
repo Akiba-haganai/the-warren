@@ -13,7 +13,7 @@ export function FinalCTA() {
           </div>
 
           <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-            Build your Warren journey—starting today.
+            Build your WEAVE journey—starting today.
           </h2>
           <p className="mt-6 text-white/80 max-w-2xl mx-auto">
             Join the community, explore the ecosystem, and get real opportunities without hunting for scraps.

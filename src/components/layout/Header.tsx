@@ -52,6 +52,10 @@ const EXTERNAL_APPS = [
     href: "https://warren-plawza.vercel.app",
     label: "PLAWZA",
   },
+  {
+    href: "https://warren-stitch.vercel.app",
+    label: "STITCH",
+  },
 ];
 
 const GET_STARTED_URL = "https://warren-wave.vercel.app";
@@ -203,7 +207,7 @@ export function Header() {
             <span className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-glow">
               <img
                 src={warrenLogo}
-                alt="Warren Hub logo"
+                alt="WEAVE logo"
                 className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
               />
             </span>

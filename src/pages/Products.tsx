@@ -11,6 +11,7 @@ import {
   Check,
   Clock,
   ExternalLink,
+  Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,6 +62,20 @@ const apps = [
     url: "https://warren-plawza.vercel.app",
     color: "bg-teal-600",
     gradient: "from-teal-600 to-teal-800",
+  },
+  {
+    icon: Briefcase,
+    title: "STITCH",
+    description: "Find opportunities. Build experience. Get hired. The career hub for students.",
+    features: [
+      { text: "Find internships & part-time jobs", icon: Check, soon: false },
+      { text: "Showcase skills & build experience", icon: Check, soon: false },
+      { text: "Connect with verified employers", icon: Shield, soon: false },
+      { text: "Opportunity matching & alerts", icon: Zap, soon: false },
+    ],
+    url: "https://warren-stitch.vercel.app",
+    color: "bg-indigo-600",
+    gradient: "from-indigo-600 to-indigo-800",
   },
   {
     icon: Podcast,

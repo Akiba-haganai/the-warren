@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import type { Episode } from "@/data/podcasts";
 
-const STORAGE_KEY = "warren-player-state";
+const STORAGE_KEY = "weave-player-state";
 const SPEED_KEY = "weave-podcast-speed";
 
 interface StoredState {

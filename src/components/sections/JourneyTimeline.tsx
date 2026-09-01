@@ -6,7 +6,7 @@ const steps = [
   { title: "Discover", desc: "Find what you need: community, accommodation, jobs, and student updates." },
   { title: "Connect", desc: "Join clubs and campus conversations in one place." },
   { title: "Apply", desc: "Explore opportunities and verified pathways for student growth." },
-  { title: "Thrive", desc: "Build your Warren journey—together with other students." },
+  { title: "Thrive", desc: "Build your WEAVE journey—together with other students." },
 ];
 
 export function JourneyTimeline() {

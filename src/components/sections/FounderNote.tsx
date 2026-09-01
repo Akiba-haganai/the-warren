@@ -16,7 +16,7 @@ export function FounderNote() {
                 Built by a student. For students.
               </h2>
               <p className="mt-6 text-base text-muted-foreground leading-relaxed">
-                Warren exists because the “right info” shouldn’t take months to discover. I built this space so every
+                WEAVE exists because the “right info” shouldn’t take months to discover. I built this space so every
                 university student can move faster—toward community, opportunities, and real support.
               </p>
             </Reveal>
@@ -40,7 +40,7 @@ export function FounderNote() {
                   <Avatar className="h-16 w-16 rounded-2xl">
                     <AvatarImage
                       src={founderPhoto}
-                      alt="Warren, founder of Warren Hub"
+                      alt="Warren, founder of WEAVE"
                       className="object-cover"
                     />
                     <AvatarFallback className="text-xl bg-blue-600 text-white">W</AvatarFallback>

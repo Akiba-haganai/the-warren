@@ -32,10 +32,14 @@ import {
   Users,
   Camera,
   PlaySquare,
+  Briefcase,
 } from "lucide-react";
+
+import { StitchShowcase } from "../components/sections/StitchShowcase";
 
 const WARREN_CAMPUS_URL = "https://warren-wave.vercel.app";
 const WARREN_CONNECT_URL = "https://warren-plawza.vercel.app";
+const WARREN_STITCH_URL = "https://warren-stitch.vercel.app";
 
 export default function Explore() {
   return (
@@ -50,6 +54,7 @@ export default function Explore() {
         <EcosystemMap />
         <CampusShowcase />
         <MarketShowcase />
+        <StitchShowcase />
         <PodcastSection />
         <FounderNote />
         <CoreValues />
@@ -98,6 +103,22 @@ function OurApps() {
       internal: false,
       color: "bg-teal-600",
       gradient: "from-teal-600 to-teal-800",
+    },
+    {
+      icon: Briefcase,
+      title: "Careers",
+      description:
+        "Find opportunities. Build experience. Get hired. The career hub for students.",
+      features: [
+        { text: "Find internships & part-time jobs", icon: Check },
+        { text: "Showcase skills & build experience", icon: Check },
+        { text: "Connect with verified employers", icon: Shield },
+        { text: "Opportunity matching & alerts", icon: Zap },
+      ],
+      url: WARREN_STITCH_URL,
+      internal: false,
+      color: "bg-indigo-600",
+      gradient: "from-indigo-600 to-indigo-800",
     },
     {
       icon: Podcast,

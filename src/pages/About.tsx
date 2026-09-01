@@ -2,11 +2,15 @@ import { PageShell } from "../components/layout/PageShell";
 import { ForceRefreshButton } from "@/components/layout/ForceRefreshButton";
 import { useVersionCheck } from "@/hooks/useVersionCheck";
 
+declare const __APP_VERSION__: string | undefined;
+declare const __APP_ENV__: string | undefined;
+declare const __APP_BRANCH__: string | undefined;
+
 export default function About() {
   const { isStale } = useVersionCheck();
   const currentVersion = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev";
-
-
+  const envName = typeof __APP_ENV__ !== "undefined" ? __APP_ENV__ : "local";
+  const branchName = typeof __APP_BRANCH__ !== "undefined" ? __APP_BRANCH__ : "unknown";
   return (
     <PageShell
       label="About WEAVE"
@@ -30,7 +34,7 @@ export default function About() {
       <div className="pt-8 border-t">
         <ForceRefreshButton />
         <p className="text-xs text-neutral-400 mt-4 text-center">
-          Version: {currentVersion}
+          Version: {currentVersion} ({envName} / {branchName})
           {isStale && (
             <span className="text-amber-600">
               {" "}· Newer version available — try Force Refresh above

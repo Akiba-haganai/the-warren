@@ -6,7 +6,7 @@ const items = [
   { title: "Verified student profiles", desc: "Reduce spam and make connections safer.", badge: "In progress" },
   { title: "Events that actually show up", desc: "Smart reminders and campus-wide visibility.", badge: "Planned" },
   { title: "Marketplace improvements", desc: "Better categories, filters, and reviews.", badge: "Planned" },
-  { title: "Warren AI assistant", desc: "Answers for student life—fast and helpful.", badge: "Soon" },
+  { title: "WEAVE AI assistant", desc: "Answers for student life—fast and helpful.", badge: "Soon" },
 ];
 
 export function Roadmap() {

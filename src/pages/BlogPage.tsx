@@ -24,7 +24,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     if (blog?.title) {
-      document.title = `${blog.title} — Warren Media`;
+      document.title = `${blog.title} — WEAVE Media`;
     }
     return () => {
       document.title = "Warren — The Digital Home for Students";
@@ -169,7 +169,7 @@ export default function BlogPage() {
                         to={`/authors/${encodeURIComponent(blog.author?.slug || "warren-team")}`}
                         className="text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
                       >
-                        {blog.author?.name || "Warren Team"}
+                        {blog.author?.name || "WEAVE Team"}
                       </Link>
                     </div>
                     {blog.publishedAt && (
