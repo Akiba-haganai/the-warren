@@ -84,7 +84,7 @@ export default function Ecosystem() {
                 {p.status}
               </Badge>
             </div>
-            <h3 className="mt-4 font-display text-xl font-semibold">{p.name}</h3>
+            <h2 className="mt-4 font-display text-xl font-semibold">{p.name}</h2>
             <p className="mt-2 text-sm text-muted-foreground flex-1">{p.desc}</p>
             {p.url && (
               <Button

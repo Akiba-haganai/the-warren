@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Card, CardContent } from "../../components/ui/card";
 import { Reveal, SectionLabel } from "../../components/layout/Reveal";
 
@@ -23,7 +22,7 @@ export function JourneyTimeline() {
         <div className="mt-16 grid gap-6 md:grid-cols-2">
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08}>
-              <motion.div whileHover={{ y: -6 }}>
+              <div className="transition-transform duration-200 hover:-translate-y-1.5">
                 <Card className="border-border bg-card rounded-3xl overflow-hidden">
                   <CardContent className="p-7">
                     <div className="flex items-center gap-4">
@@ -37,7 +36,7 @@ export function JourneyTimeline() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             </Reveal>
           ))}
         </div>

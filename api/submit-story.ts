@@ -4,8 +4,8 @@ import { randomUUID } from "crypto";
 
 // Server-only client — uses a write token, never exposed to the browser.
 const client = createClient({
-  projectId: process.env.SANITY_PROJECT_ID,
-  dataset: process.env.SANITY_DATASET || "production",
+  projectId: process.env.SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID || "7yislksr",
+  dataset: process.env.SANITY_DATASET || process.env.VITE_SANITY_DATASET || "production",
   apiVersion: "2024-01-01",
   token: process.env.SANITY_WRITE_TOKEN,
   useCdn: false,
@@ -18,8 +18,8 @@ const client = createClient({
 async function verifyTurnstile(token: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
-    // If no secret key is configured, skip verification (dev mode).
-    console.warn("TURNSTILE_SECRET_KEY not set — skipping bot verification.");
+    // If no secret key is configured, skip verification only in dev mode.
+    console.warn("TURNSTILE_SECRET_KEY not set — skipping bot verification in development.");
     return true;
   }
 
@@ -51,7 +51,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { title, body, author, excerpt, turnstileToken } = req.body ?? {};
 
   // ── Turnstile verification ──────────────────────────────────────────
-  if (process.env.TURNSTILE_SECRET_KEY) {
+  const isProduction =
+    process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+
+  if (isProduction || process.env.TURNSTILE_SECRET_KEY) {
+    if (!process.env.TURNSTILE_SECRET_KEY) {
+      console.error("TURNSTILE_SECRET_KEY not configured in production.");
+      return res.status(500).json({ error: "Server security verification not configured." });
+    }
     if (typeof turnstileToken !== "string" || !turnstileToken) {
       return res.status(400).json({ error: "Security verification required." });
     }

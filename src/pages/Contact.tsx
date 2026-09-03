@@ -21,8 +21,8 @@ import { Button } from "@/components/ui/button";
 // ---------------------------------------------------------------------------
 // 1. Get your free access key at https://web3forms.com/#start
 //    It sends form submissions to the email you verify during signup.
-// ---------------------------------------------------------------------------
-const WEB3FORMS_ACCESS_KEY = "96890191-321e-44ba-9a32-4c46b2e1a422"; // ← replace with your real key
+const WEB3FORMS_ACCESS_KEY =
+  import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "96890191-321e-44ba-9a32-4c46b2e1a422";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -62,7 +62,7 @@ export default function Contact() {
       } else {
         throw new Error(data.message || "Unknown error");
       }
-    } catch (err) {
+    } catch {
       toast.error(
         "Something went wrong. Please try again or email us directly."
       );
@@ -90,7 +90,7 @@ export default function Contact() {
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
             <Mail className="h-5 w-5" />
           </span>
-          <h3 className="mt-4 font-semibold">Email</h3>
+          <h2 className="mt-4 font-semibold text-lg">Email</h2>
           <p className="text-muted-foreground text-sm break-words">
             chilengawarren307@gmail.com
           </p>
@@ -106,7 +106,7 @@ export default function Contact() {
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-500 text-white">
             <MessageCircle className="h-5 w-5" />
           </span>
-          <h3 className="mt-4 font-semibold">WhatsApp</h3>
+          <h2 className="mt-4 font-semibold text-lg">WhatsApp</h2>
           <p className="text-muted-foreground text-sm">Chat with Us</p>
         </a>
 
@@ -115,16 +115,16 @@ export default function Contact() {
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
             <MapPin className="h-5 w-5" />
           </span>
-          <h3 className="mt-4 font-semibold">Based in</h3>
+          <h2 className="mt-4 font-semibold text-lg">Based in</h2>
           <p className="text-muted-foreground text-sm">Kitwe, Zambia</p>
         </div>
       </div>
 
       {/* ---------- Form ---------- */}
       <div className="mt-12 rounded-3xl border border-border bg-card p-8">
-        <h3 className="font-display text-2xl font-semibold">
+        <h2 className="font-display text-2xl font-semibold">
           Send a direct message
-        </h3>
+        </h2>
 
         <Form {...form}>
           <form

@@ -118,7 +118,7 @@ export default function Products() {
                   >
                     <app.icon className="h-6 w-6" />
                   </span>
-                  <h3 className="font-display text-2xl font-semibold">{app.title}</h3>
+                  <h2 className="font-display text-2xl font-semibold">{app.title}</h2>
                 </div>
 
                 <div className="mb-4 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 aspect-video flex items-center justify-center text-sm text-muted-foreground border border-border/50">

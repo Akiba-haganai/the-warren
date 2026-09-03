@@ -1,2 +1,0 @@
-Logo update in progress
-

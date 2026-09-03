@@ -1,0 +1,22 @@
+# WEAVE
+
+> Stories. Culture. What's happening on campus. The modern digital hub for university students.
+
+WEAVE is a digital platform and media network built for university students. It unites student journalism, cultural photography, community discussions, campus services, and podcasts into an integrated experience.
+
+## Key Sections
+
+- [Home](https://warren-weave.vercel.app/): Media hero, trending campus topics, student voice polls, latest blogs, and campus culture snapshots.
+- [Blogs](https://warren-weave.vercel.app/blogs): Student-written stories, campus opinions, lifestyle guides, and academic insights.
+- [Submit a Blog](https://warren-weave.vercel.app/submit): Public submission portal for students to submit stories and thought pieces for editorial review.
+- [Podcasts](https://warren-weave.vercel.app/podcasts): Student-led audio conversations covering faith, careers, relationships, and university life.
+- [Culture](https://warren-weave.vercel.app/culture): Visual gallery capturing moments, events, and everyday life across campus.
+- [Explore](https://warren-weave.vercel.app/explore): The wider ecosystem of platforms including WAVE (campus networking), PLAWZA (student marketplace and housing), and STITCH (careers and opportunities).
+- [About](https://warren-weave.vercel.app/about): Mission, background, and vision behind WEAVE.
+- [Contact](https://warren-weave.vercel.app/contact): Direct communication, feedback, and community channels.
+
+## Legal & Policies
+
+- [Privacy Policy](https://warren-weave.vercel.app/privacy): Data collection, usage, and privacy commitments.
+- [Terms of Service](https://warren-weave.vercel.app/terms): Platform guidelines and user agreements.
+- [Cookie Policy](https://warren-weave.vercel.app/cookies): Information about cookies and local storage.

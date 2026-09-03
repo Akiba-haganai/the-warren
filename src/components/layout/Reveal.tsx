@@ -8,14 +8,17 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export function Reveal({
   children,
   delay = 0,
+  eager = false,
 }: {
   children: ReactNode;
   delay?: number;
+  eager?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(eager);
 
   useEffect(() => {
+    if (eager) return;
     const el = ref.current;
     if (!el) return;
 
@@ -29,20 +32,22 @@ export function Reveal({
           observer.unobserve(el);
         }
       },
-      { threshold: 0.1, rootMargin: "-80px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [eager]);
 
   return (
     <div
       ref={ref}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: eager
+          ? "none"
+          : `opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
       }}
     >
       {children}

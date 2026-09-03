@@ -1,5 +1,3 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
 import { ArrowRight, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Reveal } from "../../components/layout/Reveal";
@@ -7,23 +5,13 @@ import { FloatingOrbs } from "./HeroFloatingOrbs";
 import { NetworkGrid } from "./HeroNetworkGrid";
 import { FloatingCards } from "./HeroFloatingCards";
 
-
-
 export function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-
   return (
-    <section ref={ref} className="relative min-h-screen bg-hero overflow-hidden pt-32 pb-24">
+    <section className="relative min-h-screen bg-hero overflow-hidden pt-32 pb-24">
       <FloatingOrbs />
       <NetworkGrid />
 
-      <motion.div style={{ y, opacity }} className="relative mx-auto max-w-7xl px-6 text-center">
+      <div className="relative mx-auto max-w-7xl px-6 text-center">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-card/70 backdrop-blur px-4 py-1.5 text-xs font-medium text-blue-600">
             <Sparkles className="h-3.5 w-3.5" />
@@ -71,7 +59,7 @@ export function Hero() {
         </Reveal>
 
         <FloatingCards />
-      </motion.div>
+      </div>
     </section>
   );
 }

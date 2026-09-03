@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Megaphone, Home, Briefcase, BookOpen, Users } from "lucide-react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Reveal, SectionLabel } from "../../components/layout/Reveal";
@@ -25,7 +24,7 @@ export function WhyWarren() {
         <div className="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
             <Reveal key={it.title} delay={i * 0.08}>
-              <motion.div whileHover={{ y: -6 }}>
+              <div className="h-full transition-transform duration-200 hover:-translate-y-1.5">
                 <Card className="group relative overflow-hidden border-border bg-card h-full transition hover:shadow-glow">
                   <CardContent className="p-6">
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-blue-100 via-transparent to-blue-200" />
@@ -38,7 +37,7 @@ export function WhyWarren() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             </Reveal>
           ))}
         </div>

@@ -81,8 +81,42 @@ export default function BlogPage() {
       })()
     : null;
 
+  const jsonLd = useMemo(() => {
+    if (!blog) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: blog.title,
+      description: blog.excerpt || blog.title,
+      image: coverSrc ? [coverSrc] : undefined,
+      datePublished: blog.publishedAt || undefined,
+      author: {
+        "@type": "Person",
+        name: blog.author?.name || "WEAVE Team",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "WEAVE",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://warren-weave.vercel.app/icon-192.png",
+        },
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": `https://warren-weave.vercel.app/blogs/${blog.slug}`,
+      },
+    };
+  }, [blog, coverSrc]);
+
   return (
     <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <Header />
       <ReadingProgress />
       <main className="pt-32 pb-24 bg-background min-h-screen">
@@ -110,7 +144,7 @@ export default function BlogPage() {
               </Link>
             </div>
           ) : (
-            <Reveal>
+            <Reveal eager>
               <div className="max-w-[750px] mx-auto">
                 {/* Top Nav (Back / Submit) */}
                 <div className="flex items-center justify-between mb-8">
@@ -216,6 +250,7 @@ export default function BlogPage() {
                     height={600}
                     className="w-full rounded-2xl shadow-lg mx-auto aspect-[2/1] object-cover"
                     loading="eager"
+                    fetchPriority="high"
                   />
                 </div>
               )}

@@ -25,7 +25,7 @@ export default function About() {
           { h: "Our home", p: "Rooted in Kitwe, built for students, designed to travel to every university one day." },
         ].map((b) => (
           <div key={b.h} className="rounded-2xl border border-border bg-card p-6">
-            <h3 className="font-display text-xl font-semibold">{b.h}</h3>
+            <h2 className="font-display text-xl font-semibold">{b.h}</h2>
             <p className="mt-2 text-muted-foreground">{b.p}</p>
           </div>
         ))}
