@@ -57,6 +57,7 @@ function MediaHero() {
             <Sparkles className="mr-1 h-3.5 w-3.5" /> Media
           </Badge>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
+            <span className="sr-only">Warren Weave — Campus Audio, Culture &amp; Stories: </span>
             University, beyond the classroom.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
