@@ -35,7 +35,7 @@ export function Footer() {
 
         {/* Company */}
         <div>
-          <h4 className="text-sm font-semibold text-foreground">Company</h4>
+          <h3 className="text-sm font-semibold text-foreground">Company</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/about" className="hover:text-foreground transition">About</Link></li>
             <li><Link to="/contact" className="hover:text-foreground transition">Contact</Link></li>
@@ -44,7 +44,7 @@ export function Footer() {
 
         {/* Legal */}
         <div>
-          <h4 className="text-sm font-semibold text-foreground">Legal</h4>
+          <h3 className="text-sm font-semibold text-foreground">Legal</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/privacy" className="hover:text-foreground transition">Privacy</Link></li>
             <li><Link to="/terms" className="hover:text-foreground transition">Terms</Link></li>
@@ -54,7 +54,7 @@ export function Footer() {
 
         {/* Connect */}
         <div>
-          <h4 className="text-sm font-semibold text-foreground">Connect</h4>
+          <h3 className="text-sm font-semibold text-foreground">Connect</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li>
               <a
@@ -174,7 +174,7 @@ export function Footer() {
 
       <div className="border-t border-border/40 bg-background/50">
         <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 text-xs text-muted-foreground">
-          <p className="max-w-4xl opacity-80 leading-relaxed">
+          <p className="max-w-4xl leading-relaxed">
             <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of WEAVE, its creators, or any affiliated institution. WEAVE is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
           </p>
           <div className="flex flex-col md:flex-row items-center justify-between gap-2 border-t border-border/40 pt-4">

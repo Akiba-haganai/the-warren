@@ -53,7 +53,7 @@ function MediaHero() {
     <section className="relative pt-32 pb-20 bg-hero overflow-hidden">
       <div className="mx-auto max-w-4xl px-6 text-center">
         <Reveal eager>
-          <Badge variant="outline" className="px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-400 bg-blue-500/10 backdrop-blur-sm">
+          <Badge variant="outline" className="px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10 backdrop-blur-sm">
             <Sparkles className="mr-1 h-3.5 w-3.5" /> Media
           </Badge>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">

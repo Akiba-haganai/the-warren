@@ -1,9 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Loader2 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState, lazy, Suspense } from "react";
+import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
-import { urlForImage } from "@/lib/sanityImage";
-import { useSanitySearch } from "@/hooks/useSanitySearch";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,14 +15,6 @@ import {
 } from "@/components/ui/sheet";
 
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 
 import {
   getThemePreference,
@@ -33,6 +23,12 @@ import {
   getSystemTheme,
   type ThemePreference,
 } from "@/lib/theme";
+
+// Lazy-load SearchDialog so @sanity/client, cmdk, and RxJS are only
+// fetched when the user actually opens search.
+const LazySearchDialog = lazy(() =>
+  import("@/components/layout/SearchDialog").then((m) => ({ default: m.SearchDialog }))
+);
 
 const nav = [
   { to: "/", label: "Media" },
@@ -92,7 +88,6 @@ function InstallAppButton() {
 
 export function Header() {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const [themePref, setThemePref] = useState<ThemePreference>(() =>
     typeof window === "undefined" ? "system" : getThemePreference(),
@@ -107,7 +102,6 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { loading: searchLoading, stories, topics, debouncedQuery } = useSanitySearch(searchQuery);
 
   useEffect(() => {
     const cleanup = initThemeFromStorage();
@@ -330,91 +324,17 @@ export function Header() {
         </div>
       </div>
 
-      {/* Command search dialog */}
-      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput 
-          placeholder="Search stories, topics, or pages..." 
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-        />
-        <CommandList>
-          {searchLoading && (
-            <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Searching...
-            </div>
-          )}
-          
-          {!searchLoading && debouncedQuery.length > 0 && stories.length === 0 && topics.length === 0 && (
-            <CommandEmpty>No results found.</CommandEmpty>
-          )}
-
-          {!searchLoading && debouncedQuery.length > 0 && (
-            <>
-              {stories.length > 0 && (
-                <CommandGroup heading="Stories">
-                  {stories.map((story) => (
-                    <CommandItem
-                      key={story._id}
-                      onSelect={() => {
-                        navigate(`/blog/${story.slug}`);
-                        setSearchOpen(false);
-                      }}
-                      className="flex items-center gap-3 py-2 cursor-pointer"
-                    >
-                      {story.mainImage && (
-                        <img 
-                          src={urlForImage(story.mainImage).width(60).height(60).fit("crop").auto("format").quality(75).url()}
-                          alt={story.title}
-                          width={60}
-                          height={60}
-                          className="w-8 h-8 rounded object-cover shrink-0"
-                        />
-                      )}
-                      <span className="line-clamp-1">{story.title}</span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {topics.length > 0 && (
-                <CommandGroup heading="Topics">
-                  {topics.map((topic) => (
-                    <CommandItem
-                      key={topic._id}
-                      onSelect={() => {
-                        navigate(`/explore?topic=${topic.slug}`);
-                        setSearchOpen(false);
-                      }}
-                      className="cursor-pointer"
-                    >
-                      <Search className="mr-2 h-4 w-4 text-muted-foreground" />
-                      {topic.title}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-            </>
-          )}
-
-          {!searchLoading && debouncedQuery.length === 0 && (
-            <CommandGroup heading="Pages">
-              {nav.map((n) => (
-                <CommandItem
-                  key={n.to}
-                  onSelect={() => {
-                    navigate(n.to);
-                    setSearchOpen(false);
-                  }}
-                  className="cursor-pointer"
-                >
-                  {n.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </CommandDialog>
+      {/* Search dialog — lazy-loaded so @sanity/client only downloads when opened */}
+      {searchOpen && (
+        <Suspense fallback={null}>
+          <LazySearchDialog
+            open={searchOpen}
+            onOpenChange={setSearchOpen}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+          />
+        </Suspense>
+      )}
     </header>
   );
-}
+}

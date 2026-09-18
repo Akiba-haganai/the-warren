@@ -125,6 +125,9 @@ export default defineConfig({
           if (id.includes("node_modules/@sentry")) {
             return "vendor-sentry";
           }
+          if (id.includes("node_modules/@sanity") || id.includes("node_modules/rxjs")) {
+            return "vendor-sanity";
+          }
           if (id.includes("node_modules/@supabase")) {
             return "vendor-supabase";
           }
