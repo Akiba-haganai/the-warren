@@ -52,6 +52,16 @@ export default defineConfig({
         ],
         globIgnores: ["**/*.map", "**/version.json"],
         runtimeCaching: [
+          // Navigation requests: NetworkFirst so we always fetch the freshest index.html from Vercel
+          // with a 3s network timeout, falling back to cache only when offline or on a dead connection!
+          {
+            urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
+            handler: "NetworkFirst" as const,
+            options: {
+              cacheName: "weave-html-cache",
+              networkTimeoutSeconds: 3,
+            },
+          },
           // Lazy route chunks — cache on first use, revalidate in background
           {
             urlPattern: ({ request }: { request: Request }) =>

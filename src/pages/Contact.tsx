@@ -45,6 +45,8 @@ export default function Contact() {
     if (sending) return;
 
     setSending(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -53,6 +55,7 @@ export default function Contact() {
           access_key: WEB3FORMS_ACCESS_KEY,
           ...values,
         }),
+        signal: controller.signal,
       });
 
       const data = await res.json();
@@ -67,6 +70,7 @@ export default function Contact() {
         "Something went wrong. Please try again or email us directly."
       );
     } finally {
+      clearTimeout(timeoutId);
       setSending(false);
     }
   }

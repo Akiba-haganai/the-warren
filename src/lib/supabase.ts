@@ -8,4 +8,21 @@ if (!url || !anonKey) {
   console.warn("Missing Supabase environment variables — podcast data will not load.");
 }
 
-export const supabase = url && anonKey ? createClient(url, anonKey) : null;
+// Wrap Supabase fetch with an 8-second timeout so stalled queries fail fast instead of hanging
+const timeoutFetch = (input: RequestInfo | URL, init?: RequestInit) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const signal = init?.signal
+    ? ("any" in AbortSignal ? (AbortSignal as any).any([init.signal, controller.signal]) : init.signal)
+    : controller.signal;
+
+  return fetch(input, { ...init, signal }).finally(() => clearTimeout(timeoutId));
+};
+
+export const supabase = url && anonKey
+  ? createClient(url, anonKey, {
+      global: {
+        fetch: timeoutFetch,
+      },
+    })
+  : null;

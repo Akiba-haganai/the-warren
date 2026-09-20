@@ -42,9 +42,12 @@ export function useVersionCheck(): PWAUpdateState {
 
   // ── Proactive version polling via /version.json ───────────────────────────
   const checkVersion = useCallback(async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
       const res = await fetch(`/version.json?t=${Date.now()}`, {
         cache: "no-store",
+        signal: controller.signal,
       });
       if (!res.ok) return;
       const data: { version: string } = await res.json();
@@ -56,6 +59,8 @@ export function useVersionCheck(): PWAUpdateState {
       }
     } catch {
       // Silently ignore — network may be offline, not worth surfacing
+    } finally {
+      clearTimeout(timeoutId);
     }
   }, []);
 
