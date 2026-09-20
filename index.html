@@ -29,7 +29,7 @@
 
     
     <!-- Network Preconnect & DNS Prefetch for Mobile Performance -->
-    <link rel="preconnect" href="https://7yislksr.apicdn.sanity.io" crossorigin />
+    <link rel="preconnect" href="https://7yislksr.apicdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="preconnect" href="https://otdeonkfwghuevzhxrsy.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://img.youtube.com" />
@@ -37,6 +37,7 @@
     <link rel="dns-prefetch" href="https://o4511632845635584.ingest.de.sentry.io" />
     <!-- Fonts are self-hosted in /public/fonts via @font-face in index.css -->
     <link rel="preload" href="/fonts/lato-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/lato-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/montserrat-600.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- PWA manifest -->
@@ -81,10 +82,20 @@
   </head>
   <body class="font-sans antialiased bg-background text-foreground">
     <div id="root">
-      <header class="sr-only">
-        <h1>Warren Weave — Campus Audio, Student Journalism &amp; University Culture</h1>
-        <p>Discover student podcasts, university stories, lifestyle guides, and cultural insights across campus.</p>
-      </header>
+      <section class="relative pt-32 pb-20 bg-hero overflow-hidden">
+        <div class="mx-auto max-w-4xl px-6 text-center">
+          <div class="inline-flex items-center rounded-md border px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10 backdrop-blur-sm font-semibold mb-4">
+            ✨ Media
+          </div>
+          <h1 class="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
+            <span class="sr-only">Warren Weave — Campus Audio, Culture &amp; Stories: </span>
+            University, beyond the classroom.
+          </h1>
+          <p class="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
+            Stories &bull; Conversations &bull; Culture
+          </p>
+        </div>
+      </section>
     </div>
 
     <script type="module" src="/src/main.tsx"></script>

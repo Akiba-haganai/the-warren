@@ -388,14 +388,24 @@ function PodcastTeaser() {
             <Link to={`/podcasts`}>
               <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition">
                 <div className="grid md:grid-cols-2">
-                  <img
-                    src={latest.thumbnail}
-                    alt={latest.title}
-                    width={640}
-                    height={360}
-                    className="aspect-video object-cover"
-                    loading="lazy"
-                  />
+                  {(() => {
+                    const ytId = latest.youtubeId || latest.thumbnail?.match(/vi\/([a-zA-Z0-9_-]+)\//)?.[1];
+                    const srcSet = ytId
+                      ? `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg 320w, https://i.ytimg.com/vi/${ytId}/hqdefault.jpg 480w, https://i.ytimg.com/vi/${ytId}/sddefault.jpg 640w`
+                      : undefined;
+                    return (
+                      <img
+                        src={ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : latest.thumbnail}
+                        srcSet={srcSet}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        alt={latest.title}
+                        width={640}
+                        height={360}
+                        className="aspect-video object-cover"
+                        loading="lazy"
+                      />
+                    );
+                  })()}
                   <CardContent className="p-6 flex flex-col justify-center">
                     <Badge className="mb-2 w-fit">{latest.category}</Badge>
                     <h3 className="font-display text-2xl font-semibold">{latest.title}</h3>
@@ -451,32 +461,37 @@ function CultureSnapshot() {
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {photos.slice(0, 8).map((photo, i) => (
-              <Reveal key={photo._id} delay={i * 0.05}>
-                <Link to="/culture" className="group relative block overflow-hidden rounded-xl bg-muted aspect-square">
-                  <img
-                    src={urlForImage(photo.image).width(400).height(400).fit("crop").auto("format").quality(75).url()}
-                    alt={photo.caption || "campus culture"}
-                    width={400}
-                    height={400}
-                    className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-3 flex flex-col justify-between">
-                    {photo.category ? (
-                      <Badge className="bg-blue-600/90 text-[10px] text-white w-fit border-none">
-                        {photo.category}
-                      </Badge>
-                    ) : <div />}
-                    {photo.caption && (
-                      <p className="text-xs text-white font-medium line-clamp-1">
-                        {photo.caption}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
+            {photos.slice(0, 8).map((photo, i) => {
+              const base = urlForImage(photo.image).fit("crop").auto("format").quality(70);
+              return (
+                <Reveal key={photo._id} delay={i * 0.05}>
+                  <Link to="/culture" className="group relative block overflow-hidden rounded-xl bg-muted aspect-square">
+                    <img
+                      src={base.width(400).height(400).url()}
+                      srcSet={`${base.width(200).height(200).url()} 200w, ${base.width(400).height(400).url()} 400w`}
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      alt={photo.caption || "campus culture"}
+                      width={400}
+                      height={400}
+                      className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-3 flex flex-col justify-between">
+                      {photo.category ? (
+                        <Badge className="bg-blue-600/90 text-[10px] text-white w-fit border-none">
+                          {photo.category}
+                        </Badge>
+                      ) : <div />}
+                      {photo.caption && (
+                        <p className="text-xs text-white font-medium line-clamp-1">
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </Reveal>
+              );
+            })}
           </div>
         )}
       </div>

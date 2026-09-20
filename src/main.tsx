@@ -62,14 +62,20 @@ window.addEventListener("vite:preloadError", async () => {
 try {
   initThemeFromStorage();
   
-  // Defer Sentry init until the browser is idle — it doesn't need to block rendering.
-  // Error boundary (below) still catches sync errors; Sentry captures them on its
-  // first flush after idle init.
-  const initSentry = () => import("./lib/sentry");
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(initSentry);
+  // Defer Sentry init until well after page load and idle — prevents Sentry's
+  // 270 KB bundle and tracing instrumentation from delaying FCP/LCP/TBT.
+  // SentryErrorBoundary still catches and reports errors via lazy import if one occurs.
+  const initSentry = () => {
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => import("./lib/sentry"), { timeout: 8000 });
+    } else {
+      setTimeout(() => import("./lib/sentry"), 3000);
+    }
+  };
+  if (document.readyState === "complete") {
+    setTimeout(initSentry, 3000);
   } else {
-    setTimeout(initSentry, 200);
+    window.addEventListener("load", () => setTimeout(initSentry, 3000), { once: true });
   }
 
   const rootEl = document.getElementById("root");

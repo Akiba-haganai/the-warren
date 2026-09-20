@@ -15,9 +15,9 @@ import { InstallPWA } from "./components/layout/InstallPWA";
 import { UpdatePrompt } from "./components/layout/UpdatePrompt";
 import { RebrandBanner } from "./components/layout/RebrandBanner";
 
-// Lazy-load every page so only the current route's code is downloaded on first visit.
-// This splits the 1.35 MB monolithic bundle into small per-route chunks.
-const Home        = lazy(() => import("./pages/Home"));
+// Home is imported eagerly so the landing page renders without a chunk download waterfall.
+// Other routes remain lazy-loaded to keep their code off the initial bundle.
+import Home from "./pages/Home";
 const Explore     = lazy(() => import("./pages/Explore"));
 const SubmitBlog  = lazy(() => import("./pages/SubmitBlog"));
 const BlogPreview = lazy(() => import("./pages/BlogPreview"));

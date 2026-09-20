@@ -46,7 +46,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/version\.json$/, /^\/api\//],
         globPatterns: [
           "index.html",
-          "assets/index-*.{js,css}",
+          "assets/*.{js,css}",
           "manifest.webmanifest",
           "fonts/*.woff2",
         ],

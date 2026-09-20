@@ -27,11 +27,11 @@ export function BlogCard({ blog, priority = false }: { blog: BlogCardProps, prio
           const base = urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
             .fit("crop")
             .auto("format")
-            .quality(75);
+            .quality(70);
           return {
-            src: base.width(600).height(338).url(),
-            srcSet: `${base.width(400).height(225).url()} 400w, ${base.width(600).height(338).url()} 600w, ${base.width(800).height(450).url()} 800w`,
-            sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            src: base.width(540).height(304).url(),
+            srcSet: `${base.width(360).height(203).url()} 360w, ${base.width(540).height(304).url()} 540w, ${base.width(720).height(405).url()} 720w`,
+            sizes: "(max-width: 640px) calc(100vw - 48px), (max-width: 1024px) 50vw, 33vw"
           };
         } catch {
           return null;
