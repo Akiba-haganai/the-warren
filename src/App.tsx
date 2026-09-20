@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "./components/layout/Toaster";
 import { ScrollToTopOnNavigate } from "./lib/ScrollToTopOnNavigate";
 import { LegacyAnchorRedirect } from "./components/routing/LegacyAnchorRedirect";
@@ -99,6 +100,7 @@ function App() {
       <InstallPWA />
       <UpdatePrompt />
       <Toaster />
+      <Analytics />
     </>
   );
 }
