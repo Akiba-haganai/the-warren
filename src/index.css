@@ -105,9 +105,9 @@
   --primary: var(--color-blue-600);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.96 0.01 255);
-  --secondary-foreground: oklch(0.214 0.02 260);
+  --secondary-foreground: oklch(0.15 0.02 260);
   --muted: oklch(0.96 0.01 255);
-  --muted-foreground: oklch(0.43 0.03 260);
+  --muted-foreground: oklch(0.35 0.03 260);
   --accent: oklch(0.93 0.05 250);
   --accent-foreground: oklch(0.25 0.15 255);
   --destructive: oklch(0.58 0.24 27);
@@ -127,9 +127,9 @@
   --primary: var(--color-blue-400);
   --primary-foreground: oklch(0.15 0.13 270);
   --secondary: oklch(0.24 0.045 265);
-  --secondary-foreground: oklch(0.97 0.015 75);
+  --secondary-foreground: oklch(0.98 0.015 75);
   --muted: oklch(0.22 0.035 265);
-  --muted-foreground: oklch(0.72 0.03 75);
+  --muted-foreground: oklch(0.85 0.03 75);
   --accent: oklch(0.3 0.09 250);
   --accent-foreground: oklch(0.97 0.015 75);
   --destructive: oklch(0.65 0.24 27);
@@ -218,4 +218,19 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+}
+
+@keyframes network-node-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }

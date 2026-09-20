@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Users, Home, Briefcase, Podcast } from "lucide-react";
 
 export function FloatingCards() {
@@ -12,23 +11,26 @@ export function FloatingCards() {
   return (
     <div className="hidden md:block">
       {cards.map((c, i) => (
-        <motion.div
+        <div
           key={c.label}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1, y: [0, -12, 0] }}
-          transition={{
-            opacity: { delay: 0.6 + i * 0.15 },
-            y: { duration: 5 + i, repeat: Infinity, ease: "easeInOut" },
+          className={`absolute ${c.pos}`}
+          style={{
+            animation: `fade-in-scale 0.5s ease-out ${0.6 + i * 0.15}s both`,
           }}
-          className={`absolute ${c.pos} glass rounded-2xl px-4 py-3 flex items-center gap-2 shadow-elegant`}
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-            <c.icon className="h-4 w-4" />
-          </span>
-          <span className="text-sm font-medium">{c.label}</span>
-        </motion.div>
+          <div
+            className="glass rounded-2xl px-4 py-3 flex items-center gap-2 shadow-elegant"
+            style={{
+              animation: `float-y ${5 + i}s ease-in-out infinite`,
+            }}
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+              <c.icon className="h-4 w-4" />
+            </span>
+            <span className="text-sm font-medium">{c.label}</span>
+          </div>
+        </div>
       ))}
     </div>
   );
 }
-

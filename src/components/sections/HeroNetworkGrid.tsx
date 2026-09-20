@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 export function NetworkGrid() {
   const nodes = Array.from({ length: 24 }, (_, i) => ({
     x: (i * 137) % 100,
@@ -34,17 +32,14 @@ export function NetworkGrid() {
       )}
 
       {nodes.map((n, i) => (
-        <motion.circle
+        <circle
           key={i}
           cx={n.x}
           cy={n.y}
           r="0.4"
           fill="oklch(0.55 0.22 255)"
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{
-            duration: 3 + (i % 4),
-            repeat: Infinity,
-            delay: i * 0.1,
+          style={{
+            animation: `network-node-pulse ${3 + (i % 4)}s infinite ${i * 0.1}s`
           }}
         />
       ))}

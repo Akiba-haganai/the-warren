@@ -20,17 +20,19 @@ export interface BlogCardProps {
   likeCount?: number;
 }
 
-export function BlogCard({ blog }: { blog: BlogCardProps }) {
-  const coverSrc = blog.mainImage
+export function BlogCard({ blog, priority = false }: { blog: BlogCardProps, priority?: boolean }) {
+  const cover = blog.mainImage
     ? (() => {
         try {
-          return urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
-            .width(600)
-            .height(338)
+          const base = urlForImage(blog.mainImage as Parameters<typeof urlForImage>[0])
             .fit("crop")
             .auto("format")
-            .quality(75)
-            .url();
+            .quality(75);
+          return {
+            src: base.width(600).height(338).url(),
+            srcSet: `${base.width(400).height(225).url()} 400w, ${base.width(600).height(338).url()} 600w, ${base.width(800).height(450).url()} 800w`,
+            sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          };
         } catch {
           return null;
         }
@@ -41,14 +43,17 @@ export function BlogCard({ blog }: { blog: BlogCardProps }) {
     <Link to={`/blogs/${blog.slug}`} className="block h-full group">
       <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition-all duration-300 h-full flex flex-col group-hover:-translate-y-1">
         <div className="aspect-video w-full relative overflow-hidden bg-muted">
-          {coverSrc ? (
+          {cover ? (
             <img
-              src={coverSrc}
+              src={cover.src}
+              srcSet={cover.srcSet}
+              sizes={cover.sizes}
               alt={blog.title}
               width={600}
               height={338}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : "auto"}
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display transition-transform duration-500 group-hover:scale-105">

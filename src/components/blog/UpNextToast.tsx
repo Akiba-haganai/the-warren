@@ -63,9 +63,9 @@ export function UpNextToast({ blog, visible, onDismiss }: UpNextToastProps) {
           />
         )}
         <div className="flex-1 min-w-0">
-          <h4 className="font-display font-medium text-sm leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <div className="font-display font-medium text-sm leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
             {blog.title}
-          </h4>
+          </div>
         </div>
         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-blue-600 transition-colors shrink-0" />
       </Link>

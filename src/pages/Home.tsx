@@ -163,6 +163,7 @@ function LatestBlogs() {
             {blogs.slice(0, 4).map((blog, i) => (
               <Reveal key={blog._id} delay={0.05 + i * 0.05}>
                 <BlogCard
+                  priority={i === 0}
                   blog={{
                     id: blog._id,
                     slug: blog.slug,
