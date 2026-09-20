@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Episode } from "@/data/podcasts";
 
-export function usePodcasts(category?: string) {
+export function usePodcasts(category?: string, { enabled = true }: { enabled?: boolean } = {}) {
   const [data, setData] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
 
     async function fetchEpisodes() {
@@ -61,7 +62,7 @@ export function usePodcasts(category?: string) {
     return () => {
       cancelled = true;
     };
-  }, [category]);
+  }, [category, enabled]);
 
   return { podcasts: data, loading, error };
 }

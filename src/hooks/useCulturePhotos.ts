@@ -10,11 +10,12 @@ export interface CulturePhoto {
 
 const QUERY = `*[_type == "culturePhoto"] | order(order asc) { _id, image, caption, category }`;
 
-export function useCulturePhotos() {
+export function useCulturePhotos({ enabled = true }: { enabled?: boolean } = {}) {
   const [photos, setPhotos] = useState<CulturePhoto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!enabled) return;
     let active = true;
     sanityClient.fetch<CulturePhoto[]>(QUERY)
       .then((data) => {
@@ -30,7 +31,8 @@ export function useCulturePhotos() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [enabled]);
 
   return { photos, loading };
 }
+

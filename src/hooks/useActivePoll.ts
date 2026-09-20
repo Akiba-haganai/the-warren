@@ -10,12 +10,13 @@ export interface Poll {
   created_at: string;
 }
 
-export function useActivePoll() {
+export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {
   const [poll, setPoll] = useState<Poll | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     let active = true;
 
     if (!supabase) {
@@ -44,7 +45,8 @@ export function useActivePoll() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [enabled]);
 
   return { poll, loading, error };
 }
+

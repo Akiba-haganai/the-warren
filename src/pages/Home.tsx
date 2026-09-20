@@ -20,11 +20,13 @@ import { useLatestBlogs } from "@/hooks/useLatestBlogs";
 import { useActivePoll } from "@/hooks/useActivePoll";
 import { useCulturePhotos } from "@/hooks/useCulturePhotos";
 import { usePodcasts } from "@/hooks/usePodcasts";
+import { useInView } from "@/hooks/useInView";
 import { supabase } from "@/lib/supabase";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { useBlogLikeCounts } from "@/hooks/useBlogLikeCounts";
 import { getBrowserId } from "@/lib/browserId";
 import { urlForImage } from "@/lib/sanityImage";
+
 
 export default function Home() {
   return (
@@ -189,7 +191,8 @@ function LatestBlogs() {
 /*  Student Voice (Poll)                                              */
 /* ------------------------------------------------------------------ */
 function StudentVoicePoll() {
-  const { poll, loading } = useActivePoll();
+  const [sectionRef, inView] = useInView<HTMLElement>();
+  const { poll, loading } = useActivePoll({ enabled: inView });
   const [voterId, setVoterId] = useState("");
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [results, setResults] = useState<any[] | null>(null);
@@ -275,7 +278,7 @@ function StudentVoicePoll() {
   const totalVotes = results ? results.reduce((sum: number, r: any) => sum + r.vote_count, 0) : 0;
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section ref={sectionRef} className="py-16 bg-muted/30">
       <div className="mx-auto max-w-3xl px-6">
         <Reveal>
           <SectionLabel>Speak</SectionLabel>
@@ -354,11 +357,12 @@ function StudentVoicePoll() {
 /*  Podcast Teaser                                                    */
 /* ------------------------------------------------------------------ */
 function PodcastTeaser() {
-  const { podcasts, loading } = usePodcasts();
+  const [sectionRef, inView] = useInView<HTMLElement>();
+  const { podcasts, loading } = usePodcasts(undefined, { enabled: inView });
   const latest = podcasts?.[0];
 
   return (
-    <section className="py-16">
+    <section ref={sectionRef} className="py-16">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionLabel>Listen</SectionLabel>
@@ -429,10 +433,11 @@ function PodcastTeaser() {
 /*  Culture Snapshot                                                  */
 /* ------------------------------------------------------------------ */
 function CultureSnapshot() {
-  const { photos, loading } = useCulturePhotos();
+  const [sectionRef, inView] = useInView<HTMLElement>();
+  const { photos, loading } = useCulturePhotos({ enabled: inView });
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section ref={sectionRef} className="py-16 bg-muted/30">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionLabel>See</SectionLabel>
