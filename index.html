@@ -36,16 +36,24 @@
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
     <link rel="dns-prefetch" href="https://o4511632845635584.ingest.de.sentry.io" />
     <!-- Fonts are self-hosted in /public/fonts via @font-face in index.css -->
+    <!-- Preload the two above-the-fold fonts first (critical path) -->
     <link rel="preload" href="/fonts/lato-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/lato-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/montserrat-600.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload secondary weights so they're fetched in parallel, not sequentially -->
+    <link rel="preload" href="/fonts/lato-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/lato-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/montserrat-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/montserrat-700.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Cloudflare Web Analytics -->
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "a7ade991db3248c9b6efbe28657e14eb"}'></script>
+    <!-- Cloudflare Web Analytics — disabled: Sentry covers error tracking and
+         the beacon was generating 5+ cdn-cgi/rum requests on every page load.
+         Re-enable if you need aggregate traffic analytics distinct from Sentry. -->
+    <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "a7ade991db3248c9b6efbe28657e14eb"}'></script> -->
     <link rel="canonical" href="https://warren-weave.vercel.app" />
+
     <meta name="robots" content="index, follow" />
     <script type="application/ld+json">
     {

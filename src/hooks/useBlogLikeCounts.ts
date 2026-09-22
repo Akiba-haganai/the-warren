@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { cachedSupabaseQuery } from "@/lib/supabaseCache";
 
 interface LikeCountRow {
   blog_slug: string;
@@ -9,6 +10,7 @@ interface LikeCountRow {
 /**
  * Batch-fetches like counts for an array of blog slugs in a single query.
  * Returns a Map<slug, count> that can be passed into BlogCard props.
+ * Results are cached for 5 minutes to avoid redundant requests on re-render.
  */
 export function useBlogLikeCounts(slugs: string[]) {
   const [counts, setCounts] = useState<Map<string, number>>(new Map());
@@ -26,20 +28,26 @@ export function useBlogLikeCounts(slugs: string[]) {
     let active = true;
     setLoading(true);
 
-    supabase
-      .from("blog_like_counts")
-      .select("blog_slug, like_count")
-      .in("blog_slug", slugs)
-      .then(({ data, error }) => {
+    cachedSupabaseQuery(`blog_like_counts:${slugKey}`, async () => {
+      const { data, error } = await supabase!
+        .from("blog_like_counts")
+        .select("blog_slug, like_count")
+        .in("blog_slug", slugs);
+
+      if (error) throw error;
+      return (data ?? []) as LikeCountRow[];
+    })
+      .then((rows) => {
         if (!active) return;
-        if (!error && data) {
-          const map = new Map<string, number>();
-          for (const row of data as LikeCountRow[]) {
-            map.set(row.blog_slug, row.like_count);
-          }
-          setCounts(map);
+        const map = new Map<string, number>();
+        for (const row of rows) {
+          map.set(row.blog_slug, row.like_count);
         }
+        setCounts(map);
         setLoading(false);
+      })
+      .catch(() => {
+        if (active) setLoading(false);
       });
 
     return () => {

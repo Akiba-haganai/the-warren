@@ -40,7 +40,10 @@ export default defineConfig({
       registerType: "prompt",
       workbox: {
         skipWaiting: false,
-        clientsClaim: true,
+        // clientsClaim: false — prevents the new SW from immediately seizing
+        // control on update, which was the root cause of the controllerchange
+        // → reload cascade. The SW takes over on the next navigation instead.
+        clientsClaim: false,
         cleanupOutdatedCaches: true,
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/version\.json$/, /^\/api\//],
@@ -50,7 +53,7 @@ export default defineConfig({
           "manifest.webmanifest",
           "fonts/*.woff2",
         ],
-        globIgnores: ["**/*.map", "**/version.json"],
+        globIgnores: ["**/*.map", "**/version.json", "**/vendor-sentry*"],
         runtimeCaching: [
           // Navigation requests: NetworkFirst so we always fetch the freshest index.html from Vercel
           // with a 3s network timeout, falling back to cache only when offline or on a dead connection!
@@ -132,30 +135,26 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Keep Sentry separate — it's large (~270 KB) and only loaded lazily on error
           if (id.includes("node_modules/@sentry")) {
             return "vendor-sentry";
           }
+          // Keep Sanity + rxjs separate — they're large and only used on content pages
           if (id.includes("node_modules/@sanity") || id.includes("node_modules/rxjs")) {
             return "vendor-sanity";
           }
-          if (id.includes("node_modules/@supabase")) {
-            return "vendor-supabase";
-          }
+          // Keep Framer Motion separate — animation-heavy, not needed on every route
           if (id.includes("node_modules/framer-motion")) {
-            return "vendor-framer";
+            return "vendor-motion";
           }
-          if (id.includes("node_modules/lucide-react")) {
-            return "vendor-icons";
-          }
-          if (
-            id.includes("node_modules/react/") ||
-            id.includes("node_modules/react-dom/") ||
-            id.includes("node_modules/react-router-dom/")
-          ) {
-            return "vendor-react";
+          // Everything else (React, ReactDOM, React Router, Supabase, Lucide, etc.)
+          // goes in a single vendor chunk. Fewer HTTP round-trips outweigh the
+          // slightly coarser caching granularity for this PWA's usage pattern.
+          if (id.includes("node_modules")) {
+            return "vendor";
           }
         },
       },
     },
   },
-});
+});

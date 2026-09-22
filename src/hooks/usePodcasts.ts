@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { cachedSupabaseQuery } from "@/lib/supabaseCache";
 import type { Episode } from "@/data/podcasts";
 
 export function usePodcasts(category?: string, { enabled = true }: { enabled?: boolean } = {}) {
@@ -24,38 +25,44 @@ export function usePodcasts(category?: string, { enabled = true }: { enabled?: b
         return;
       }
 
-      let query = supabase
-        .from("episodes")
-        .select("*")
-        .order("published_date", { ascending: false });
+      const cacheKey = `episodes:${category ?? "all"}`;
 
-      if (category && category !== "All") {
-        query = query.eq("category", category);
-      }
+      try {
+        const rows = await cachedSupabaseQuery(cacheKey, async () => {
+          let query = supabase!
+            .from("episodes")
+            .select("*")
+            .order("published_date", { ascending: false });
 
-      const { data: rows, error: err } = await query;
+          if (category && category !== "All") {
+            query = query.eq("category", category);
+          }
 
-      if (cancelled) return;
+          const { data: rows, error: err } = await query;
+          if (err) throw err;
+          return rows ?? [];
+        });
 
-      if (err) {
+        if (cancelled) return;
+
+        setData(
+          (rows as any[]).map((row) => ({
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            youtubeId: row.youtube_id,
+            thumbnail: row.thumbnail,
+            duration: row.duration,
+            category: row.category,
+            date: row.published_date,
+          })),
+        );
+        setLoading(false);
+      } catch {
+        if (cancelled) return;
         setError("Couldn't load episodes. Please try again.");
         setLoading(false);
-        return;
       }
-
-      setData(
-        (rows ?? []).map((row) => ({
-          id: row.id,
-          title: row.title,
-          description: row.description,
-          youtubeId: row.youtube_id,
-          thumbnail: row.thumbnail,
-          duration: row.duration,
-          category: row.category,
-          date: row.published_date,
-        })),
-      );
-      setLoading(false);
     }
 
     fetchEpisodes();
@@ -65,4 +72,4 @@ export function usePodcasts(category?: string, { enabled = true }: { enabled?: b
   }, [category, enabled]);
 
   return { podcasts: data, loading, error };
-}
+}

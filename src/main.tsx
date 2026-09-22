@@ -24,24 +24,36 @@ function renderFatalError(err: unknown) {
 }
 
 window.addEventListener("error", (event) => {
-  renderFatalError(event.error ?? event.message);
+  const err = event.error ?? event.message;
+  renderFatalError(err);
+  import("./lib/sentry")
+    .then(({ captureLazyException }) => captureLazyException(err))
+    .catch(() => {});
 });
 window.addEventListener("unhandledrejection", (event) => {
   renderFatalError(event.reason);
+  import("./lib/sentry")
+    .then(({ captureLazyException }) => captureLazyException(event.reason))
+    .catch(() => {});
 });
 
 // ── Boot-Crash Nuclear Reset ──────────────────────────────────────────────
 // If Vite fails to load a JS chunk (e.g. a stale SW served a file whose hash
 // no longer exists on the CDN), increment a strike counter in sessionStorage.
-// After 3 consecutive crashes we perform a "nuclear reset":
-//   1. Unregister all service workers
-//   2. Delete every cache bucket
-//   3. Force a hard reload to pull a fresh build from Vercel
-// This prevents a corrupted PWA install from permanently bricking itself.
+//
+// Strike 1: record the failure — do NOT reload immediately. The page may
+//   recover on its own (e.g. SW cache has been updated in the background).
+// Strike 2+: "nuclear reset" — unregister all service workers, delete every
+//   cache bucket, then force a hard reload to pull a fresh build from Vercel.
+//
+// Using 2 strikes (not 3) means we escape a corrupted install faster, and
+// not reloading on strike 1 avoids triggering the controllerchange cascade
+// that was the root cause of the "no network" timeout loop.
 const CRASH_STRIKE_KEY = "weave:boot_crash_strikes";
 window.addEventListener("vite:preloadError", async () => {
   const strikes = parseInt(sessionStorage.getItem(CRASH_STRIKE_KEY) ?? "0", 10) + 1;
-  if (strikes >= 3) {
+  if (strikes >= 2) {
+    // Nuclear reset — clear caches and reload cleanly
     sessionStorage.removeItem(CRASH_STRIKE_KEY);
     try {
       const regs = await navigator.serviceWorker.getRegistrations();
@@ -53,30 +65,21 @@ window.addEventListener("vite:preloadError", async () => {
     }
     window.location.reload();
   } else {
+    // Strike 1: record but don't reload. If the chunk is genuinely missing,
+    // the user's next action will retry and hit strike 2 → nuclear reset.
     sessionStorage.setItem(CRASH_STRIKE_KEY, String(strikes));
-    window.location.reload();
   }
 });
 
 
 try {
   initThemeFromStorage();
-  
-  // Defer Sentry init until well after page load and idle — prevents Sentry's
-  // 270 KB bundle and tracing instrumentation from delaying FCP/LCP/TBT.
-  // SentryErrorBoundary still catches and reports errors via lazy import if one occurs.
-  const initSentry = () => {
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(() => import("./lib/sentry"), { timeout: 8000 });
-    } else {
-      setTimeout(() => import("./lib/sentry"), 3000);
-    }
-  };
-  if (document.readyState === "complete") {
-    setTimeout(initSentry, 3000);
-  } else {
-    window.addEventListener("load", () => setTimeout(initSentry, 3000), { once: true });
-  }
+
+  // ── Sentry is NOT pre-fetched here ────────────────────────────────────────
+  // SentryErrorBoundary (below) lazy-imports @sentry/react the first time an
+  // error is caught, keeping ~270 KB of Sentry off the critical entry bundle.
+  // There's no requestIdleCallback pre-fetch — loading Sentry proactively was
+  // consuming bandwidth and blocking FCP/LCP even when no error occurred.
 
   const rootEl = document.getElementById("root");
   if (!rootEl) {
@@ -96,4 +99,4 @@ try {
   );
 } catch (err) {
   renderFatalError(err);
-}
+}

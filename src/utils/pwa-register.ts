@@ -5,10 +5,14 @@
  *  1. Register /sw.js (the Vite-built service worker).
  *  2. Detect when a new SW reaches "installed" (waiting) state.
  *  3. Fire an onUpdateReady callback so React UI can show the update banner.
- *  4. Guard the controllerchange→reload path with a `refreshing` boolean
- *     to prevent the infinite-reload loop bug.
- *  5. Export sendSkipWaiting() so the UI can promote the waiting worker
- *     only when the user explicitly accepts the update.
+ *  4. Export sendSkipWaiting() so the UI can promote the waiting worker
+ *     only when the user explicitly accepts the update (via the toast).
+ *
+ * NOTE: The controllerchange→reload listener has been intentionally removed.
+ * Automatic reloads on controller change caused a cascade reload loop when
+ * combined with clientsClaim + vite:preloadError + version polling.
+ * Reloading is now the exclusive responsibility of applyUpdate() in
+ * useVersionCheck.ts, which only fires on explicit user action.
  */
 
 export interface PWARegisterOptions {
@@ -37,15 +41,6 @@ export function sendSkipWaiting(): void {
  */
 export function registerPWA(options: PWARegisterOptions = {}): void {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-
-  // ── Guard: prevent infinite reload on controllerchange double-fire ────────
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (refreshing) return;
-    refreshing = true;
-    // Small delay so any in-flight XHR/fetch can settle before the page reloads
-    setTimeout(() => window.location.reload(), 300);
-  });
 
   // ── Register SW ───────────────────────────────────────────────────────────
   window.addEventListener("load", () => {

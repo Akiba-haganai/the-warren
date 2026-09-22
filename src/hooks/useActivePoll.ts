@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { cachedSupabaseQuery } from "@/lib/supabaseCache";
 
 export interface Poll {
   id: string;
@@ -24,21 +25,27 @@ export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {
       return;
     }
 
-    supabase
-      .from("polls")
-      .select("*")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-      .then(({ data, error }) => {
+    cachedSupabaseQuery("polls:active", async () => {
+      const { data, error } = await supabase!
+        .from("polls")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as Poll | null;
+    })
+      .then((data) => {
         if (!active) return;
-        if (error) {
-          console.error("Error fetching active poll:", error.message);
-          setError(true);
-        } else {
-          setPoll(data);
-        }
+        setPoll(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Error fetching active poll:", err?.message ?? err);
+        setError(true);
         setLoading(false);
       });
 

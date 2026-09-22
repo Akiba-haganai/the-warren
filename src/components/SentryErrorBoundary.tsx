@@ -27,13 +27,13 @@ export class SentryErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Report to Sentry lazily — doesn't block the error UI from rendering
-    import("@sentry/react")
-      .then(({ captureException }) => {
-        captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+    // Report to Sentry lazily — keeps @sentry/react off the critical bundle
+    import("@/lib/sentry")
+      .then(({ captureLazyException }) => {
+        captureLazyException(error, { componentStack: errorInfo.componentStack });
       })
       .catch(() => {
-        // If Sentry fails to load, silently swallow — the error UI still shows
+        // If Sentry fails to load, silently swallow — error UI still shows
       });
   }
 

@@ -17,8 +17,10 @@ export interface PWAUpdateState {
  *  1. SW lifecycle events (updatefound → installed → waiting) from pwa-register.ts
  *  2. Proactive polling of /version.json on visibility/focus/interval
  *
- * When stale is detected, calls registration.update() so the browser starts
- * downloading the new SW immediately without waiting for the 24-hour organic check.
+ * When stale is detected we surface the toast only — we do NOT call
+ * registration.update() automatically, because that triggers a SW install cycle
+ * which (combined with the old controllerchange listener) caused a reload loop.
+ * The user drives the update by tapping "Refresh now" → applyUpdate().
  */
 export function useVersionCheck(): PWAUpdateState {
   const [updateReady, setUpdateReady] = useState(false);
@@ -54,8 +56,11 @@ export function useVersionCheck(): PWAUpdateState {
       const running = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : null;
       if (running && data.version !== running) {
         setIsStale(true);
-        // Force the browser to fetch the new SW immediately
-        registrationRef.current?.update().catch(() => {});
+        // ── Do NOT call registration.update() here ──────────────────────────
+        // Automatically triggering a SW update starts a new install cycle.
+        // With the old controllerchange→reload listener this caused a cascade:
+        //   stale detected → update() → updatefound → installed → controllerchange → reload
+        // The user controls when the update applies by tapping "Refresh now".
       }
     } catch {
       // Silently ignore — network may be offline, not worth surfacing
@@ -81,11 +86,13 @@ export function useVersionCheck(): PWAUpdateState {
     };
   }, [checkVersion]);
 
-  // ── Apply update: promote waiting SW → controllerchange → reload ──────────
+  // ── Apply update: promote waiting SW → then reload ───────────────────────
+  // The controllerchange→reload listener has been removed from pwa-register.ts
+  // so we reload explicitly here after sending SKIP_WAITING.
   const applyUpdate = useCallback(() => {
     sendSkipWaiting();
-    // Reload is handled by the controllerchange listener in pwa-register.ts
-    // with the refreshing guard — no manual reload needed here.
+    // Brief delay so the SW can finish activating before we reload
+    setTimeout(() => window.location.reload(), 300);
   }, []);
 
   return { updateReady, isStale, applyUpdate };
