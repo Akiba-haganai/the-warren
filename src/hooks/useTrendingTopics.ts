@@ -11,8 +11,8 @@ export interface TrendingTopic {
   lastUpdated: string | null;
 }
 
-const TRENDING_TOPICS_QUERY = `
-*[_type == "topic"]{
+const TRENDING_TOPICS_QUERY_NATIONAL = `
+*[_type == "topic" && !defined(university)]{
   _id,
   "name": title,
   "slug": slug.current,
@@ -23,14 +23,28 @@ const TRENDING_TOPICS_QUERY = `
 }
 `;
 
-export function useTrendingTopics() {
+const TRENDING_TOPICS_QUERY_UNIVERSITY = `
+*[_type == "topic" && (!defined(university) || university->slug.current == $universitySlug)]{
+  _id,
+  "name": title,
+  "slug": slug.current,
+  isTrending,
+  "postCount": count(*[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug)]),
+  "recentPostCount": count(*[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug) && dateTime(publishedAt) > dateTime(now()) - 60*60*24*30]),
+  "lastUpdated": *[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug)] | order(publishedAt desc)[0].publishedAt
+}
+`;
+
+export function useTrendingTopics(universitySlug?: string) {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     
-    sanityClient.fetch<TrendingTopic[]>(TRENDING_TOPICS_QUERY)
+    const query = universitySlug ? TRENDING_TOPICS_QUERY_UNIVERSITY : TRENDING_TOPICS_QUERY_NATIONAL;
+    
+    sanityClient.fetch<TrendingTopic[]>(query, { universitySlug: universitySlug || "" })
       .then((data) => {
         if (!active) return;
         
@@ -56,7 +70,7 @@ export function useTrendingTopics() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [universitySlug]);
 
   return { topics, loading };
 }

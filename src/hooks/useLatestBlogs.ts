@@ -24,7 +24,7 @@ export interface BlogCard {
 // published dataset) simply never sees it. That draft/publish split is
 // Sanity's built-in equivalent of the moderation gate we used to enforce
 // by hand in Supabase.
-const QUERY = `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...9] {
+const BASE_QUERY_PROJECTION = `{
   _id,
   title,
   "slug": slug.current,
@@ -35,14 +35,19 @@ const QUERY = `*[_type == "story" && defined(publishedAt)] | order(publishedAt d
   "topics": topics[]->{ _id, title, "slug": slug.current }
 }`;
 
-export function useLatestBlogs() {
+export function useLatestBlogs(universitySlug?: string) {
   const [blogs, setBlogs] = useState<BlogCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
+    
+    const query = universitySlug
+      ? `*[_type == "story" && defined(publishedAt) && (!defined(university) || university->slug.current == $universitySlug)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`
+      : `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`;
+
     sanityClient
-      .fetch<BlogCard[]>(QUERY)
+      .fetch<BlogCard[]>(query, { universitySlug: universitySlug || "" })
       .then((data) => {
         if (active) {
           setBlogs(data || []);
@@ -59,7 +64,7 @@ export function useLatestBlogs() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [universitySlug]);
 
   return { blogs, loading };
 }

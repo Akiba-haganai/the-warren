@@ -26,6 +26,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { useBlogLikeCounts } from "@/hooks/useBlogLikeCounts";
 import { getBrowserId } from "@/lib/browserId";
 import { urlForImage } from "@/lib/sanityImage";
+import { useCampus } from "@/contexts/CampusContext";
 
 
 export default function Home() {
@@ -51,6 +52,8 @@ export default function Home() {
 /*  Media Hero                                                        */
 /* ------------------------------------------------------------------ */
 function MediaHero() {
+  const { scope, universityName } = useCampus();
+
   return (
     <section className="relative pt-32 pb-20 bg-hero overflow-hidden">
       <div className="mx-auto max-w-4xl px-6 text-center">
@@ -60,7 +63,11 @@ function MediaHero() {
           </Badge>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
             <span className="sr-only">Warren Weave — Campus Audio, Culture &amp; Stories: </span>
-            University, beyond the classroom.
+            {scope === "university" ? (
+              <>{universityName},<br />beyond the classroom.</>
+            ) : (
+              <>University, beyond the classroom.</>
+            )}
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
             Stories &bull; Conversations &bull; Culture
@@ -75,7 +82,8 @@ function MediaHero() {
 /*  Trending Topics                                                   */
 /* ------------------------------------------------------------------ */
 function TrendingTopics() {
-  const { topics, loading } = useTrendingTopics();
+  const { universitySlug, scope, universityName } = useCampus();
+  const { topics, loading } = useTrendingTopics(universitySlug);
 
   return (
     <section className="py-12 bg-muted/30">
@@ -85,7 +93,9 @@ function TrendingTopics() {
             <SectionLabel>Discover</SectionLabel>
             <div className="flex items-center gap-2 mt-2">
               <TrendingUp className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold">Trending Now</h2>
+              <h2 className="text-xl font-semibold">
+                Trending {scope === "university" ? `at ${universityName}` : "Now"}
+              </h2>
             </div>
           </div>
         </Reveal>
@@ -124,7 +134,8 @@ function TrendingTopics() {
 /*  Latest Blogs                                                      */
 /* ------------------------------------------------------------------ */
 function LatestBlogs() {
-  const { blogs, loading } = useLatestBlogs();
+  const { universitySlug, scope, universityName } = useCampus();
+  const { blogs, loading } = useLatestBlogs(universitySlug);
   const slugs = blogs.slice(0, 4).map((b) => b.slug);
   const { counts: likeCounts } = useBlogLikeCounts(slugs);
 
@@ -134,7 +145,9 @@ function LatestBlogs() {
         <Reveal>
           <SectionLabel>Read</SectionLabel>
           <div className="flex items-center justify-between mt-2 mb-8">
-            <h2 className="text-2xl font-semibold">Latest Blogs</h2>
+            <h2 className="text-2xl font-semibold">
+              Latest Blogs {scope === "university" ? `from ${universityName}` : ""}
+            </h2>
             <Button asChild variant="ghost" className="text-blue-600">
               <Link to="/blogs">
                 All Blogs <ArrowRight className="ml-1 h-4 w-4" />
@@ -191,8 +204,9 @@ function LatestBlogs() {
 /*  Student Voice (Poll)                                              */
 /* ------------------------------------------------------------------ */
 function StudentVoicePoll() {
+  const { universitySlug, scope, universityName } = useCampus();
   const [sectionRef, inView] = useInView<HTMLElement>();
-  const { poll, loading } = useActivePoll({ enabled: inView });
+  const { poll, loading } = useActivePoll({ enabled: inView, universitySlug });
   const [voterId, setVoterId] = useState("");
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [results, setResults] = useState<any[] | null>(null);
@@ -282,7 +296,9 @@ function StudentVoicePoll() {
       <div className="mx-auto max-w-3xl px-6">
         <Reveal>
           <SectionLabel>Speak</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-6">Student Voice</h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-6">
+            Student Voice {scope === "university" ? `- ${universityName}` : ""}
+          </h2>
           {loading ? (
             <Card>
               <CardContent className="p-6 space-y-3">
@@ -357,8 +373,9 @@ function StudentVoicePoll() {
 /*  Podcast Teaser                                                    */
 /* ------------------------------------------------------------------ */
 function PodcastTeaser() {
+  const { universitySlug } = useCampus();
   const [sectionRef, inView] = useInView<HTMLElement>();
-  const { podcasts, loading } = usePodcasts(undefined, { enabled: inView });
+  const { podcasts, loading } = usePodcasts(undefined, { enabled: inView, universitySlug });
   const latest = podcasts?.[0];
 
   return (
@@ -433,8 +450,9 @@ function PodcastTeaser() {
 /*  Culture Snapshot                                                  */
 /* ------------------------------------------------------------------ */
 function CultureSnapshot() {
+  const { universitySlug, scope, universityName } = useCampus();
   const [sectionRef, inView] = useInView<HTMLElement>();
-  const { photos, loading } = useCulturePhotos({ enabled: inView });
+  const { photos, loading } = useCulturePhotos({ enabled: inView, universitySlug });
 
   return (
     <section ref={sectionRef} className="py-16 bg-muted/30">
@@ -444,7 +462,9 @@ function CultureSnapshot() {
           <div className="flex items-center justify-between mt-2 mb-6">
             <div className="flex items-center gap-2">
               <Camera className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold">Campus Culture</h2>
+              <h2 className="text-xl font-semibold">
+                Culture {scope === "university" ? `at ${universityName}` : "Snapshot"}
+              </h2>
             </div>
             <Button asChild variant="ghost" className="text-blue-600">
               <Link to="/culture">

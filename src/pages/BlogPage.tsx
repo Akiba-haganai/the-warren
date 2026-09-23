@@ -13,6 +13,7 @@ import { StoryBody } from "@/components/StoryBody";
 import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 import { ShareRow } from "@/components/blog/ShareRow";
+import { EcosystemCTA } from "@/components/blog/EcosystemCTA";
 import { LikeButton } from "@/components/blog/LikeButton";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { calculateReadingTime } from "@/lib/readingTime";
@@ -258,6 +259,10 @@ export default function BlogPage() {
               {/* Body — Constrained for reading */}
               <div className="max-w-[750px] mx-auto">
                 <StoryBody value={blog.body} />
+                
+                {blog.topics && blog.topics.length > 0 && (
+                  <EcosystemCTA topics={blog.topics} />
+                )}
 
                 {/* Bottom Engagement Row */}
                 <div 

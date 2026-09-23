@@ -18,6 +18,7 @@ import { RebrandBanner } from "./components/layout/RebrandBanner";
 // Home is imported eagerly so the landing page renders without a chunk download waterfall.
 // Other routes remain lazy-loaded to keep their code off the initial bundle.
 import Home from "./pages/Home";
+const CampusPage  = lazy(() => import("./pages/CampusPage"));
 const Explore     = lazy(() => import("./pages/Explore"));
 const SubmitBlog  = lazy(() => import("./pages/SubmitBlog"));
 const BlogPreview = lazy(() => import("./pages/BlogPreview"));
@@ -63,6 +64,7 @@ function App() {
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/campuses/:slug" element={<CampusPage />} />
           <Route path="/explore" element={<Explore />} />
 
           {/* Blog Routes */}
