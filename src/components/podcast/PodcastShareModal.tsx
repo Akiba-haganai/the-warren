@@ -22,7 +22,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://warren-wave.vercel.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://warren-weave.vercel.app";
   const url = `${origin}/podcasts?episode=${episode.id}`;
   const youtubeUrl = `https://www.youtube.com/watch?v=${episode.youtubeId}`;
   const strippedUrl = url.replace(/^https?:\/\//, "");

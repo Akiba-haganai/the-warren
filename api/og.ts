@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const baseUrl = "https://warren-wave.vercel.app";
+  const baseUrl = "https://warren-weave.vercel.app";
 
   try {
     const story = await sanity.fetch(
