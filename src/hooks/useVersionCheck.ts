@@ -44,8 +44,11 @@ export function useVersionCheck(): PWAUpdateState {
 
   // ── Proactive version polling via /version.json ───────────────────────────
   const checkVersion = useCallback(async () => {
+    // If device is known to be offline, avoid kicking off network fetches that will time out
+    if (typeof navigator !== "undefined" && !navigator.onLine) return;
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
       const res = await fetch(`/version.json?t=${Date.now()}`, {
         cache: "no-store",
@@ -63,7 +66,7 @@ export function useVersionCheck(): PWAUpdateState {
         // The user controls when the update applies by tapping "Refresh now".
       }
     } catch {
-      // Silently ignore — network may be offline, not worth surfacing
+      // Silently ignore — network may be offline or high-latency, not worth surfacing
     } finally {
       clearTimeout(timeoutId);
     }

@@ -30,7 +30,14 @@ const components: PortableTextComponents = {
               opts={{
                 width: "100%",
                 height: "100%",
-                playerVars: { autoplay: 0, controls: 1, modestbranding: 1 },
+                playerVars: {
+                autoplay: 0,
+                controls: 1,
+                modestbranding: 1,
+                playsinline: 1,
+                enablejsapi: 1,
+                origin: typeof window !== "undefined" ? window.location.origin : undefined,
+              },
               }}
               className="absolute inset-0 w-full h-full"
             />

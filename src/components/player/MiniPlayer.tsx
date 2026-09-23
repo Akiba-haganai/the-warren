@@ -384,6 +384,8 @@ export function MiniPlayer() {
           controls: isVisible ? 1 : 0,
           modestbranding: 1,
           playsinline: 1,
+          enablejsapi: 1,
+          origin: typeof window !== "undefined" ? window.location.origin : undefined,
           start: Math.floor(currentTime),
         },
       }}
@@ -800,9 +802,14 @@ export function MiniPlayer() {
         </div>
       )}
 
-      {/* Hidden YouTube IFrame for Audio Mode */}
+      {/* Offscreen YouTube IFrame for Audio Mode:
+          Do NOT use `display: none` / `hidden` because unrendered iframes lose their browsing context origin (becoming 'null'),
+          triggering hundreds of postMessage target origin mismatch errors and blocking background audio playback. */}
       {!isVideoMode && (
-        <div className="hidden">
+        <div
+          className="fixed -left-[9999px] -top-[9999px] w-px h-px opacity-0 pointer-events-none overflow-hidden"
+          aria-hidden="true"
+        >
           {renderYouTube(false)}
         </div>
       )}
