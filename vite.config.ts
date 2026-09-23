@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { VitePWA } from "vite-plugin-pwa";
 import { writeFileSync } from "fs";
 import { resolve } from "path";
@@ -13,6 +12,9 @@ const vercelEnv = process.env.VERCEL_ENV || "local";
 const vercelBranch = process.env.VERCEL_GIT_COMMIT_REF || "main";
 
 export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   define: {
     __APP_VERSION__: JSON.stringify(buildVersion),
     __APP_ENV__: JSON.stringify(vercelEnv),
@@ -30,7 +32,6 @@ export default defineConfig({
     },
     react(),
     tailwindcss(),
-    tsconfigPaths(),
     VitePWA({
       injectRegister: null,
       // generateSW with skipWaiting: false — Workbox generates the SW but

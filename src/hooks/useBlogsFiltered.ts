@@ -58,9 +58,9 @@ export function useBlogsFiltered(
     const topicFilter = topicSlug ? `&& $topicSlug in topics[]->slug.current` : "";
 
     if (sort === "most_liked") {
-      // For "most_liked": fetch ALL matching blogs from Sanity (unpaginated),
-      // fetch all like counts, sort by count, then paginate in-memory.
-      const query = `*[_type == "story" && defined(publishedAt) ${topicFilter}] | order(publishedAt desc) {
+      // For "most_liked": fetch the 100 most recent matching blogs from Sanity,
+      // fetch their like counts, sort by count, then paginate in-memory.
+      const query = `*[_type == "story" && defined(publishedAt) ${topicFilter}] | order(publishedAt desc)[0...100] {
         _id,
         title,
         "slug": slug.current,
