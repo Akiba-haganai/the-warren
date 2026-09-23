@@ -49,7 +49,7 @@ export function UpNextToast({ blog, visible, onDismiss }: UpNextToastProps) {
       </p>
       
       <Link 
-        to={`/blog/${blog.slug}`} 
+        to={`/blogs/${blog.slug}`} 
         className="group flex gap-3 items-center"
         onClick={onDismiss} // Auto dismiss when navigating
       >

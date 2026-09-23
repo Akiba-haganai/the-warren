@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
@@ -67,13 +67,30 @@ export default function Podcasts() {
   // Featured episodes (first 3, from the full unfiltered list)
   const featured = podcasts.slice(0, 3);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const episodeParam = searchParams.get("episode");
+
+  // Handle shared ?episode=<id> deep link
+  useEffect(() => {
+    if (!loading && podcasts.length > 0 && episodeParam) {
+      const targetEp = podcasts.find((ep) => ep.id === episodeParam || ep.youtubeId === episodeParam);
+      if (targetEp) {
+        restoredRef.current = true;
+        playEpisode(targetEp, podcasts);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete("episode");
+        setSearchParams(newParams, { replace: true });
+      }
+    }
+  }, [loading, podcasts, episodeParam, playEpisode, searchParams, setSearchParams]);
+
   // Once episodes have loaded, try to resume whatever was playing last time
   useEffect(() => {
-    if (!loading && podcasts.length > 0 && !restoredRef.current && !currentEpisode) {
+    if (!loading && podcasts.length > 0 && !restoredRef.current && !currentEpisode && !episodeParam) {
       restoreFromEpisodes(podcasts);
       restoredRef.current = true;
     }
-  }, [loading, podcasts, currentEpisode, restoreFromEpisodes]);
+  }, [loading, podcasts, currentEpisode, restoreFromEpisodes, episodeParam]);
 
   // Compute in-progress episodes for Continue Listening section
   const progressMap = getLocalProgressMap();

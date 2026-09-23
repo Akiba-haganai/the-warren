@@ -53,11 +53,12 @@ export function InstallPWA() {
       role="dialog"
       aria-label="Install WEAVE app"
       style={{
+        bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
         transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
         opacity: visible ? 1 : 0,
         transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease",
       }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[calc(100vw-2rem)] max-w-sm"
+      className="fixed left-1/2 -translate-x-1/2 z-[60] w-[calc(100vw-2rem)] max-w-sm"
     >
       {/* Glow halo behind card */}
       <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 opacity-30 blur-xl pointer-events-none" />

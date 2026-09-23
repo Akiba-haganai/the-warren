@@ -25,6 +25,24 @@ function extractCategory(description: string): string {
   return "Uncategorized";
 }
 
+// Converts ISO 8601 duration string (e.g. "PT1H2M10S", "PT14M22S", "PT45S") to formatted time "1:02:10" or "14:22"
+function formatDuration(isoDuration: string): string {
+  if (!isoDuration) return "0:00";
+  const regex = /P(?:([0-9]+)D)?T?(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?/;
+  const matches = isoDuration.match(regex);
+  if (!matches) return "0:00";
+
+  const days = parseInt(matches[1] || "0", 10);
+  const hours = parseInt(matches[2] || "0", 10) + days * 24;
+  const minutes = parseInt(matches[3] || "0", 10);
+  const seconds = parseInt(matches[4] || "0", 10);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Guard: only Vercel Cron (or you, manually, with the secret) can trigger this
   const authHeader = req.headers.authorization;

@@ -72,11 +72,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (typeof title !== "string" || title.trim().length < 3) {
     return res.status(400).json({ error: "Title must be at least 3 characters." });
   }
+  if (title.trim().length > 200) {
+    return res.status(400).json({ error: "Title must not exceed 200 characters." });
+  }
+
   if (typeof body !== "string" || body.trim().length < 10) {
     return res.status(400).json({ error: "Story must be at least 10 characters." });
   }
+  if (body.trim().length > 50000) {
+    return res.status(400).json({ error: "Story must not exceed 50,000 characters." });
+  }
+
   if (typeof author !== "string" || author.trim().length < 2) {
     return res.status(400).json({ error: "Your name must be at least 2 characters." });
+  }
+  if (author.trim().length > 100) {
+    return res.status(400).json({ error: "Your name must not exceed 100 characters." });
+  }
+
+  if (excerpt && typeof excerpt === "string" && excerpt.trim().length > 400) {
+    return res.status(400).json({ error: "Excerpt must not exceed 400 characters." });
   }
 
   try {

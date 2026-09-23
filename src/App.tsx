@@ -104,7 +104,7 @@ function App() {
       {currentEpisode && (
         <Suspense
           fallback={
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl p-3 flex items-center gap-3">
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl p-3 pb-safe flex items-center gap-3">
               <div className="h-12 w-20 rounded-lg bg-muted animate-pulse shrink-0 border border-border" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">{currentEpisode.title}</p>

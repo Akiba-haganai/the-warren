@@ -18,7 +18,14 @@ export function WhatsAppFAB() {
   const { currentEpisode } = usePlayer();
 
   return (
-    <div className={`fixed right-6 z-50 flex flex-col items-end gap-3 transition-all duration-300 ${currentEpisode ? "bottom-24" : "bottom-6"}`}>
+    <div
+      style={{
+        bottom: currentEpisode
+          ? "calc(6.5rem + env(safe-area-inset-bottom, 0px))"
+          : "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
+      }}
+      className="fixed right-6 z-50 flex flex-col items-end gap-3 transition-all duration-300"
+    >
       {open && (
         <div className="flex flex-col gap-2 bg-card/90 backdrop-blur border border-border rounded-2xl p-3 shadow-elegant mb-2">
           {links.map((link) => (

@@ -47,7 +47,11 @@ export async function subscribeToEpisodePushNotifications(): Promise<boolean> {
     let sub = await reg.pushManager.getSubscription();
 
     if (!sub) {
-      const publicVapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "BH1234567890abcdefghijklmnopqrstuvwxyz";
+      const publicVapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!publicVapidKey) {
+        console.warn("Push notifications not configured: VITE_VAPID_PUBLIC_KEY is missing.");
+        return false;
+      }
       sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: publicVapidKey,

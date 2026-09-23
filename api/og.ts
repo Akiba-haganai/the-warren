@@ -78,27 +78,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
+function escapeHtml(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function buildHtml({ title, description, image, url }: { title: string; description: string; image: string; url: string }) {
+  const safeTitle = escapeHtml(title);
+  const safeDesc = escapeHtml(description);
+  const safeImage = escapeHtml(image);
+  const safeUrl = escapeHtml(url);
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
-  <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="${description}" />
-  <meta property="og:image" content="${image}" />
-  <meta property="og:url" content="${url}" />
+  <title>${safeTitle}</title>
+  <meta property="og:title" content="${safeTitle}" />
+  <meta property="og:description" content="${safeDesc}" />
+  <meta property="og:image" content="${safeImage}" />
+  <meta property="og:url" content="${safeUrl}" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="WEAVE" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="${title}" />
-  <meta name="twitter:description" content="${description}" />
-  <meta name="twitter:image" content="${image}" />
-  <meta http-equiv="refresh" content="0;url=${url}" />
+  <meta name="twitter:title" content="${safeTitle}" />
+  <meta name="twitter:description" content="${safeDesc}" />
+  <meta name="twitter:image" content="${safeImage}" />
+  <meta http-equiv="refresh" content="0;url=${safeUrl}" />
 </head>
 <body>
-  <p>Redirecting to <a href="${url}">${title}</a></p>
+  <p>Redirecting to <a href="${safeUrl}">${safeTitle}</a></p>
 </body>
 </html>`;
 }

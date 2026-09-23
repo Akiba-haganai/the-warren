@@ -7,8 +7,26 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
     <link rel="apple-touch-icon" href="/icon-192.png">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="WEAVE" />
     <meta name="theme-color" content="#FF6D00" />
+
+    <!-- Instant dark-theme initialization to prevent flash of unstyled content (FOUC) -->
+    <script>
+      (function() {
+        try {
+          var pref = localStorage.getItem('theme');
+          var isDark = pref === 'dark' || (pref !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="Warren Weave — Discover university podcasts, student journalism, campus culture, and stories connecting students across Zambia." />
     <meta name="keywords" content="Warren Weave, campus podcasts, university stories, Zambian student journalism, UNZA, CBU, student culture" />
 

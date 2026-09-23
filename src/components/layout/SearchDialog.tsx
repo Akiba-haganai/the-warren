@@ -64,7 +64,7 @@ export function SearchDialog({
                   <CommandItem
                     key={story._id}
                     onSelect={() => {
-                      navigate(`/blog/${story.slug}`);
+                      navigate(`/blogs/${story.slug}`);
                       onOpenChange(false);
                     }}
                     className="flex items-center gap-3 py-2 cursor-pointer"
@@ -90,7 +90,7 @@ export function SearchDialog({
                   <CommandItem
                     key={topic._id}
                     onSelect={() => {
-                      navigate(`/explore?topic=${topic.slug}`);
+                      navigate(`/topics/${topic.slug}`);
                       onOpenChange(false);
                     }}
                     className="cursor-pointer"

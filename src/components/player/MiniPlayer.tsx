@@ -690,7 +690,7 @@ export function MiniPlayer() {
 
       {/* ── DOCKED MINI PLAYER ── */}
       {!isExpanded && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl transition-all">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl transition-all pb-safe">
           {/* Progress bar at top edge */}
           <input
             type="range"
