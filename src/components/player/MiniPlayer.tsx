@@ -18,8 +18,15 @@ import {
   Headphones,
   Loader2,
   AlertCircle,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Bookmark } from "lucide-react";
+import {
+  type VideoQuality,
+  QUALITY_OPTIONS,
+  getStoredQuality,
+  setStoredQuality,
+} from "@/lib/playerQuality";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -92,6 +99,31 @@ export function MiniPlayer() {
   const [sleepRemainingSec, setSleepRemainingSec] = useState<number | null>(null);
   const [tintColor, setTintColor] = useState<string>("rgba(255, 109, 0, 0.15)");
   const [isVideoMode, setIsVideoMode] = useState<boolean>(false);
+  const [quality, setQuality] = useState<VideoQuality>(getStoredQuality);
+
+  const handleQualityChange = useCallback((newQuality: VideoQuality) => {
+    setQuality(newQuality);
+    setStoredQuality(newQuality);
+    if (player && typeof player.setPlaybackQuality === "function") {
+      try {
+        player.setPlaybackQuality(newQuality);
+      } catch {}
+    }
+    const opt = QUALITY_OPTIONS.find((o) => o.value === newQuality);
+    toast(`Streaming quality set to ${opt?.label ?? newQuality} (${opt?.resolution})`);
+  }, [player]);
+
+  // Dynamic quality adjustment: force ultra-low data (144p) in audio-only mode, restore preference in video mode
+  useEffect(() => {
+    if (!player || typeof player.setPlaybackQuality !== "function") return;
+    try {
+      if (!isVideoMode) {
+        player.setPlaybackQuality("tiny");
+      } else {
+        player.setPlaybackQuality(quality);
+      }
+    } catch {}
+  }, [isVideoMode, player, quality]);
 
   // Extract cover art dominant color tint for Phase 7
   useEffect(() => {
@@ -128,11 +160,15 @@ export function MiniPlayer() {
       try {
         event.target.setPlaybackRate(playbackSpeed);
       } catch {}
+      try {
+        const targetQuality = isVideoMode ? quality : "tiny";
+        event.target.setPlaybackQuality(targetQuality);
+      } catch {}
       event.target.playVideo();
       setIsPlaying(true);
       setDuration(event.target.getDuration());
     },
-    [resumePosition, playbackSpeed, setIsLoading, setIsPlaying, setPlayerError],
+    [resumePosition, playbackSpeed, isVideoMode, quality, setIsLoading, setIsPlaying, setPlayerError],
   );
 
   const onError = useCallback(
@@ -387,6 +423,7 @@ export function MiniPlayer() {
           enablejsapi: 1,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
           start: Math.floor(currentTime),
+          vq: isVisible ? (quality === "default" ? undefined : quality) : "tiny",
         },
       }}
       className={isVisible ? "absolute inset-0 w-full h-full" : ""}
@@ -456,8 +493,8 @@ export function MiniPlayer() {
                   renderYouTube(true)
                 )}
                 
-                {/* Audio / Video Toggle Pill */}
-                <div className="absolute top-3 right-3 flex items-center bg-black/60 backdrop-blur-md rounded-full p-1 border border-white/10">
+                {/* Audio / Video Toggle Pill - positioned top-left to avoid obstructing YouTube controls */}
+                <div className="absolute top-3 left-3 z-10 flex items-center bg-black/70 backdrop-blur-md rounded-full p-1 border border-white/10 shadow-lg">
                   <button
                     onClick={() => setIsVideoMode(false)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!isVideoMode ? "bg-primary text-white" : "text-white/70 hover:text-white"}`}
@@ -621,6 +658,39 @@ export function MiniPlayer() {
                       {speed}x {playbackSpeed === speed ? "✓" : ""}
                     </DropdownMenuItem>
                   ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Quality / Data Saver Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs">
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
+                    <span>{QUALITY_OPTIONS.find((o) => o.value === quality)?.resolution || "Quality"}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-56">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground border-b border-border/50">
+                    Streaming Quality & Data
+                  </div>
+                  {QUALITY_OPTIONS.map((opt) => (
+                    <DropdownMenuItem
+                      key={opt.value}
+                      onClick={() => handleQualityChange(opt.value)}
+                      className="flex items-center justify-between text-xs py-2 cursor-pointer"
+                    >
+                      <div className="flex flex-col">
+                        <span className={`font-medium ${quality === opt.value ? "text-primary font-bold" : ""}`}>
+                          {opt.label} ({opt.resolution})
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{opt.description}</span>
+                      </div>
+                      {quality === opt.value && <span className="text-primary font-bold ml-2">✓</span>}
+                    </DropdownMenuItem>
+                  ))}
+                  <div className="px-2 py-1.5 text-[10px] text-muted-foreground bg-muted/40 rounded mt-1">
+                    💡 Audio mode automatically uses ultra-low data (144p).
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
