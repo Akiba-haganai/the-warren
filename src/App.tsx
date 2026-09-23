@@ -102,7 +102,20 @@ function App() {
         </Routes>
       </Suspense>
       {currentEpisode && (
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl p-3 flex items-center gap-3">
+              <div className="h-12 w-20 rounded-lg bg-muted animate-pulse shrink-0 border border-border" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{currentEpisode.title}</p>
+                <p className="text-xs text-primary font-medium flex items-center gap-1.5 mt-0.5 animate-pulse">
+                  <span className="inline-block h-2 w-2 rounded-full bg-primary animate-ping" />
+                  Connecting audio stream...
+                </p>
+              </div>
+            </div>
+          }
+        >
           <LazyMiniPlayer />
         </Suspense>
       )}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import type { Episode } from "@/data/podcasts";
 
@@ -10,6 +10,12 @@ interface StoredState {
   positionSeconds: number;
 }
 
+export interface PlayerControls {
+  togglePlay: () => void;
+  play: () => void;
+  pause: () => void;
+}
+
 interface PlayerContextType {
   currentEpisode: Episode | null;
   queue: Episode[];
@@ -18,11 +24,18 @@ interface PlayerContextType {
   resumePosition: number;
   shouldAutoplay: boolean;
   isExpanded: boolean;
+  isPlaying: boolean;
+  isLoading: boolean;
+  playerError: string | null;
   playbackSpeed: number;
   sleepTimerMinutes: number | "end" | null;
   sleepTimerEndsAt: number | null;
   setIsExpanded: (expanded: boolean) => void;
   toggleExpanded: () => void;
+  setIsPlaying: (playing: boolean) => void;
+  setIsLoading: (loading: boolean) => void;
+  setPlayerError: (error: string | null) => void;
+  togglePlay: () => void;
   setPlaybackSpeed: (speed: number) => void;
   setSleepTimer: (minutes: number | "end" | null) => void;
   cancelSleepTimer: () => void;
@@ -32,6 +45,7 @@ interface PlayerContextType {
   playPrevious: () => void;
   savePosition: (seconds: number) => void;
   restoreFromEpisodes: (episodes: Episode[]) => void;
+  registerControls: (controls: PlayerControls | null) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -42,6 +56,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [resumePosition, setResumePosition] = useState(0);
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [playerError, setPlayerError] = useState<string | null>(null);
+  const controlsRef = useRef<PlayerControls | null>(null);
+
   const [playbackSpeed, setPlaybackSpeedState] = useState<number>(() => {
     if (typeof window === "undefined") return 1;
     const saved = localStorage.getItem(SPEED_KEY);
@@ -50,8 +69,20 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | "end" | null>(null);
   const [sleepTimerEndsAt, setSleepTimerEndsAt] = useState<number | null>(null);
 
+  const registerControls = useCallback((controls: PlayerControls | null) => {
+    controlsRef.current = controls;
+  }, []);
+
   const toggleExpanded = useCallback(() => {
     setIsExpanded((prev) => !prev);
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    if (controlsRef.current) {
+      controlsRef.current.togglePlay();
+    } else {
+      setIsPlaying((prev) => !prev);
+    }
   }, []);
 
   const setPlaybackSpeed = useCallback((speed: number) => {
@@ -76,15 +107,31 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const playEpisode = useCallback((episode: Episode, newQueue?: Episode[]) => {
+    // If user clicks the currently active episode, toggle play/pause instead of restarting
+    if (currentEpisode?.id === episode.id) {
+      if (controlsRef.current) {
+        controlsRef.current.togglePlay();
+      } else {
+        setIsPlaying((prev) => !prev);
+      }
+      return;
+    }
+
     setCurrentEpisode(episode);
+    setIsLoading(true);
+    setIsPlaying(false);
+    setPlayerError(null);
     if (newQueue) setQueue(newQueue);
     setResumePosition(0);
     setShouldAutoplay(true);
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ episodeId: episode.id, positionSeconds: 0 }));
-  }, []);
+  }, [currentEpisode]);
 
   const closePlayer = useCallback(() => {
     setCurrentEpisode(null);
+    setIsPlaying(false);
+    setIsLoading(false);
+    setPlayerError(null);
     setIsExpanded(false);
     setSleepTimerMinutes(null);
     setSleepTimerEndsAt(null);
@@ -151,11 +198,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         resumePosition,
         shouldAutoplay,
         isExpanded,
+        isPlaying,
+        isLoading,
+        playerError,
         playbackSpeed,
         sleepTimerMinutes,
         sleepTimerEndsAt,
         setIsExpanded,
         toggleExpanded,
+        setIsPlaying,
+        setIsLoading,
+        setPlayerError,
+        togglePlay,
         setPlaybackSpeed,
         setSleepTimer,
         cancelSleepTimer,
@@ -165,6 +219,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         playPrevious,
         savePosition,
         restoreFromEpisodes,
+        registerControls,
       }}
     >
       {children}

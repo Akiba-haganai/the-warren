@@ -6,7 +6,7 @@ import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, Clock, Search, Mic, ArrowRight, ExternalLink } from "lucide-react";
+import { Play, Pause, Loader2, Clock, Search, Mic, ArrowRight, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/carousel";
 
 export default function Podcasts() {
-  const { playEpisode, currentEpisode, restoreFromEpisodes } = usePlayer();
+  const { playEpisode, currentEpisode, restoreFromEpisodes, isPlaying, isLoading } = usePlayer();
   const { podcasts, loading, error } = usePodcasts();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
@@ -104,10 +104,17 @@ export default function Podcasts() {
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {continueListening.map((ep) => {
                   const prog = inProgressMap[ep.id];
+                  const isCurrent = currentEpisode?.id === ep.id;
+                  const isCurLoading = isCurrent && isLoading;
+                  const isCurPlaying = isCurrent && isPlaying;
                   return (
                     <Card
                       key={`continue-${ep.id}`}
-                      className="overflow-hidden border-primary/30 bg-card hover:shadow-glow transition cursor-pointer"
+                      className={`overflow-hidden transition cursor-pointer ${
+                        isCurrent
+                          ? "border-primary ring-2 ring-primary/40 shadow-glow"
+                          : "border-primary/30 bg-card hover:shadow-glow"
+                      }`}
                       onClick={() => playEpisode(ep, podcasts)}
                     >
                       <div className="relative">
@@ -117,10 +124,18 @@ export default function Podcasts() {
                           className="w-full aspect-video object-cover"
                         />
                         <button
-                          className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/20 transition"
-                          aria-label={`Resume ${ep.title}`}
+                          className={`absolute inset-0 flex items-center justify-center transition ${
+                            isCurrent ? "bg-black/50" : "bg-black/40 hover:bg-black/20"
+                          }`}
+                          aria-label={isCurLoading ? "Loading" : isCurPlaying ? "Pause" : `Resume ${ep.title}`}
                         >
-                          <Play className="h-10 w-10 text-white fill-white" />
+                          {isCurLoading ? (
+                            <Loader2 className="h-10 w-10 text-white animate-spin" />
+                          ) : isCurPlaying ? (
+                            <Pause className="h-10 w-10 text-white fill-white" />
+                          ) : (
+                            <Play className="h-10 w-10 text-white fill-white" />
+                          )}
                         </button>
                         {/* Progress Bar overlay at bottom edge of thumbnail */}
                         <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/50">
@@ -149,77 +164,95 @@ export default function Podcasts() {
               <h2 className="text-2xl font-semibold mb-6">Featured Episodes</h2>
               <Carousel>
                 <CarouselContent>
-                  {featured.map((ep) => (
-                    <CarouselItem
-                      key={ep.id}
-                      className="md:basis-1/2 lg:basis-1/3"
-                    >
-                      <Card
-                        className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
-                          currentEpisode?.id === ep.id
-                            ? "ring-2 ring-primary"
-                            : ""
-                        }`}
+                  {featured.map((ep) => {
+                    const isCurrent = currentEpisode?.id === ep.id;
+                    const isCurLoading = isCurrent && isLoading;
+                    const isCurPlaying = isCurrent && isPlaying;
+                    return (
+                      <CarouselItem
+                        key={ep.id}
+                        className="md:basis-1/2 lg:basis-1/3"
                       >
-                        <div className="relative">
-                          <img
-                            src={ep.thumbnail}
-                            alt={ep.title}
-                            className="w-full aspect-video object-cover"
-                            loading="lazy"
-                          />
-                          <button
-                            onClick={() => playEpisode(ep, featured)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
-                            aria-label={`Play ${ep.title}`}
-                          >
-                            <Play className="h-12 w-12 text-white fill-white" />
-                          </button>
-                          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {ep.duration}
-                          </span>
-                        </div>
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between gap-2 mb-2">
-                            <Badge variant="secondary">{ep.category}</Badge>
-                            <div className="flex items-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                onClick={() => toggleSaveEpisode(ep)}
-                                title={isSaved(ep.id) ? "Remove Bookmark" : "Save Episode"}
-                              >
-                                <Bookmark className={`h-3.5 w-3.5 ${isSaved(ep.id) ? "text-primary fill-primary" : ""}`} />
-                              </Button>
-                              <PodcastShareModal episode={ep} />
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                asChild
-                                title="Open in YouTube"
-                              >
-                                <a
-                                  href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <ExternalLink className="h-3.5 w-3.5" />
-                                </a>
-                              </Button>
-                            </div>
+                        <Card
+                          className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
+                            isCurrent
+                              ? "ring-2 ring-primary border-primary shadow-glow"
+                              : ""
+                          }`}
+                        >
+                          <div className="relative">
+                            <img
+                              src={ep.thumbnail}
+                              alt={ep.title}
+                              className="w-full aspect-video object-cover"
+                              loading="lazy"
+                            />
+                            <button
+                              onClick={() => playEpisode(ep, featured)}
+                              className={`absolute inset-0 flex items-center justify-center transition ${
+                                isCurrent
+                                  ? "bg-black/50 opacity-100"
+                                  : "bg-black/40 opacity-0 hover:opacity-100"
+                              }`}
+                              aria-label={isCurLoading ? "Loading" : isCurPlaying ? "Pause" : `Play ${ep.title}`}
+                            >
+                              {isCurLoading ? (
+                                <div className="flex flex-col items-center gap-1.5">
+                                  <Loader2 className="h-10 w-10 text-white animate-spin" />
+                                  <span className="text-white text-xs font-medium">Connecting...</span>
+                                </div>
+                              ) : isCurPlaying ? (
+                                <Pause className="h-12 w-12 text-white fill-white" />
+                              ) : (
+                                <Play className="h-12 w-12 text-white fill-white" />
+                              )}
+                            </button>
+                            <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                              <Clock className="h-3 w-3" /> {ep.duration}
+                            </span>
                           </div>
-                          <h3 className="font-semibold text-base leading-snug line-clamp-2">
-                            {ep.title}
-                          </h3>
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {ep.date}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                              <Badge variant="secondary">{ep.category}</Badge>
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                  onClick={() => toggleSaveEpisode(ep)}
+                                  title={isSaved(ep.id) ? "Remove Bookmark" : "Save Episode"}
+                                >
+                                  <Bookmark className={`h-3.5 w-3.5 ${isSaved(ep.id) ? "text-primary fill-primary" : ""}`} />
+                                </Button>
+                                <PodcastShareModal episode={ep} />
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  asChild
+                                  title="Open in YouTube"
+                                >
+                                  <a
+                                    href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <ExternalLink className="h-3.5 w-3.5" />
+                                  </a>
+                                </Button>
+                              </div>
+                            </div>
+                            <h3 className="font-semibold text-base leading-snug line-clamp-2">
+                              {ep.title}
+                            </h3>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {ep.date}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious className="hidden sm:flex" />
                 <CarouselNext className="hidden sm:flex" />
@@ -309,7 +342,7 @@ export default function Podcasts() {
                       <Card
                         className={`overflow-hidden border-border bg-card hover:shadow-glow transition ${
                           currentEpisode?.id === ep.id
-                            ? "ring-2 ring-primary"
+                            ? "ring-2 ring-primary border-primary shadow-glow"
                             : ""
                         }`}
                       >
@@ -322,10 +355,29 @@ export default function Podcasts() {
                           />
                           <button
                             onClick={() => playEpisode(ep, filtered)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
-                            aria-label={`Play ${ep.title}`}
+                            className={`absolute inset-0 flex items-center justify-center transition ${
+                              currentEpisode?.id === ep.id
+                                ? "bg-black/50 opacity-100"
+                                : "bg-black/40 opacity-0 hover:opacity-100"
+                            }`}
+                            aria-label={
+                              currentEpisode?.id === ep.id && isLoading
+                                ? "Loading"
+                                : currentEpisode?.id === ep.id && isPlaying
+                                ? "Pause"
+                                : `Play ${ep.title}`
+                            }
                           >
-                            <Play className="h-12 w-12 text-white fill-white" />
+                            {currentEpisode?.id === ep.id && isLoading ? (
+                              <div className="flex flex-col items-center gap-1.5">
+                                <Loader2 className="h-10 w-10 text-white animate-spin" />
+                                <span className="text-white text-xs font-medium">Connecting...</span>
+                              </div>
+                            ) : currentEpisode?.id === ep.id && isPlaying ? (
+                              <Pause className="h-12 w-12 text-white fill-white" />
+                            ) : (
+                              <Play className="h-12 w-12 text-white fill-white" />
+                            )}
                           </button>
                           <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
                             <Clock className="h-3 w-3" /> {ep.duration}

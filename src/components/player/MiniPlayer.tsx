@@ -15,7 +15,9 @@ import {
   Gauge,
   Moon,
   MonitorPlay,
-  Headphones
+  Headphones,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Bookmark } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -73,11 +75,17 @@ export function MiniPlayer() {
     sleepTimerEndsAt,
     setSleepTimer,
     cancelSleepTimer,
+    isPlaying,
+    isLoading,
+    playerError,
+    setIsPlaying,
+    setIsLoading,
+    setPlayerError,
+    registerControls,
   } = usePlayer();
 
   const { toggleSaveEpisode, isSaved } = useSavedEpisodes();
 
-  const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -95,9 +103,25 @@ export function MiniPlayer() {
   const pollRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
 
+  // Register controls to PlayerContext so global buttons can trigger play/pause
+  useEffect(() => {
+    registerControls({
+      togglePlay: () => {
+        if (!player) return;
+        if (isPlaying) player.pauseVideo();
+        else player.playVideo();
+      },
+      play: () => player?.playVideo(),
+      pause: () => player?.pauseVideo(),
+    });
+    return () => registerControls(null);
+  }, [player, isPlaying, registerControls]);
+
   const onReady = useCallback(
     (event: { target: any }) => {
       setPlayer(event.target);
+      setIsLoading(false);
+      setPlayerError(null);
       if (resumePosition > 0) {
         event.target.seekTo(resumePosition, true);
       }
@@ -108,7 +132,38 @@ export function MiniPlayer() {
       setIsPlaying(true);
       setDuration(event.target.getDuration());
     },
-    [resumePosition, playbackSpeed],
+    [resumePosition, playbackSpeed, setIsLoading, setIsPlaying, setPlayerError],
+  );
+
+  const onError = useCallback(
+    (event: { data: number }) => {
+      setIsLoading(false);
+      setIsPlaying(false);
+      let msg = "Could not stream audio.";
+      if (event.data === 150 || event.data === 101) {
+        msg = "Playback restricted by YouTube in embedded mode.";
+      } else if (event.data === 100) {
+        msg = "This video was removed or marked private on YouTube.";
+      } else if (event.data === 2) {
+        msg = "Invalid YouTube video ID.";
+      }
+      setPlayerError(msg);
+      toast.error(msg, {
+        description: "Tap to open and play directly on YouTube.",
+        action: currentEpisode?.youtubeId
+          ? {
+              label: "Open YouTube",
+              onClick: () =>
+                window.open(
+                  `https://www.youtube.com/watch?v=${currentEpisode.youtubeId}`,
+                  "_blank",
+                ),
+            }
+          : undefined,
+        duration: 8000,
+      });
+    },
+    [currentEpisode, setIsLoading, setIsPlaying, setPlayerError],
   );
 
   // Sync playback speed whenever user changes it
@@ -155,10 +210,25 @@ export function MiniPlayer() {
 
   const onStateChange = useCallback(
     (event: { data: number }) => {
-      setIsPlaying(event.data === 1);
-
-      // Video ended
-      if (event.data === 0) {
+      if (event.data === 1) {
+        // Playing
+        setIsPlaying(true);
+        setIsLoading(false);
+        setPlayerError(null);
+      } else if (event.data === 2) {
+        // Paused
+        setIsPlaying(false);
+        setIsLoading(false);
+      } else if (event.data === 3) {
+        // Buffering
+        setIsLoading(true);
+      } else if (event.data === -1) {
+        // Unstarted / connecting
+        setIsLoading(true);
+      } else if (event.data === 0) {
+        // Video ended
+        setIsPlaying(false);
+        setIsLoading(false);
         if (sleepTimerMinutes === "end") {
           cancelSleepTimer();
           toast("Sleep timer finished — playback ended");
@@ -191,7 +261,17 @@ export function MiniPlayer() {
         }
       }
     },
-    [hasNext, playNext, currentEpisode, queue, sleepTimerMinutes, cancelSleepTimer],
+    [
+      hasNext,
+      playNext,
+      currentEpisode,
+      queue,
+      sleepTimerMinutes,
+      cancelSleepTimer,
+      setIsPlaying,
+      setIsLoading,
+      setPlayerError,
+    ],
   );
 
   // Poll playback position for seek bar + throttled progress save (every 10s)
@@ -310,6 +390,7 @@ export function MiniPlayer() {
       className={isVisible ? "absolute inset-0 w-full h-full" : ""}
       onReady={onReady}
       onStateChange={onStateChange}
+      onError={onError}
     />
   );
 
@@ -401,6 +482,18 @@ export function MiniPlayer() {
                   Published on {currentEpisode.date}
                 </p>
 
+                {/* Loading / Error status banner */}
+                {isLoading && (
+                  <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium animate-pulse">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Connecting audio stream...
+                  </div>
+                )}
+                {playerError && (
+                  <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium">
+                    <AlertCircle className="h-3.5 w-3.5" /> {playerError}
+                  </div>
+                )}
+
                 {/* Sleep Timer Indicator Pill */}
                 {(sleepRemainingSec !== null || sleepTimerMinutes === "end") && (
                   <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-medium text-primary">
@@ -471,9 +564,11 @@ export function MiniPlayer() {
                 <Button
                   onClick={togglePlay}
                   className="h-16 w-16 rounded-full bg-[#FF6D00] hover:bg-orange-600 text-white shadow-glow-coral flex items-center justify-center transition-transform active:scale-95"
-                  aria-label={isPlaying ? "Pause" : "Play"}
+                  aria-label={isLoading ? "Loading audio" : isPlaying ? "Pause" : "Play"}
                 >
-                  {isPlaying ? (
+                  {isLoading ? (
+                    <Loader2 className="h-7 w-7 animate-spin text-white" />
+                  ) : isPlaying ? (
                     <Pause className="h-7 w-7 fill-white" />
                   ) : (
                     <Play className="h-7 w-7 fill-white ml-1" />
@@ -627,9 +722,19 @@ export function MiniPlayer() {
                   <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 group-hover:text-primary transition" />
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                  </span>
+                  {isLoading ? (
+                    <span className="text-primary font-medium flex items-center gap-1 animate-pulse">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Loading audio...
+                    </span>
+                  ) : playerError ? (
+                    <span className="text-destructive font-medium truncate max-w-[180px]">
+                      {playerError}
+                    </span>
+                  ) : (
+                    <span>
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  )}
                   {sleepRemainingSec !== null && (
                     <span className="text-primary font-medium flex items-center gap-0.5">
                       <Moon className="h-3 w-3" /> {formatTime(sleepRemainingSec)}
@@ -657,9 +762,15 @@ export function MiniPlayer() {
                 size="icon"
                 onClick={togglePlay}
                 className="h-9 w-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition"
-                aria-label={isPlaying ? "Pause" : "Play"}
+                aria-label={isLoading ? "Loading audio" : isPlaying ? "Pause" : "Play"}
               >
-                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-primary" />}
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                ) : isPlaying ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4 fill-primary" />
+                )}
               </Button>
 
               <Button
