@@ -21,8 +21,7 @@ import { Button } from "@/components/ui/button";
 // ---------------------------------------------------------------------------
 // 1. Get your free access key at https://web3forms.com/#start
 //    It sends form submissions to the email you verify during signup.
-const WEB3FORMS_ACCESS_KEY =
-  import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "96890191-321e-44ba-9a32-4c46b2e1a422";
+const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),

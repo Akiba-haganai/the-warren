@@ -77,15 +77,22 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
 
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("comments").insert({
-        blog_slug: blogSlug,
-        author_name: author,
-        content: commentText,
-        parent_id: parentId,
-        is_approved: false,
+      const response = await fetch("/api/submit-comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          blog_slug: blogSlug,
+          author_name: author,
+          content: commentText,
+          parent_id: parentId,
+          turnstileToken,
+        }),
       });
 
-      if (error) throw error;
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit comment");
+      }
 
       toast.success("Comment submitted! It will appear once approved.");
 

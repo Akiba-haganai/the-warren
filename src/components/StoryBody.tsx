@@ -30,14 +30,17 @@ const components: PortableTextComponents = {
               opts={{
                 width: "100%",
                 height: "100%",
+                host: "https://www.youtube-nocookie.com",
                 playerVars: {
-                autoplay: 0,
-                controls: 1,
-                modestbranding: 1,
-                playsinline: 1,
-                enablejsapi: 1,
-                origin: typeof window !== "undefined" ? window.location.origin : undefined,
-              },
+                  autoplay: 0,
+                  controls: 1,
+                  modestbranding: 1,
+                  playsinline: 1,
+                  enablejsapi: 1,
+                  rel: 0,
+                  iv_load_policy: 3,
+                  origin: typeof window !== "undefined" ? window.location.origin : undefined,
+                },
               }}
               className="absolute inset-0 w-full h-full"
             />

@@ -115,6 +115,12 @@ export function MiniPlayer() {
 
   // Dynamic quality adjustment: force ultra-low data (144p) in audio-only mode, restore preference in video mode
   useEffect(() => {
+    // When isVideoMode changes, the iframe will remount (because it moves in the React tree).
+    // We MUST clear the stale player reference to prevent "not attached to DOM" errors.
+    setPlayer(null);
+  }, [isVideoMode]);
+
+  useEffect(() => {
     if (!player || typeof player.setPlaybackQuality !== "function") return;
     try {
       if (!isVideoMode) {
@@ -123,31 +129,44 @@ export function MiniPlayer() {
         player.setPlaybackQuality(quality);
       }
     } catch {}
-  }, [isVideoMode, player, quality]);
+  }, [player, quality]);
 
   // Extract cover art dominant color tint for Phase 7
   useEffect(() => {
     if (currentEpisode) {
       extractDominantColor(currentEpisode.thumbnail, currentEpisode.id).then(setTintColor);
+      // Clear player when episode changes to avoid stale API calls
+      setPlayer(null);
     }
   }, [currentEpisode]);
 
   const pollRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
 
+  // Helper to safely call player methods
+  const safePlayerCall = useCallback((action: (p: any) => void) => {
+    if (!player) return;
+    try {
+      action(player);
+    } catch (err: any) {
+      if (err?.message?.includes("not attached")) {
+        setPlayer(null);
+      }
+    }
+  }, [player]);
+
   // Register controls to PlayerContext so global buttons can trigger play/pause
   useEffect(() => {
     registerControls({
-      togglePlay: () => {
-        if (!player) return;
-        if (isPlaying) player.pauseVideo();
-        else player.playVideo();
-      },
-      play: () => player?.playVideo(),
-      pause: () => player?.pauseVideo(),
+      togglePlay: () => safePlayerCall((p) => {
+        if (isPlaying) p.pauseVideo();
+        else p.playVideo();
+      }),
+      play: () => safePlayerCall((p) => p.playVideo()),
+      pause: () => safePlayerCall((p) => p.pauseVideo()),
     });
     return () => registerControls(null);
-  }, [player, isPlaying, registerControls]);
+  }, [safePlayerCall, isPlaying, registerControls]);
 
   const onReady = useCallback(
     (event: { target: any }) => {
@@ -204,12 +223,8 @@ export function MiniPlayer() {
 
   // Sync playback speed whenever user changes it
   useEffect(() => {
-    if (player && player.setPlaybackRate) {
-      try {
-        player.setPlaybackRate(playbackSpeed);
-      } catch {}
-    }
-  }, [player, playbackSpeed]);
+    safePlayerCall((p) => p.setPlaybackRate(playbackSpeed));
+  }, [safePlayerCall, playbackSpeed]);
 
   // Sleep timer countdown & audio fade-out
   useEffect(() => {
@@ -225,24 +240,24 @@ export function MiniPlayer() {
 
       // Fade volume down in the last 5 seconds
       if (remainingMs <= 5000 && remainingMs > 0) {
-        try {
+        safePlayerCall((p) => {
           const fadeVol = Math.max(0, Math.floor((remainingMs / 5000) * 100));
-          player.setVolume(fadeVol);
-        } catch {}
+          p.setVolume(fadeVol);
+        });
       }
 
       if (remainingMs <= 0) {
-        try {
-          player.pauseVideo();
-          player.setVolume(100);
-        } catch {}
+        safePlayerCall((p) => {
+          p.pauseVideo();
+          p.setVolume(100);
+        });
         cancelSleepTimer();
         toast("Sleep timer finished — playback paused");
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [sleepTimerEndsAt, player, isPlaying, cancelSleepTimer]);
+  }, [sleepTimerEndsAt, player, isPlaying, cancelSleepTimer, safePlayerCall]);
 
   const onStateChange = useCallback(
     (event: { data: number }) => {
@@ -315,22 +330,24 @@ export function MiniPlayer() {
   useEffect(() => {
     if (!player || !isPlaying || !currentEpisode) return;
     pollRef.current = window.setInterval(() => {
-      const t = player.getCurrentTime?.() ?? 0;
-      const d = player.getDuration?.() ?? duration;
-      setCurrentTime(t);
-      savePosition(t);
+      safePlayerCall((p) => {
+        const t = p.getCurrentTime?.() ?? 0;
+        const d = p.getDuration?.() ?? duration;
+        setCurrentTime(t);
+        savePosition(t);
 
-      // Throttle database / progress saves to every 10 seconds
-      const now = Date.now();
-      if (now - lastSaveRef.current > 10_000) {
-        lastSaveRef.current = now;
-        saveEpisodeProgress(currentEpisode.id, t, d);
-      }
+        // Throttle database / progress saves to every 10 seconds
+        const now = Date.now();
+        if (now - lastSaveRef.current > 10_000) {
+          lastSaveRef.current = now;
+          saveEpisodeProgress(currentEpisode.id, t, d);
+        }
+      });
     }, 1000);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [player, isPlaying, currentEpisode, duration, savePosition]);
+  }, [player, isPlaying, currentEpisode, duration, savePosition, safePlayerCall]);
 
   // Phase 4 — Media Session API for Lock Screen Controls
   useEffect(() => {
@@ -349,8 +366,8 @@ export function MiniPlayer() {
       });
 
       const actionHandlers: [MediaSessionAction, MediaSessionActionHandler | null][] = [
-        ["play", () => player?.playVideo()],
-        ["pause", () => player?.pauseVideo()],
+        ["play", () => safePlayerCall((p) => p.playVideo())],
+        ["pause", () => safePlayerCall((p) => p.pauseVideo())],
         ["previoustrack", () => hasPrevious && playPrevious()],
         ["nexttrack", () => hasNext && playNext()],
         ["seekbackward", () => skipSeconds(-15)],
@@ -364,7 +381,7 @@ export function MiniPlayer() {
         } catch {}
       }
     } catch {}
-  }, [currentEpisode, player, hasPrevious, hasNext, playPrevious, playNext, closePlayer]);
+  }, [currentEpisode, safePlayerCall, hasPrevious, hasNext, playPrevious, playNext, closePlayer]);
 
   // Sync position state with Media Session
   useEffect(() => {
@@ -385,20 +402,21 @@ export function MiniPlayer() {
   }, [currentTime, duration, playbackSpeed]);
 
   const togglePlay = () => {
-    if (isPlaying) player?.pauseVideo();
-    else player?.playVideo();
+    safePlayerCall((p) => {
+      if (isPlaying) p.pauseVideo();
+      else p.playVideo();
+    });
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const t = Number(e.target.value);
-    player?.seekTo(t, true);
+    safePlayerCall((p) => p.seekTo(t, true));
     setCurrentTime(t);
   };
 
   const skipSeconds = (seconds: number) => {
-    if (!player) return;
     const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
-    player.seekTo(newTime, true);
+    safePlayerCall((p) => p.seekTo(newTime, true));
     setCurrentTime(newTime);
   };
 
@@ -415,12 +433,15 @@ export function MiniPlayer() {
       opts={{
         width: "100%",
         height: "100%",
+        host: "https://www.youtube-nocookie.com",
         playerVars: {
           autoplay: 1,
           controls: isVisible ? 1 : 0,
           modestbranding: 1,
           playsinline: 1,
           enablejsapi: 1,
+          rel: 0,
+          iv_load_policy: 3,
           origin: typeof window !== "undefined" ? window.location.origin : undefined,
           start: Math.floor(currentTime),
           vq: isVisible ? (quality === "default" ? undefined : quality) : "tiny",
@@ -566,7 +587,7 @@ export function MiniPlayer() {
                   currentTime={currentTime}
                   duration={duration}
                   onSeek={(t) => {
-                    player?.seekTo(t, true);
+                    safePlayerCall((p) => p.seekTo(t, true));
                     setCurrentTime(t);
                   }}
                 />
@@ -749,7 +770,7 @@ export function MiniPlayer() {
                 episodeId={currentEpisode.id}
                 currentTime={currentTime}
                 onSeek={(t) => {
-                  player?.seekTo(t, true);
+                  safePlayerCall((p) => p.seekTo(t, true));
                   setCurrentTime(t);
                 }}
               />
