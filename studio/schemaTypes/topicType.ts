@@ -56,5 +56,12 @@ export const topicType = defineType({
       type: "text",
       description: "Optional: override the meta description for SEO.",
     }),
+    defineField({
+      name: "university",
+      title: "University (Optional)",
+      type: "reference",
+      to: [{ type: "university" }],
+      description: "If this topic is exclusive to one university (e.g., 'CBU Freshers').",
+    }),
   ],
 });

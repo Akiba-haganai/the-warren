@@ -7,6 +7,7 @@ export interface Episode {
   duration: string;       // e.g. "12:34"
   category: string;
   date: string;
+  universitySlug?: string | null;
 }
 
 export const episodes: Episode[] = [

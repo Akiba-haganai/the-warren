@@ -55,6 +55,7 @@ export function usePodcasts(category?: string, { enabled = true }: { enabled?: b
             duration: row.duration,
             category: row.category,
             date: row.published_date,
+            universitySlug: row.university_slug,
           })),
         );
         setLoading(false);

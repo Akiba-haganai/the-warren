@@ -9,6 +9,8 @@ export interface Poll {
   is_active: boolean;
   expires_at: string | null;
   created_at: string;
+  university_slug?: string | null;
+  campus_slug?: string | null;
 }
 
 export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {

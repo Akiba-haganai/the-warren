@@ -40,6 +40,18 @@ export const culturePhotoType = defineType({
       description: "Lower numbers show first.",
       initialValue: 0,
     }),
+    defineField({
+      name: "university",
+      title: "University (Optional)",
+      type: "reference",
+      to: [{ type: "university" }],
+    }),
+    defineField({
+      name: "campus",
+      title: "Campus (Optional)",
+      type: "reference",
+      to: [{ type: "campus" }],
+    }),
   ],
   preview: {
     select: { title: "caption", media: "image" },

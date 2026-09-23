@@ -62,6 +62,20 @@ export const storyType = defineType({
       validation: (rule) => rule.max(5),
     }),
     defineField({
+      name: "university",
+      title: "University (Optional)",
+      type: "reference",
+      to: [{ type: "university" }],
+      description: "If this story is specific to a university.",
+    }),
+    defineField({
+      name: "campus",
+      title: "Campus (Optional)",
+      type: "reference",
+      to: [{ type: "campus" }],
+      description: "If this story is specific to a campus.",
+    }),
+    defineField({
       name: "body",
       title: "Body",
       type: "array",

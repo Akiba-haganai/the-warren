@@ -5,8 +5,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { PlayerProvider } from "./contexts/PlayerContext";
+import { CampusProvider } from "./contexts/CampusContext";
 import { initThemeFromStorage } from "./lib/theme";
 import { SentryErrorBoundary } from "./components/SentryErrorBoundary";
+
 
 function renderFatalError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
@@ -89,11 +91,13 @@ try {
   createRoot(rootEl).render(
     <StrictMode>
       <SentryErrorBoundary>
-        <BrowserRouter>
-          <PlayerProvider>
-            <App />
-          </PlayerProvider>
-        </BrowserRouter>
+        <CampusProvider>
+          <BrowserRouter>
+            <PlayerProvider>
+              <App />
+            </PlayerProvider>
+          </BrowserRouter>
+        </CampusProvider>
       </SentryErrorBoundary>
     </StrictMode>,
   );

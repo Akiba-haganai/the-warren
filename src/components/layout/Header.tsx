@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
 
+import { CampusSelector } from "@/components/layout/CampusSelector";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -212,8 +213,10 @@ export function Header() {
             </div>
           </Link>
 
+          <CampusSelector />
+
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {items.map((n) => (
               <Link key={n.to} to={n.to} className={navLinkClass(n.to)}>
                 {n.label}
