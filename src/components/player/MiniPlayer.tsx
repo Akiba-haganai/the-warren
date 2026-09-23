@@ -27,7 +27,7 @@ import {
   getStoredQuality,
   setStoredQuality,
 } from "@/lib/playerQuality";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -325,8 +325,32 @@ export function MiniPlayer() {
     ],
   );
 
-  // Poll playback position for seek bar + throttled progress save (every 10s)
+  // Poll playback position for seek bar + throttled progress save
   const lastSaveRef = useRef<number>(0);
+  const lastLocalSaveRef = useRef<number>(0);
+  const lastMediaSessionUpdate = useRef<number>(0);
+
+  const updateMediaSessionPosition = useCallback(
+    (pos: number) => {
+      if (
+        typeof navigator !== "undefined" &&
+        "mediaSession" in navigator &&
+        "setPositionState" in navigator.mediaSession &&
+        duration > 0
+      ) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: Math.max(1, duration),
+            playbackRate: playbackSpeed || 1,
+            position: Math.min(pos, duration),
+          });
+          lastMediaSessionUpdate.current = Date.now();
+        } catch {}
+      }
+    },
+    [duration, playbackSpeed],
+  );
+
   useEffect(() => {
     if (!player || !isPlaying || !currentEpisode) return;
     pollRef.current = window.setInterval(() => {
@@ -334,20 +358,30 @@ export function MiniPlayer() {
         const t = p.getCurrentTime?.() ?? 0;
         const d = p.getDuration?.() ?? duration;
         setCurrentTime(t);
-        savePosition(t);
 
-        // Throttle database / progress saves to every 10 seconds
         const now = Date.now();
-        if (now - lastSaveRef.current > 10_000) {
+        // Throttle local storage save to every 5 seconds (avoids 1s storage I/O thrashing)
+        if (now - lastLocalSaveRef.current > 5_000) {
+          lastLocalSaveRef.current = now;
+          savePosition(t);
+        }
+
+        // Throttle Supabase database progress saves to every 15 seconds
+        if (now - lastSaveRef.current > 15_000) {
           lastSaveRef.current = now;
           saveEpisodeProgress(currentEpisode.id, t, d);
+        }
+
+        // Throttled Media Session drift correction (every 20s instead of every 1s)
+        if (now - lastMediaSessionUpdate.current > 20_000) {
+          updateMediaSessionPosition(t);
         }
       });
     }, 1000);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [player, isPlaying, currentEpisode, duration, savePosition, safePlayerCall]);
+  }, [player, isPlaying, currentEpisode, duration, savePosition, safePlayerCall, updateMediaSessionPosition]);
 
   // Phase 4 — Media Session API for Lock Screen Controls
   useEffect(() => {
@@ -383,28 +417,19 @@ export function MiniPlayer() {
     } catch {}
   }, [currentEpisode, safePlayerCall, hasPrevious, hasNext, playPrevious, playNext, closePlayer]);
 
-  // Sync position state with Media Session
+  // Sync position state with Media Session only when play/pause or speed changes (browser interpolates the rest)
   useEffect(() => {
-    if (
-      typeof navigator !== "undefined" &&
-      "mediaSession" in navigator &&
-      "setPositionState" in navigator.mediaSession &&
-      duration > 0
-    ) {
-      try {
-        navigator.mediaSession.setPositionState({
-          duration: Math.max(1, duration),
-          playbackRate: playbackSpeed || 1,
-          position: Math.min(currentTime, duration),
-        });
-      } catch {}
-    }
-  }, [currentTime, duration, playbackSpeed]);
+    updateMediaSessionPosition(currentTime);
+  }, [isPlaying, playbackSpeed, updateMediaSessionPosition]);
 
   const togglePlay = () => {
     safePlayerCall((p) => {
-      if (isPlaying) p.pauseVideo();
-      else p.playVideo();
+      if (isPlaying) {
+        p.pauseVideo();
+        savePosition(currentTime);
+      } else {
+        p.playVideo();
+      }
     });
   };
 
@@ -412,12 +437,14 @@ export function MiniPlayer() {
     const t = Number(e.target.value);
     safePlayerCall((p) => p.seekTo(t, true));
     setCurrentTime(t);
+    updateMediaSessionPosition(t);
   };
 
   const skipSeconds = (seconds: number) => {
     const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
     safePlayerCall((p) => p.seekTo(newTime, true));
     setCurrentTime(newTime);
+    updateMediaSessionPosition(newTime);
   };
 
   // If player is collapsed, switch back to audio mode
@@ -425,29 +452,60 @@ export function MiniPlayer() {
     if (!isExpanded) setIsVideoMode(false);
   }, [isExpanded]);
 
+  // Stable YouTube options per episode to prevent react-youtube from repeatedly reloading video via loadVideoByPlayerVars
+  const initialResumeRef = useRef<number>(resumePosition);
+  useEffect(() => {
+    initialResumeRef.current = resumePosition;
+  }, [currentEpisode?.id]);
+
+  const youtubeAudioOpts = useMemo(
+    () => ({
+      width: "100%",
+      height: "100%",
+      host: "https://www.youtube-nocookie.com",
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        enablejsapi: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        start: initialResumeRef.current > 0 ? Math.floor(initialResumeRef.current) : undefined,
+      },
+    }),
+    [currentEpisode?.youtubeId],
+  );
+
+  const youtubeVideoOpts = useMemo(
+    () => ({
+      width: "100%",
+      height: "100%",
+      host: "https://www.youtube-nocookie.com",
+      playerVars: {
+        autoplay: 1,
+        controls: 1,
+        modestbranding: 1,
+        playsinline: 1,
+        enablejsapi: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        start: initialResumeRef.current > 0 ? Math.floor(initialResumeRef.current) : undefined,
+      },
+    }),
+    [currentEpisode?.youtubeId],
+  );
+
   if (!currentEpisode) return null;
 
   const renderYouTube = (isVisible: boolean) => (
     <YouTube
       videoId={currentEpisode.youtubeId}
-      opts={{
-        width: "100%",
-        height: "100%",
-        host: "https://www.youtube-nocookie.com",
-        playerVars: {
-          autoplay: 1,
-          controls: isVisible ? 1 : 0,
-          modestbranding: 1,
-          playsinline: 1,
-          enablejsapi: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          origin: typeof window !== "undefined" ? window.location.origin : undefined,
-          start: Math.floor(currentTime),
-          vq: isVisible ? (quality === "default" ? undefined : quality) : "tiny",
-        },
-      }}
+      opts={isVisible ? youtubeVideoOpts : youtubeAudioOpts}
       className={isVisible ? "absolute inset-0 w-full h-full" : ""}
+      iframeClassName={isVisible ? "w-full h-full" : ""}
       onReady={onReady}
       onStateChange={onStateChange}
       onError={onError}
