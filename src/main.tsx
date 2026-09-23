@@ -25,56 +25,51 @@ function renderFatalError(err: unknown) {
   }
 }
 
+// Global error logging to Sentry — do NOT call renderFatalError here!
+// renderFatalError wipes out the DOM with "App failed to start" which would
+// turn any transient background network blip into a catastrophic screen crash.
 window.addEventListener("error", (event) => {
   const err = event.error ?? event.message;
-  renderFatalError(err);
+  console.error("[WEAVE Uncaught Error]", err);
   import("./lib/sentry")
     .then(({ captureLazyException }) => captureLazyException(err))
     .catch(() => {});
 });
 window.addEventListener("unhandledrejection", (event) => {
-  renderFatalError(event.reason);
+  console.warn("[WEAVE Unhandled Rejection]", event.reason);
   import("./lib/sentry")
     .then(({ captureLazyException }) => captureLazyException(event.reason))
     .catch(() => {});
 });
 
-// ── Boot-Crash Nuclear Reset ──────────────────────────────────────────────
-// If Vite fails to load a JS chunk (e.g. a stale SW served a file whose hash
-// no longer exists on the CDN), increment a strike counter in sessionStorage.
+// ── Chunk Loading Auto-Recovery (vite:preloadError) ────────────────────────
+// When a new deployment is pushed to Vercel, previously cached HTML may request
+// older JS chunks that no longer exist on the server (returning 404).
 //
-// Strike 1: record the failure — do NOT reload immediately. The page may
-//   recover on its own (e.g. SW cache has been updated in the background).
-// Strike 2+: "nuclear reset" — unregister all service workers, delete every
-//   cache bucket, then force a hard reload to pull a fresh build from Vercel.
-//
-// Using 2 strikes (not 3) means we escape a corrupted install faster, and
-// not reloading on strike 1 avoids triggering the controllerchange cascade
-// that was the root cause of the "no network" timeout loop.
-const CRASH_STRIKE_KEY = "weave:boot_crash_strikes";
-window.addEventListener("vite:preloadError", async () => {
-  const strikes = parseInt(sessionStorage.getItem(CRASH_STRIKE_KEY) ?? "0", 10) + 1;
-  if (strikes >= 2) {
-    // Nuclear reset — clear caches and reload cleanly
-    sessionStorage.removeItem(CRASH_STRIKE_KEY);
+// Automatically recover by clearing stale caches and refreshing the page ONCE.
+// Guarded with a sessionStorage flag to strictly prevent reload loops.
+const CHUNK_RELOAD_KEY = "weave:chunk_reload_done";
+window.addEventListener("vite:preloadError", async (event) => {
+  event.preventDefault();
+  const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
+  if (!alreadyReloaded) {
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, "true");
     try {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map((r) => r.unregister()));
-      const keys = await caches.keys();
-      await Promise.all(keys.map((k) => caches.delete(k)));
-    } catch {
-      // Best-effort — carry on with the reload regardless
-    }
+      if ("caches" in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+    } catch {}
     window.location.reload();
   } else {
-    // Strike 1: record but don't reload. If the chunk is genuinely missing,
-    // the user's next action will retry and hit strike 2 → nuclear reset.
-    sessionStorage.setItem(CRASH_STRIKE_KEY, String(strikes));
+    console.error("[WEAVE] Chunk failed to load even after cache-refresh reload");
   }
 });
 
 
 try {
+  // Clear chunk reload flag on successful start
+  sessionStorage.removeItem(CHUNK_RELOAD_KEY);
   initThemeFromStorage();
 
   // ── Sentry is NOT pre-fetched here ────────────────────────────────────────

@@ -1,12 +1,13 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Toaster } from "./components/layout/Toaster";
 import { ScrollToTopOnNavigate } from "./lib/ScrollToTopOnNavigate";
 import { LegacyAnchorRedirect } from "./components/routing/LegacyAnchorRedirect";
 import { usePlayer } from "./contexts/PlayerContext";
+import { lazyWithRetry } from "./lib/lazyWithRetry";
 
 // Lazy load MiniPlayer so framer-motion is only bundled when a podcast is played
-const LazyMiniPlayer = lazy(() => 
+const LazyMiniPlayer = lazyWithRetry(() => 
   import("./components/player/MiniPlayer").then(module => ({ default: module.MiniPlayer }))
 );
 import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
@@ -16,27 +17,27 @@ import { UpdatePrompt } from "./components/layout/UpdatePrompt";
 import { RebrandBanner } from "./components/layout/RebrandBanner";
 
 // Home is imported eagerly so the landing page renders without a chunk download waterfall.
-// Other routes remain lazy-loaded to keep their code off the initial bundle.
+// Other routes use lazyWithRetry so transient mobile packet drops retry automatically.
 import Home from "./pages/Home";
-const CampusPage  = lazy(() => import("./pages/CampusPage"));
-const Explore     = lazy(() => import("./pages/Explore"));
-const SubmitBlog  = lazy(() => import("./pages/SubmitBlog"));
-const BlogPreview = lazy(() => import("./pages/BlogPreview"));
-const BlogsList   = lazy(() => import("./pages/BlogsList"));
-const BlogPage    = lazy(() => import("./pages/BlogPage"));
-const TopicPage   = lazy(() => import("./pages/TopicPage"));
-const AuthorPage  = lazy(() => import("./pages/AuthorPage"));
-const About       = lazy(() => import("./pages/About"));
-const Contact     = lazy(() => import("./pages/Contact"));
-const Privacy     = lazy(() => import("./pages/Privacy"));
-const Terms       = lazy(() => import("./pages/Terms"));
-const Cookies     = lazy(() => import("./pages/Cookies"));
-const Ecosystem   = lazy(() => import("./pages/Ecosystem"));
-const Products    = lazy(() => import("./pages/Products"));
-const Podcasts    = lazy(() => import("./pages/Podcasts"));
-const Culture     = lazy(() => import("./pages/Culture"));
-const SavedArticles = lazy(() => import("./pages/SavedArticles"));
-const CampusDirectory = lazy(() => import("./pages/CampusDirectory"));
+const CampusPage      = lazyWithRetry(() => import("./pages/CampusPage"));
+const Explore         = lazyWithRetry(() => import("./pages/Explore"));
+const SubmitBlog      = lazyWithRetry(() => import("./pages/SubmitBlog"));
+const BlogPreview     = lazyWithRetry(() => import("./pages/BlogPreview"));
+const BlogsList       = lazyWithRetry(() => import("./pages/BlogsList"));
+const BlogPage        = lazyWithRetry(() => import("./pages/BlogPage"));
+const TopicPage       = lazyWithRetry(() => import("./pages/TopicPage"));
+const AuthorPage      = lazyWithRetry(() => import("./pages/AuthorPage"));
+const About           = lazyWithRetry(() => import("./pages/About"));
+const Contact         = lazyWithRetry(() => import("./pages/Contact"));
+const Privacy         = lazyWithRetry(() => import("./pages/Privacy"));
+const Terms           = lazyWithRetry(() => import("./pages/Terms"));
+const Cookies         = lazyWithRetry(() => import("./pages/Cookies"));
+const Ecosystem       = lazyWithRetry(() => import("./pages/Ecosystem"));
+const Products        = lazyWithRetry(() => import("./pages/Products"));
+const Podcasts        = lazyWithRetry(() => import("./pages/Podcasts"));
+const Culture         = lazyWithRetry(() => import("./pages/Culture"));
+const SavedArticles   = lazyWithRetry(() => import("./pages/SavedArticles"));
+const CampusDirectory = lazyWithRetry(() => import("./pages/CampusDirectory"));
 
 function StoryToBlogRedirect() {
   const params = useParams();
@@ -51,7 +52,11 @@ function StoryPreviewToBlogRedirect() {
 // Minimal inline fallback — just keeps the background colour so there's no
 // white flash while a chunk loads. No spinner needed; chunks are tiny.
 function PageFallback() {
-  return <div className="min-h-screen bg-background" />;
+  return (
+    <div className="min-h-screen bg-background relative">
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-orange-500 to-amber-500 animate-pulse z-[100]" />
+    </div>
+  );
 }
 
 function App() {

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useMemo, useState, lazy, Suspense } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Bookmark } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
 
@@ -25,9 +25,11 @@ import {
   type ThemePreference,
 } from "@/lib/theme";
 
-// Lazy-load SearchDialog so @sanity/client, cmdk, and RxJS are only
-// fetched when the user actually opens search.
-const LazySearchDialog = lazy(() =>
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
+
+// Lazy-load SearchDialog with retry so @sanity/client, cmdk, and RxJS are only
+// fetched when the user actually opens search, retrying automatically on flaky connections.
+const LazySearchDialog = lazyWithRetry(() =>
   import("@/components/layout/SearchDialog").then((m) => ({ default: m.SearchDialog }))
 );
 
