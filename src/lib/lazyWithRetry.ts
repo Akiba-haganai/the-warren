@@ -16,7 +16,12 @@ export function lazyWithRetry<T extends ComponentType<any>>(
     new Promise<{ default: T }>((resolve, reject) => {
       function attempt(remaining: number) {
         factory()
-          .then(resolve)
+          .then((mod) => {
+            if (!mod || !mod.default) {
+              throw new Error("Module failed to load or has no default export (possible network timeout)");
+            }
+            resolve(mod);
+          })
           .catch((error) => {
             if (remaining <= 0) {
               reject(error);

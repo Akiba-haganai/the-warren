@@ -101,8 +101,8 @@ export default defineConfig({
         name: "WEAVE",
         short_name: "WEAVE",
         description: "Stories. Culture. What's happening.",
-        theme_color: "#FF6D00",
-        background_color: "#FF6D00",
+        theme_color: "#2563EB",
+        background_color: "#2563EB",
         display: "standalone",
         start_url: "/",
         icons: [
