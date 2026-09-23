@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState, lazy, Suspense } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User } from "lucide-react";
+import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Bookmark } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.png";
 
 import { CampusSelector } from "@/components/layout/CampusSelector";
