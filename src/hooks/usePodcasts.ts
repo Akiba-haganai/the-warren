@@ -20,15 +20,15 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
         if (!cancelled) {
           try {
             console.warn("Supabase not configured. Using fallback podcast data.");
-            const { podcastEpisodes } = await import("@/data/podcasts");
-            let filtered = podcastEpisodes;
+            const { episodes } = await import("@/data/podcasts");
+            let filtered = episodes;
             if (category && category !== "All") {
-              filtered = filtered.filter(ep => ep.category === category);
+              filtered = filtered.filter((ep: Episode) => ep.category === category);
             }
             if (universitySlug) {
-              filtered = filtered.filter(ep => ep.universitySlug === universitySlug || !ep.universitySlug);
+              filtered = filtered.filter((ep: Episode) => ep.universitySlug === universitySlug || !ep.universitySlug);
             } else {
-              filtered = filtered.filter(ep => !ep.universitySlug);
+              filtered = filtered.filter((ep: Episode) => !ep.universitySlug);
             }
             setData(filtered);
             setLoading(false);
