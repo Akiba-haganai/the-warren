@@ -35,6 +35,7 @@ const nav = [
   { to: "/", label: "Media" },
   { to: "/blogs", label: "Blogs" },
   { to: "/podcasts", label: "Podcasts" },
+  { to: "/campuses", label: "Campuses" },
   { to: "/explore", label: "Explore" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -240,6 +241,11 @@ export function Header() {
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
               <Search className="h-4 w-4" />
             </Button>
+            <Button variant="ghost" size="icon" asChild aria-label="Saved articles">
+              <Link to="/saved">
+                <Bookmark className="h-4 w-4" />
+              </Link>
+            </Button>
             <Button variant="ghost" size="icon" disabled title="Profile (coming soon)" className="text-muted-foreground">
               <User className="h-4 w-4" />
             </Button>
@@ -286,6 +292,11 @@ export function Header() {
                       </Link>
                     </SheetClose>
                   ))}
+                  <SheetClose asChild>
+                    <Link to="/saved" className={navLinkClass("/saved")}>
+                      🔖 Saved Articles
+                    </Link>
+                  </SheetClose>
 
                   <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3">
                     <div className="flex flex-col gap-2">

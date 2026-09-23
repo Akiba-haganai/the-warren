@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { ArrowRight, Briefcase, ShoppingBag, MessageCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

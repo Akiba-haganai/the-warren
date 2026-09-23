@@ -1,4 +1,4 @@
-import { useCampus, type CampusScope } from "@/contexts/CampusContext";
+import { useCampus } from "@/contexts/CampusContext";
 import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
 import {

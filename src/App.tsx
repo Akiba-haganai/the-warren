@@ -35,6 +35,8 @@ const Ecosystem   = lazy(() => import("./pages/Ecosystem"));
 const Products    = lazy(() => import("./pages/Products"));
 const Podcasts    = lazy(() => import("./pages/Podcasts"));
 const Culture     = lazy(() => import("./pages/Culture"));
+const SavedArticles = lazy(() => import("./pages/SavedArticles"));
+const CampusDirectory = lazy(() => import("./pages/CampusDirectory"));
 
 function StoryToBlogRedirect() {
   const params = useParams();
@@ -64,6 +66,7 @@ function App() {
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/campuses" element={<CampusDirectory />} />
           <Route path="/campuses/:slug" element={<CampusPage />} />
           <Route path="/explore" element={<Explore />} />
 
@@ -90,6 +93,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/podcasts" element={<Podcasts />} />
           <Route path="/culture" element={<Culture />} />
+          <Route path="/saved" element={<SavedArticles />} />
         </Routes>
       </Suspense>
       {currentEpisode && (

@@ -82,12 +82,12 @@ export function Comments({ blogSlug }: { blogSlug: string }) {
         author_name: author,
         content: commentText,
         parent_id: parentId,
-        is_approved: true,
+        is_approved: false,
       });
 
       if (error) throw error;
 
-      toast.success("Comment posted!");
+      toast.success("Comment submitted! It will appear once approved.");
 
       // Reset forms
       if (parentId) {

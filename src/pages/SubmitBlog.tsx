@@ -8,9 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Send, CheckCircle } from "lucide-react";
 import TurnstileRaw, { Turnstile as NamedTurnstile } from "react-turnstile";
+import { useCampus } from "@/contexts/CampusContext";
 const Turnstile = (NamedTurnstile || (TurnstileRaw as any)?.default || TurnstileRaw) as typeof NamedTurnstile;
 
 export default function SubmitBlog() {
+  const { universitySlug, universityName, scope } = useCampus();
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -41,6 +43,7 @@ export default function SubmitBlog() {
         excerpt,
         body,
         turnstileToken,
+        universitySlug: universitySlug || null,
       }),
     });
 
@@ -73,6 +76,11 @@ export default function SubmitBlog() {
             <p className="mt-4 text-lg text-muted-foreground">
               Got a blog, opinion, or experience to share? We'll review it before it goes live.
             </p>
+            {scope === "university" && universityName && (
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-sm text-blue-600 dark:text-blue-400">
+                📍 Submitting as a {universityName} student
+              </div>
+            )}
           </Reveal>
 
           <Card className="mt-10 border-border bg-card">

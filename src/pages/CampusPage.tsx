@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCampus } from "@/contexts/CampusContext";
 import Home from "./Home";
 

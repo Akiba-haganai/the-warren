@@ -8,7 +8,7 @@ export interface CulturePhoto {
   category?: string;
 }
 
-const QUERY = `*[_type == "culturePhoto"] | order(order asc)[0...12] { _id, image, caption, category }`;
+
 
 export function useCulturePhotos({ enabled = true, universitySlug }: { enabled?: boolean; universitySlug?: string } = {}) {
   const [photos, setPhotos] = useState<CulturePhoto[]>([]);

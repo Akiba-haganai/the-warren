@@ -14,6 +14,7 @@ import { urlForImage } from "@/lib/sanityImage";
 import { ArrowLeft } from "lucide-react";
 import { ShareRow } from "@/components/blog/ShareRow";
 import { EcosystemCTA } from "@/components/blog/EcosystemCTA";
+import { SaveButton } from "@/components/blog/SaveButton";
 import { LikeButton } from "@/components/blog/LikeButton";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { calculateReadingTime } from "@/lib/readingTime";
@@ -224,6 +225,13 @@ export default function BlogPage() {
                 {/* Engagement row */}
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <LikeButton blogSlug={blog.slug} />
+                  <SaveButton
+                    slug={blog.slug}
+                    title={blog.title}
+                    excerpt={blog.excerpt}
+                    authorName={blog.author?.name}
+                    publishedAt={blog.publishedAt}
+                  />
                   <div className="h-6 w-px bg-border hidden sm:block" />
                   <ShareRow
                     title={blog.title}
