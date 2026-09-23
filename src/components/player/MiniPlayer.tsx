@@ -14,6 +14,8 @@ import {
   RotateCw,
   Gauge,
   Moon,
+  MonitorPlay,
+  Headphones
 } from "lucide-react";
 import { Bookmark } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -81,6 +83,7 @@ export function MiniPlayer() {
   const [duration, setDuration] = useState(0);
   const [sleepRemainingSec, setSleepRemainingSec] = useState<number | null>(null);
   const [tintColor, setTintColor] = useState<string>("rgba(255, 109, 0, 0.15)");
+  const [isVideoMode, setIsVideoMode] = useState<boolean>(false);
 
   // Extract cover art dominant color tint for Phase 7
   useEffect(() => {
@@ -283,7 +286,32 @@ export function MiniPlayer() {
     setCurrentTime(newTime);
   };
 
+  // If player is collapsed, switch back to audio mode
+  useEffect(() => {
+    if (!isExpanded) setIsVideoMode(false);
+  }, [isExpanded]);
+
   if (!currentEpisode) return null;
+
+  const renderYouTube = (isVisible: boolean) => (
+    <YouTube
+      videoId={currentEpisode.youtubeId}
+      opts={{
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          autoplay: 1,
+          controls: isVisible ? 1 : 0,
+          modestbranding: 1,
+          playsinline: 1,
+          start: Math.floor(currentTime),
+        },
+      }}
+      className={isVisible ? "absolute inset-0 w-full h-full" : ""}
+      onReady={onReady}
+      onStateChange={onStateChange}
+    />
+  );
 
   return (
     <>
@@ -332,12 +360,35 @@ export function MiniPlayer() {
 
             {/* Center Content: Large Art & Episode Details */}
             <div className="my-auto py-6 flex flex-col items-center max-w-md mx-auto w-full">
-              <motion.img
-                layoutId="podcast-cover-art"
-                src={currentEpisode.thumbnail}
-                alt={currentEpisode.title}
-                className="w-full aspect-video sm:aspect-square object-cover rounded-2xl shadow-2xl border border-border"
-              />
+              {/* Cover Art OR Video Player */}
+              <div className="relative w-full aspect-video sm:aspect-square rounded-2xl shadow-2xl border border-border overflow-hidden bg-black flex items-center justify-center">
+                {!isVideoMode ? (
+                  <motion.img
+                    layoutId="podcast-cover-art"
+                    src={currentEpisode.thumbnail}
+                    alt={currentEpisode.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  renderYouTube(true)
+                )}
+                
+                {/* Audio / Video Toggle Pill */}
+                <div className="absolute top-3 right-3 flex items-center bg-black/60 backdrop-blur-md rounded-full p-1 border border-white/10">
+                  <button
+                    onClick={() => setIsVideoMode(false)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!isVideoMode ? "bg-primary text-white" : "text-white/70 hover:text-white"}`}
+                  >
+                    <Headphones className="h-3.5 w-3.5" /> Audio
+                  </button>
+                  <button
+                    onClick={() => setIsVideoMode(true)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${isVideoMode ? "bg-primary text-white" : "text-white/70 hover:text-white"}`}
+                  >
+                    <MonitorPlay className="h-3.5 w-3.5" /> Video
+                  </button>
+                </div>
+              </div>
 
               <div className="mt-6 text-center w-full px-2">
                 <Badge variant="secondary" className="mb-2">
@@ -638,19 +689,12 @@ export function MiniPlayer() {
         </div>
       )}
 
-      {/* Hidden YouTube IFrame */}
-      <div className="hidden">
-        <YouTube
-          videoId={currentEpisode.youtubeId}
-          opts={{
-            height: "0",
-            width: "0",
-            playerVars: { autoplay: 1, controls: 0, modestbranding: 1, playsinline: 1 },
-          }}
-          onReady={onReady}
-          onStateChange={onStateChange}
-        />
-      </div>
+      {/* Hidden YouTube IFrame for Audio Mode */}
+      {!isVideoMode && (
+        <div className="hidden">
+          {renderYouTube(false)}
+        </div>
+      )}
     </>
   );
 }

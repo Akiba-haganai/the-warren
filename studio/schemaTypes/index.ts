@@ -4,5 +4,14 @@ import { authorType } from "./authorType";
 import { culturePhotoType } from "./culturePhotoType";
 import { universityType } from "./universityType";
 import { campusType } from "./campusType";
+import { youtubeType } from "./youtubeType";
 
-export const schemaTypes = [storyType, topicType, authorType, culturePhotoType, universityType, campusType];
+export const schemaTypes = [
+  storyType,
+  authorType,
+  culturePhotoType,
+  topicType,
+  universityType,
+  campusType,
+  youtubeType,
+];

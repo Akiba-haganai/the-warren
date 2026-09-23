@@ -1,16 +1,48 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlForImage } from "@/lib/sanityImage";
 
+import YouTube from "react-youtube";
+
+function getYouTubeId(url: string) {
+  if (!url) return null;
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match?.[1];
+}
+
 const components: PortableTextComponents = {
   types: {
     image: ({ value }) => (
       <img
         src={urlForImage(value).width(800).auto("format").url()}
         alt={value.alt || ""}
-        className="rounded-lg my-6 w-full"
+        className="rounded-lg my-6 w-full shadow-md"
         loading="lazy"
       />
     ),
+    youtube: ({ value }) => {
+      const id = getYouTubeId(value.url);
+      if (!id) return null;
+      return (
+        <div className="my-8">
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xl bg-black">
+            <YouTube
+              videoId={id}
+              opts={{
+                width: "100%",
+                height: "100%",
+                playerVars: { autoplay: 0, controls: 1, modestbranding: 1 },
+              }}
+              className="absolute inset-0 w-full h-full"
+            />
+          </div>
+          {value.caption && (
+            <p className="text-center text-sm text-muted-foreground mt-3 font-medium">
+              {value.caption}
+            </p>
+          )}
+        </div>
+      );
+    },
   },
 };
 
