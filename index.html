@@ -57,14 +57,13 @@
     <link rel="dns-prefetch" href="https://img.youtube.com" />
     <link rel="dns-prefetch" href="https://o4511632845635584.ingest.de.sentry.io" />
     <!-- Fonts are self-hosted in /public/fonts via @font-face in index.css -->
-    <!-- Preload the two above-the-fold fonts first (critical path) -->
+    <!-- Preload only the two above-the-fold fonts (body text + hero heading).
+         Secondary weights (lato-300/700, montserrat-500/700) are NOT preloaded —
+         they compete for connections on cold start and are already cached by the
+         service worker after the first visit. The browser fetches them naturally
+         when the CSS @font-face rules are parsed, in parallel with everything else. -->
     <link rel="preload" href="/fonts/lato-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/montserrat-600.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Preload secondary weights so they're fetched in parallel, not sequentially -->
-    <link rel="preload" href="/fonts/lato-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/lato-700.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/montserrat-500.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/montserrat-700.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />

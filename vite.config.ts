@@ -148,11 +148,31 @@ export default defineConfig({
           if (id.includes("node_modules/framer-motion")) {
             return "vendor-motion";
           }
-          // Everything else (React, ReactDOM, React Router, Supabase, Lucide, etc.)
-          // goes in a single vendor chunk. Fewer HTTP round-trips outweigh the
-          // slightly coarser caching granularity for this PWA's usage pattern.
+          // React core — smallest possible critical-path unit. The browser
+          // can start parsing and executing this while the larger UI/data
+          // chunks are still downloading in parallel.
+          if (
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react-dom/") ||
+            id.includes("node_modules/scheduler/")
+          ) {
+            return "vendor-react";
+          }
+          // React Router — needed for routing but not for initial paint
+          if (id.includes("node_modules/react-router")) {
+            return "vendor-router";
+          }
+          // Supabase — auth/data layer, not needed until first hook fires
+          if (id.includes("node_modules/@supabase")) {
+            return "vendor-supabase";
+          }
+          // Lucide icons — tree-shaken but still a chunk on its own
+          if (id.includes("node_modules/lucide-react")) {
+            return "vendor-icons";
+          }
+          // Everything else (Radix, shadcn, sonner, embla, etc.)
           if (id.includes("node_modules")) {
-            return "vendor";
+            return "vendor-ui";
           }
         },
       },
