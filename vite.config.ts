@@ -66,13 +66,6 @@ export default defineConfig({
               networkTimeoutSeconds: 3,
             },
           },
-          // Lazy route chunks — cache on first use, revalidate in background
-          {
-            urlPattern: ({ request }: { request: Request }) =>
-              request.destination === "script" || request.destination === "style",
-            handler: "StaleWhileRevalidate" as const,
-            options: { cacheName: "weave-route-chunks" },
-          },
           // YouTube thumbnails
           {
             urlPattern: ({ url }: { url: URL }) =>
@@ -136,43 +129,27 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // Keep Sentry separate — it's large (~270 KB) and only loaded lazily on error
-          if (id.includes("node_modules/@sentry")) {
+          const normalized = id.replace(/\\/g, "/");
+
+          // Keep Sentry separate — large (~270 KB) and only loaded lazily on error
+          if (normalized.includes("node_modules/@sentry")) {
             return "vendor-sentry";
           }
-          // Keep Sanity + rxjs separate — they're large and only used on content pages
-          if (id.includes("node_modules/@sanity") || id.includes("node_modules/rxjs")) {
+
+          // Keep Sanity + rxjs separate — only used on content pages
+          if (normalized.includes("node_modules/@sanity") || normalized.includes("node_modules/rxjs")) {
             return "vendor-sanity";
           }
-          // Keep Framer Motion separate — animation-heavy, not needed on every route
-          if (id.includes("node_modules/framer-motion")) {
+
+          // Keep Framer Motion separate — animation-heavy, only used for Podcasts/Player
+          if (normalized.includes("node_modules/framer-motion")) {
             return "vendor-motion";
           }
-          // React core — smallest possible critical-path unit. The browser
-          // can start parsing and executing this while the larger UI/data
-          // chunks are still downloading in parallel.
-          if (
-            id.includes("node_modules/react/") ||
-            id.includes("node_modules/react-dom/") ||
-            id.includes("node_modules/scheduler/")
-          ) {
-            return "vendor-react";
-          }
-          // React Router — needed for routing but not for initial paint
-          if (id.includes("node_modules/react-router")) {
-            return "vendor-router";
-          }
-          // Supabase — auth/data layer, not needed until first hook fires
-          if (id.includes("node_modules/@supabase")) {
-            return "vendor-supabase";
-          }
-          // Lucide icons — tree-shaken but still a chunk on its own
-          if (id.includes("node_modules/lucide-react")) {
-            return "vendor-icons";
-          }
-          // Everything else (Radix, shadcn, sonner, embla, etc.)
-          if (id.includes("node_modules")) {
-            return "vendor-ui";
+
+          // Unified vendor chunk for core app runtime (React, React Router, Supabase, Lucide, Radix)
+          // Keeping these together prevents bundler duplication of React symbols/internals.
+          if (normalized.includes("node_modules")) {
+            return "vendor";
           }
         },
       },

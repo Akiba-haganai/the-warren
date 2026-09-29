@@ -47,14 +47,13 @@
     <meta name="twitter:image" content="https://warren-weave.vercel.app/og-image-1200x630.png" />
 
     
-    <!-- Network Preconnect & DNS Prefetch for Mobile Performance -->
+    <!-- Network Preconnect for Critical Path APIs (under Lighthouse max 4 limit) -->
     <link rel="preconnect" href="https://7yislksr.apicdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="preconnect" href="https://otdeonkfwghuevzhxrsy.supabase.co" crossorigin />
-    <link rel="preconnect" href="https://www.youtube.com" />
-    <link rel="preconnect" href="https://s.ytimg.com" crossorigin />
-    <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+    <!-- Non-critical origins use dns-prefetch to avoid speculative TLS handshake costs -->
     <link rel="dns-prefetch" href="https://img.youtube.com" />
+    <link rel="dns-prefetch" href="https://www.youtube.com" />
     <link rel="dns-prefetch" href="https://o4511632845635584.ingest.de.sentry.io" />
     <!-- Fonts are self-hosted in /public/fonts via @font-face in index.css -->
     <!-- Preload only the two above-the-fold fonts (body text + hero heading).
