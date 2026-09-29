@@ -23,28 +23,17 @@ const TRENDING_TOPICS_QUERY_NATIONAL = `
 }
 `;
 
-const TRENDING_TOPICS_QUERY_UNIVERSITY = `
-*[_type == "topic" && (!defined(university) || university->slug.current == $universitySlug)]{
-  _id,
-  "name": title,
-  "slug": slug.current,
-  isTrending,
-  "postCount": count(*[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug)]),
-  "recentPostCount": count(*[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug) && dateTime(publishedAt) > dateTime(now()) - 60*60*24*30]),
-  "lastUpdated": *[_type == "story" && references(^._id) && (!defined(university) || university->slug.current == $universitySlug)] | order(publishedAt desc)[0].publishedAt
-}
-`;
 
-export function useTrendingTopics(universitySlug?: string) {
+export function useTrendingTopics() {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     
-    const query = universitySlug ? TRENDING_TOPICS_QUERY_UNIVERSITY : TRENDING_TOPICS_QUERY_NATIONAL;
+    const query = TRENDING_TOPICS_QUERY_NATIONAL;
     
-    sanityClient.fetch<TrendingTopic[]>(query, { universitySlug: universitySlug || "" })
+    sanityClient.fetch<TrendingTopic[]>(query, {})
       .then((data) => {
         if (!active) return;
         
@@ -70,7 +59,7 @@ export function useTrendingTopics(universitySlug?: string) {
     return () => {
       active = false;
     };
-  }, [universitySlug]);
+  }, []);
 
   return { topics, loading };
 }

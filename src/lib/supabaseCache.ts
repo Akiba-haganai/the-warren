@@ -44,6 +44,10 @@ export async function cachedSupabaseQuery<T>(
   const inflight = Promise.resolve(queryFn()).then((data) => {
     cache.set(key, { data, timestamp: Date.now() });
     return data;
+  }).catch((err) => {
+    // On failure, remove the stale entry so the next caller can retry cleanly
+    cache.delete(key);
+    throw err;
   });
 
   // Store the inflight promise (timestamp 0 so it won't be mistaken as fresh)

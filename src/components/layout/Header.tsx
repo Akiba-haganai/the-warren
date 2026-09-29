@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, Suspense } from "react";
 import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Bookmark } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.webp";
 
-import { CampusSelector } from "@/components/layout/CampusSelector";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -216,7 +216,7 @@ export function Header() {
             </div>
           </Link>
 
-          <CampusSelector />
+
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">

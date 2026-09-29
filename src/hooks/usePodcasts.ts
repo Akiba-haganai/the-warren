@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { cachedSupabaseQuery } from "@/lib/supabaseCache";
 import type { Episode } from "@/data/podcasts";
 
-export function usePodcasts(category?: string, { enabled = true, universitySlug }: { enabled?: boolean; universitySlug?: string } = {}) {
+export function usePodcasts(category?: string, { enabled = true }: { enabled?: boolean } = {}) {
   const [data, setData] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,11 +25,7 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
             if (category && category !== "All") {
               filtered = filtered.filter((ep: Episode) => ep.category === category);
             }
-            if (universitySlug) {
-              filtered = filtered.filter((ep: Episode) => ep.universitySlug === universitySlug || !ep.universitySlug);
-            } else {
-              filtered = filtered.filter((ep: Episode) => !ep.universitySlug);
-            }
+            
             setData(filtered);
             setLoading(false);
           } catch (e) {
@@ -41,7 +37,7 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
         return;
       }
 
-      const cacheKey = `episodes:${category ?? "all"}:${universitySlug || "national"}`;
+      const cacheKey = `episodes:${category ?? "all"}:national`;
 
       try {
         const rows = await cachedSupabaseQuery(cacheKey, async () => {
@@ -52,12 +48,6 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
 
           if (category && category !== "All") {
             query = query.eq("category", category);
-          }
-          
-          if (universitySlug) {
-            query = query.or(`university_slug.eq.${universitySlug},university_slug.is.null`);
-          } else {
-            query = query.is("university_slug", null);
           }
 
           const { data: rows, error: err } = await query;
@@ -77,7 +67,7 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
             duration: row.duration,
             category: row.category,
             date: row.published_date,
-            universitySlug: row.university_slug,
+            
           })),
         );
         setLoading(false);
@@ -92,7 +82,7 @@ export function usePodcasts(category?: string, { enabled = true, universitySlug 
     return () => {
       cancelled = true;
     };
-  }, [category, enabled, universitySlug]);
+  }, [category, enabled]);
 
   return { podcasts: data, loading, error };
-}
+}

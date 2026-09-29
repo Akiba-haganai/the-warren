@@ -19,7 +19,6 @@ import { RebrandBanner } from "./components/layout/RebrandBanner";
 // Home is imported eagerly so the landing page renders without a chunk download waterfall.
 // Other routes use lazyWithRetry so transient mobile packet drops retry automatically.
 import Home from "./pages/Home";
-const CampusPage      = lazyWithRetry(() => import("./pages/CampusPage"));
 const Explore         = lazyWithRetry(() => import("./pages/Explore"));
 const SubmitBlog      = lazyWithRetry(() => import("./pages/SubmitBlog"));
 const BlogPreview     = lazyWithRetry(() => import("./pages/BlogPreview"));
@@ -37,7 +36,6 @@ const Products        = lazyWithRetry(() => import("./pages/Products"));
 const Podcasts        = lazyWithRetry(() => import("./pages/Podcasts"));
 const Culture         = lazyWithRetry(() => import("./pages/Culture"));
 const SavedArticles   = lazyWithRetry(() => import("./pages/SavedArticles"));
-const CampusDirectory = lazyWithRetry(() => import("./pages/CampusDirectory"));
 
 function StoryToBlogRedirect() {
   const params = useParams();
@@ -71,8 +69,8 @@ function App() {
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/campuses" element={<CampusDirectory />} />
-          <Route path="/campuses/:slug" element={<CampusPage />} />
+          <Route path="/campuses" element={<Navigate to="/" replace />} />
+          <Route path="/campuses/:slug" element={<Navigate to="/" replace />} />
           <Route path="/explore" element={<Explore />} />
 
           {/* Blog Routes */}

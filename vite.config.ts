@@ -146,11 +146,7 @@ export default defineConfig({
             return "vendor-motion";
           }
 
-          // Unified vendor chunk for core app runtime (React, React Router, Supabase, Lucide, Radix)
-          // Keeping these together prevents bundler duplication of React symbols/internals.
-          if (normalized.includes("node_modules")) {
-            return "vendor";
-          }
+
         },
       },
     },

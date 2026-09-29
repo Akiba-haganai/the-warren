@@ -35,19 +35,17 @@ const BASE_QUERY_PROJECTION = `{
   "topics": topics[]->{ _id, title, "slug": slug.current }
 }`;
 
-export function useLatestBlogs(universitySlug?: string) {
+export function useLatestBlogs() {
   const [blogs, setBlogs] = useState<BlogCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     
-    const query = universitySlug
-      ? `*[_type == "story" && defined(publishedAt) && (!defined(university) || university->slug.current == $universitySlug)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`
-      : `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`;
+    const query = `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`;
 
     sanityClient
-      .fetch<BlogCard[]>(query, { universitySlug: universitySlug || "" })
+      .fetch<BlogCard[]>(query, {})
       .then((data) => {
         if (active) {
           setBlogs(data || []);
@@ -64,7 +62,7 @@ export function useLatestBlogs(universitySlug?: string) {
     return () => {
       active = false;
     };
-  }, [universitySlug]);
+  }, []);
 
   return { blogs, loading };
 }
