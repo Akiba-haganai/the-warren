@@ -20,9 +20,8 @@ const TRENDING_TOPICS_QUERY_NATIONAL = `
   "postCount": count(*[_type == "story" && references(^._id)]),
   "recentPostCount": count(*[_type == "story" && references(^._id) && dateTime(publishedAt) > dateTime(now()) - 60*60*24*30]),
   "lastUpdated": *[_type == "story" && references(^._id)] | order(publishedAt desc)[0].publishedAt
-}
+} | order(isTrending desc, recentPostCount desc, postCount desc) [0...10]
 `;
-
 
 export function useTrendingTopics() {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
@@ -37,18 +36,8 @@ export function useTrendingTopics() {
       .then((data) => {
         if (!active) return;
         
-        // Sort: isTrending pinned first, then by recent post count, then by total post count
-        const sorted = data.sort((a, b) => {
-          if (a.isTrending && !b.isTrending) return -1;
-          if (!a.isTrending && b.isTrending) return 1;
-          
-          if (a.recentPostCount !== b.recentPostCount) {
-            return b.recentPostCount - a.recentPostCount;
-          }
-          return b.postCount - a.postCount;
-        });
-        
-        setTopics(sorted);
+        // Data is now already sorted and limited to top 10 on Sanity's edge
+        setTopics(data);
         setLoading(false);
       })
       .catch((error) => {

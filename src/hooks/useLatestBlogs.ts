@@ -42,7 +42,7 @@ export function useLatestBlogs() {
   useEffect(() => {
     let active = true;
     
-    const query = `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...9] ${BASE_QUERY_PROJECTION}`;
+    const query = `*[_type == "story" && defined(publishedAt)] | order(publishedAt desc) [0...4] ${BASE_QUERY_PROJECTION}`;
 
     sanityClient
       .fetch<BlogCard[]>(query, {})
