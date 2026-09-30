@@ -7,7 +7,7 @@ export interface Episode {
   duration: string;       // e.g. "12:34"
   category: string;
   date: string;
-  universitySlug?: string | null;
+  
 }
 
 export const episodes: Episode[] = [
@@ -16,7 +16,7 @@ export const episodes: Episode[] = [
     title: "Campus Hustle – How to Make Money as a University Student",
     description: "We talk to three students who are running side businesses while studying.",
     youtubeId: "dQw4w9WgXcQ",
-    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
     duration: "18:24",
     category: "Entrepreneurship",
     date: "2025-12-01",
@@ -26,7 +26,7 @@ export const episodes: Episode[] = [
     title: "Faith & Focus – Staying Grounded in First Year",
     description: "A conversation with the Campus Christian Union about balancing faith and academics.",
     youtubeId: "9bZkp7q19f0",
-    thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",
     duration: "22:10",
     category: "Faith",
     date: "2025-11-28",

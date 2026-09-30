@@ -10,7 +10,7 @@ export interface CulturePhoto {
 
 
 
-export function useCulturePhotos({ enabled = true, universitySlug }: { enabled?: boolean; universitySlug?: string } = {}) {
+export function useCulturePhotos({ enabled = true }: { enabled?: boolean } = {}) {
   const [photos, setPhotos] = useState<CulturePhoto[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,11 +18,9 @@ export function useCulturePhotos({ enabled = true, universitySlug }: { enabled?:
     if (!enabled) return;
     let active = true;
 
-    const query = universitySlug
-      ? `*[_type == "culturePhoto" && (!defined(university) || university->slug.current == $universitySlug)] | order(order asc)[0...12] { _id, image, caption, category }`
-      : `*[_type == "culturePhoto"] | order(order asc)[0...12] { _id, image, caption, category }`;
+    const query = `*[_type == "culturePhoto"] | order(order asc)[0...12] { _id, image, caption, category }`;
 
-    sanityClient.fetch<CulturePhoto[]>(query, { universitySlug: universitySlug || "" })
+    sanityClient.fetch<CulturePhoto[]>(query, {})
       .then((data) => {
         if (active) {
           setPhotos(data);
@@ -36,7 +34,7 @@ export function useCulturePhotos({ enabled = true, universitySlug }: { enabled?:
     return () => {
       active = false;
     };
-  }, [enabled, universitySlug]);
+  }, [enabled]);
 
   return { photos, loading };
 }

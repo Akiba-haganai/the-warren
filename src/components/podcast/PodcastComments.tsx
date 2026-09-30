@@ -28,16 +28,7 @@ interface PodcastCommentsProps {
 }
 
 export function PodcastComments({ episodeId, currentTime, onSeek }: PodcastCommentsProps) {
-  const [comments, setComments] = useState<EpisodeComment[]>([
-    {
-      id: "c1",
-      episodeId,
-      authorName: "Alex M.",
-      content: "This ecosystem breakdown is incredible! Loved the points at 02:15.",
-      timestampSeconds: 135,
-      createdAt: "2 hours ago",
-    },
-  ]);
+  const [comments, setComments] = useState<EpisodeComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [includeTimestamp, setIncludeTimestamp] = useState(true);
 

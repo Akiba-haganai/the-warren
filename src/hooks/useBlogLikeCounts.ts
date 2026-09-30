@@ -46,8 +46,11 @@ export function useBlogLikeCounts(slugs: string[]) {
         setCounts(map);
         setLoading(false);
       })
-      .catch(() => {
-        if (active) setLoading(false);
+      .catch((err) => {
+        if (active) {
+          console.error("[useBlogLikeCounts] Failed to fetch like counts:", err?.message ?? err);
+          setLoading(false);
+        }
       });
 
     return () => {

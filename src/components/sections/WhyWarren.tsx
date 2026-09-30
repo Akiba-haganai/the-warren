@@ -3,11 +3,11 @@ import { Card, CardContent } from "../../components/ui/card";
 import { Reveal, SectionLabel } from "../../components/layout/Reveal";
 
 const items = [
-  { icon: Megaphone, title: "Information is scattered", desc: "..." },
-  { icon: Home, title: "Accommodation is difficult", desc: "..." },
-  { icon: Briefcase, title: "Jobs are hidden", desc: "..." },
-  { icon: BookOpen, title: "Learning is fragmented", desc: "..." },
-  { icon: Users, title: "Communities are disconnected", desc: "..." },
+  { icon: Megaphone, title: "Information is scattered", desc: "Important campus updates and announcements often get lost in noisy chat groups or obscure notice boards." },
+  { icon: Home, title: "Accommodation is difficult", desc: "Finding safe, affordable student housing close to campus shouldn't feel like a full-time job." },
+  { icon: Briefcase, title: "Jobs are hidden", desc: "Internships, part-time jobs, and career opportunities for students are hard to discover when you need them most." },
+  { icon: BookOpen, title: "Learning is fragmented", desc: "Study materials, past papers, and academic support are scattered across different platforms and drives." },
+  { icon: Users, title: "Communities are disconnected", desc: "It's difficult to find and connect with peers who share your interests, course, or faith on campus." },
 ];
 
 export function WhyWarren() {

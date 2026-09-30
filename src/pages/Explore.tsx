@@ -10,7 +10,6 @@ import { PodcastSection } from "../components/sections/PodcastSection";
 import { FounderNote } from "../components/sections/FounderNote";
 import { CoreValues } from "../components/sections/CoreValues";
 import { Roadmap } from "../components/sections/Roadmap";
-import { Stats } from "../components/sections/Stats";
 import { FinalCTA } from "../components/sections/FinalCTA";
 
 import { Button } from "@/components/ui/button";
@@ -59,7 +58,6 @@ export default function Explore() {
         <FounderNote />
         <CoreValues />
         <Roadmap />
-        <Stats />
         <FinalCTA />
       </main>
       <Footer />

@@ -80,9 +80,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       description: video.snippet.description?.slice(0, 500) || "",
       youtube_id: video.id,
       thumbnail:
-        video.snippet.thumbnails?.maxres?.url ||
         video.snippet.thumbnails?.high?.url ||
-        `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
+        video.snippet.thumbnails?.medium?.url ||
+        `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
       duration: formatDuration(video.contentDetails.duration),
       category: extractCategory(video.snippet.description || ""),
       published_date: video.snippet.publishedAt.split("T")[0],

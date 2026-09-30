@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { PlayerProvider } from "./contexts/PlayerContext";
-import { CampusProvider } from "./contexts/CampusContext";
+
 import { initThemeFromStorage } from "./lib/theme";
 import { SentryErrorBoundary } from "./components/SentryErrorBoundary";
 
@@ -86,13 +86,11 @@ try {
   createRoot(rootEl).render(
     <StrictMode>
       <SentryErrorBoundary>
-        <CampusProvider>
           <BrowserRouter>
             <PlayerProvider>
               <App />
             </PlayerProvider>
           </BrowserRouter>
-        </CampusProvider>
       </SentryErrorBoundary>
     </StrictMode>,
   );
