@@ -43,7 +43,10 @@ export function registerPWA(options: PWARegisterOptions = {}): void {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
   // ── Register SW ───────────────────────────────────────────────────────────
-  window.addEventListener("load", () => {
+  // Guard: if registerPWA() is called from a React effect after the window
+  // "load" event has already fired (which it often has on fast connections),
+  // adding a "load" listener is a no-op and the SW never registers.
+  const doRegister = () => {
     navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
       .then((registration) => {
@@ -84,5 +87,12 @@ export function registerPWA(options: PWARegisterOptions = {}): void {
         options.onRegisterError?.(error);
         console.error("[WEAVE SW] Registration failed:", error);
       });
-  });
+  };
+
+  if (document.readyState === "complete") {
+    // load already fired — register immediately
+    doRegister();
+  } else {
+    window.addEventListener("load", doRegister, { once: true });
+  }
 }

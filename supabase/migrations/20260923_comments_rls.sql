@@ -6,10 +6,9 @@ CREATE POLICY "Allow public read access for approved comments"
 ON comments FOR SELECT
 USING (is_approved = true);
 
--- Allow service_role to insert new comments (for serverless function)
-CREATE POLICY "Allow service_role to insert comments"
-ON comments FOR INSERT
-WITH CHECK (true);
+-- The service role bypasses RLS anyway, so no insert policy is needed.
+-- We ensure no anonymous insert is allowed by dropping the old unsafe policy.
+DROP POLICY IF EXISTS "Allow service_role to insert comments" ON comments;
 
 -- Drop previous open policies if they exist (assuming anon had insert access)
 -- Note: Replace "policy_name" if you have a specific name, but if we don't know it, 

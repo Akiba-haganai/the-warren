@@ -59,11 +59,10 @@ export function useVersionCheck(): PWAUpdateState {
       const running = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : null;
       if (running && data.version !== running) {
         setIsStale(true);
-        // ── Do NOT call registration.update() here ──────────────────────────
-        // Automatically triggering a SW update starts a new install cycle.
-        // With the old controllerchange→reload listener this caused a cascade:
-        //   stale detected → update() → updatefound → installed → controllerchange → reload
-        // The user controls when the update applies by tapping "Refresh now".
+        // Trigger a SW update check so there's actually a new worker to promote
+        // when the user taps "Refresh now". Without this, skipWaiting would be
+        // sent to nothing and the reload would bring back the same old version.
+        registrationRef.current?.update().catch(() => {});
       }
     } catch {
       // Silently ignore — network may be offline or high-latency, not worth surfacing
@@ -89,13 +88,23 @@ export function useVersionCheck(): PWAUpdateState {
     };
   }, [checkVersion]);
 
-  // ── Apply update: promote waiting SW → then reload ───────────────────────
-  // The controllerchange→reload listener has been removed from pwa-register.ts
-  // so we reload explicitly here after sending SKIP_WAITING.
+  // ── Apply update: promote waiting SW → then reload on controllerchange ───
+  // Using controllerchange (instead of a blind 300ms timer) means we reload
+  // exactly when the new SW has finished activating, not before.
+  // This is safe because we removed the old auto-reload controllerchange listener
+  // from pwa-register.ts — the only reload now is this explicit user-triggered one.
   const applyUpdate = useCallback(() => {
+    // Wire up a one-time reload on controllerchange before sending skipWaiting.
+    // Once the new SW claims control, the page reloads with the new assets.
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      () => window.location.reload(),
+      { once: true }
+    );
     sendSkipWaiting();
-    // Brief delay so the SW can finish activating before we reload
-    setTimeout(() => window.location.reload(), 300);
+    // Fallback: if controllerchange doesn't fire within 2s (e.g. no waiting SW),
+    // reload anyway so the user isn't left with a stale UI.
+    setTimeout(() => window.location.reload(), 2000);
   }, []);
 
   return { updateReady, isStale, applyUpdate };

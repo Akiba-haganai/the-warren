@@ -48,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { title, body, author, excerpt, turnstileToken } = req.body ?? {};
+  const { title, body, author, excerpt, turnstileToken, universitySlug } = req.body ?? {};
 
   // ── Turnstile verification ──────────────────────────────────────────
   const isProduction =
@@ -106,6 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       _type: "story",
       title: title.trim(),
       author: author.trim(),
+      universitySlug: universitySlug?.trim() || undefined,
       excerpt: excerpt?.trim() || undefined,
       submittedViaForm: true,
       body: [
