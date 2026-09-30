@@ -159,7 +159,9 @@ export default defineConfig({
             return "vendor-sentry";
           }
 
-          // Keep Sanity + rxjs separate — only used on content pages
+          // Keep Sanity + rxjs separate — used on the homepage and content pages.
+          // Separating it reduces the chance of it blocking the critical render path
+          // and allows Rolldown to tree-shake routes that don't need the Sanity client.
           if (normalized.includes("node_modules/@sanity") || normalized.includes("node_modules/rxjs")) {
             return "vendor-sanity";
           }
