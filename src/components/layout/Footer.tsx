@@ -7,7 +7,7 @@ import {
   Camera,
   PlaySquare,
 } from "lucide-react";
-import warrenLogo from "@/assets/warren_logo.png";
+import warrenLogo from "@/assets/warren_logo.webp";
 
 export function Footer() {
   return (

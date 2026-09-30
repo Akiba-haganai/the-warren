@@ -33,7 +33,12 @@ export function CampusSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+          aria-label={`Select campus: ${scope === "national" ? "All Zambia" : universityName}`}
+        >
           <MapPin className="h-4 w-4" />
           <span className="hidden sm:inline-block text-xs font-medium">
             {scope === "national" ? "All Zambia" : universityName}
