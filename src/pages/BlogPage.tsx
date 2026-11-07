@@ -19,6 +19,7 @@ import { LikeButton } from "@/components/blog/LikeButton";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { calculateReadingTime } from "@/lib/readingTime";
 import { UpNextToast } from "@/components/blog/UpNextToast";
+import { SITE_CONFIG } from "@/config/site";
 
 export default function BlogPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -26,10 +27,10 @@ export default function BlogPage() {
 
   useEffect(() => {
     if (blog?.title) {
-      document.title = `${blog.title} — WEAVE Media`;
+      document.title = `${blog.title} — ${SITE_CONFIG.name}`;
     }
     return () => {
-      document.title = "Warren — The Digital Home for Students";
+      document.title = `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`;
     };
   }, [blog]);
 
@@ -85,6 +86,7 @@ export default function BlogPage() {
 
   const jsonLd = useMemo(() => {
     if (!blog) return null;
+    const origin = typeof window !== "undefined" ? window.location.origin : SITE_CONFIG.defaultOrigin;
     return {
       "@context": "https://schema.org",
       "@type": "Article",
@@ -94,19 +96,19 @@ export default function BlogPage() {
       datePublished: blog.publishedAt || undefined,
       author: {
         "@type": "Person",
-        name: blog.author?.name || "WEAVE Team",
+        name: blog.author?.name || "Weave Team",
       },
       publisher: {
         "@type": "Organization",
-        name: "WEAVE",
+        name: SITE_CONFIG.name,
         logo: {
           "@type": "ImageObject",
-          url: "https://warren-weave.vercel.app/icon-192.png",
+          url: `${origin}/icon-192.png`,
         },
       },
       mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": `https://warren-weave.vercel.app/blogs/${blog.slug}`,
+        "@id": `${origin}/blogs/${blog.slug}`,
       },
     };
   }, [blog, coverSrc]);
@@ -140,7 +142,7 @@ export default function BlogPage() {
               </p>
               <Link
                 to="/blogs"
-                className="mt-6 inline-flex items-center gap-2 text-blue-600 hover:underline"
+                className="mt-6 inline-flex items-center gap-2 text-primary hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" /> Back to all blogs
               </Link>
@@ -158,7 +160,7 @@ export default function BlogPage() {
                   </Link>
                   <Link
                     to="/submit"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition"
                   >
                     Share your story
                   </Link>
@@ -185,7 +187,7 @@ export default function BlogPage() {
 
                 {/* Meta */}
                 <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-display text-lg font-semibold uppercase overflow-hidden">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-display text-lg font-semibold uppercase overflow-hidden">
                     {blog.author?.image ? (
                       <img
                         src={urlForImage(blog.author.image).width(88).height(88).fit("crop").auto("format").quality(75).url()}
@@ -202,10 +204,10 @@ export default function BlogPage() {
                     <div className="text-base font-medium">
                       By{" "}
                       <Link
-                        to={`/authors/${encodeURIComponent(blog.author?.slug || "warren-team")}`}
-                        className="text-foreground hover:text-blue-600 transition underline-offset-2 hover:underline"
+                        to={`/authors/${encodeURIComponent(blog.author?.slug || "weave-team")}`}
+                        className="text-foreground hover:text-primary transition underline-offset-2 hover:underline"
                       >
-                        {blog.author?.name || "WEAVE Team"}
+                        {blog.author?.name || "Weave Team"}
                       </Link>
                     </div>
                     {blog.publishedAt && (
@@ -316,7 +318,7 @@ export default function BlogPage() {
                   >
                     <ArrowLeft className="h-4 w-4" /> All Blogs
                   </Link>
-                  <Link to="/submit" className="text-blue-600 hover:underline">
+                  <Link to="/submit" className="text-primary hover:underline">
                     Submit your blog →
                   </Link>
                 </div>

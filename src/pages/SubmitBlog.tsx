@@ -177,7 +177,7 @@ export default function SubmitBlog() {
 
                   <Button
                     type="submit"
-                    className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow"
+                    className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
                     disabled={submitting}
                   >
                     <Send className="mr-2 h-4 w-4" />

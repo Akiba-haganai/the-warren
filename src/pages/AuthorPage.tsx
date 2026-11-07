@@ -76,7 +76,7 @@ export default function AuthorPage() {
                     className="h-24 w-24 rounded-full object-cover border-2 border-border shadow-md"
                   />
                 ) : (
-                  <div className="h-24 w-24 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center font-display text-3xl font-semibold uppercase">
+                  <div className="h-24 w-24 rounded-full bg-primary/10 text-primary flex items-center justify-center font-display text-3xl font-semibold uppercase">
                     {displayName.charAt(0)}
                   </div>
                 )}

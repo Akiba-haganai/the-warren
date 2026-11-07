@@ -11,8 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="WEAVE" />
-    <meta name="theme-color" content="#2563EB" />
+    <meta name="apple-mobile-web-app-title" content="Weave" />
+    <meta name="theme-color" content="#4f46e5" />
 
     <!-- Instant dark-theme initialization to prevent flash of unstyled content (FOUC) -->
     <script>
@@ -28,25 +28,24 @@
         } catch (e) {}
       })();
     </script>
-    <meta name="description" content="Warren Weave — Discover university podcasts, student journalism, campus culture, and stories connecting students across Zambia." />
-    <meta name="keywords" content="Warren Weave, campus podcasts, university stories, Zambian student journalism, UNZA, CBU, student culture" />
+    <meta name="description" content="Weave — Discover stories, podcasts, and culture for everyone." />
+    <meta name="keywords" content="Weave, podcasts, stories, blogs, culture, audio network" />
 
-    <title>Warren Weave — Audio & Culture Network</title>
+    <title>Weave — Stories, Podcasts &amp; Culture</title>
     <!-- Open Graph -->
-    <meta property="og:title" content="Warren Weave — Audio & Culture Network" />
+    <meta property="og:title" content="Weave — Stories, Podcasts &amp; Culture" />
     <meta property="og:description" content="Discover exclusive podcasts, deep cultural insights, and stories that weave our community together." />
-    <meta property="og:image" content="https://warren-weave.vercel.app/og-image-1200x630.png" />
+    <meta property="og:image" content="https://weave.akiba-hara.workers.dev/og-image-1200x630.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://warren-weave.vercel.app" />
+    <meta property="og:url" content="https://weave.akiba-hara.workers.dev" />
     <meta property="og:type" content="website" />
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Warren Weave — Audio & Culture Network" />
+    <meta name="twitter:title" content="Weave — Stories, Podcasts &amp; Culture" />
     <meta name="twitter:description" content="Discover exclusive podcasts, deep cultural insights, and stories that weave our community together." />
-    <meta name="twitter:image" content="https://warren-weave.vercel.app/og-image-1200x630.png" />
+    <meta name="twitter:image" content="https://weave.akiba-hara.workers.dev/og-image-1200x630.png" />
 
-    
     <!-- Network Preconnect for Critical Path APIs (under Lighthouse max 4 limit) -->
     <link rel="preconnect" href="https://7yislksr.apicdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
@@ -56,22 +55,13 @@
     <link rel="dns-prefetch" href="https://www.youtube.com" />
     <link rel="dns-prefetch" href="https://o4511632845635584.ingest.de.sentry.io" />
     <!-- Fonts are self-hosted in /public/fonts via @font-face in index.css -->
-    <!-- Preload only the two above-the-fold fonts (body text + hero heading).
-         Secondary weights (lato-300/700, montserrat-500/700) are NOT preloaded —
-         they compete for connections on cold start and are already cached by the
-         service worker after the first visit. The browser fetches them naturally
-         when the CSS @font-face rules are parsed, in parallel with everything else. -->
     <link rel="preload" href="/fonts/lato-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/montserrat-600.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Cloudflare Web Analytics — disabled: Sentry covers error tracking and
-         the beacon was generating 5+ cdn-cgi/rum requests on every page load.
-         Re-enable if you need aggregate traffic analytics distinct from Sentry. -->
-    <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "a7ade991db3248c9b6efbe28657e14eb"}'></script> -->
-    <link rel="canonical" href="https://warren-weave.vercel.app" />
+    <link rel="canonical" href="https://weave.akiba-hara.workers.dev" />
 
     <meta name="robots" content="index, follow" />
     <script type="application/ld+json">
@@ -80,24 +70,24 @@
       "@graph": [
         {
           "@type": "WebSite",
-          "@id": "https://warren-weave.vercel.app/#website",
-          "url": "https://warren-weave.vercel.app",
-          "name": "Warren Weave",
-          "description": "Discover university podcasts, student journalism, campus culture, and stories connecting students across Zambia.",
+          "@id": "https://weave.akiba-hara.workers.dev/#website",
+          "url": "https://weave.akiba-hara.workers.dev",
+          "name": "Weave",
+          "description": "Discover stories, podcasts, and culture for everyone.",
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://warren-weave.vercel.app/explore?q={search_term_string}",
+            "target": "https://weave.akiba-hara.workers.dev/explore?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         },
         {
           "@type": "Organization",
-          "@id": "https://warren-weave.vercel.app/#organization",
-          "name": "Warren Weave",
-          "url": "https://warren-weave.vercel.app",
+          "@id": "https://weave.akiba-hara.workers.dev/#organization",
+          "name": "Weave",
+          "url": "https://weave.akiba-hara.workers.dev",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://warren-weave.vercel.app/icon-512.png",
+            "url": "https://weave.akiba-hara.workers.dev/icon-512.png",
             "width": 512,
             "height": 512
           },
@@ -111,15 +101,15 @@
     <div id="root">
       <section class="relative pt-32 pb-20 bg-hero overflow-hidden">
         <div class="mx-auto max-w-4xl px-6 text-center">
-          <div class="inline-flex items-center rounded-md border px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10 backdrop-blur-sm font-semibold mb-4">
-            ✨ Media
+          <div class="inline-flex items-center rounded-md border px-3 py-1 text-xs sm:text-sm border-primary/30 text-primary bg-primary/10 backdrop-blur-sm font-semibold mb-4">
+            ✨ Weave
           </div>
           <h1 class="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
-            <span class="sr-only">Warren Weave — Campus Audio, Culture &amp; Stories: </span>
-            University, beyond the classroom.
+            <span class="sr-only">Weave — Stories, Podcasts &amp; Culture: </span>
+            Stories, culture &amp; conversations for everyone.
           </h1>
           <p class="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-            Stories &bull; Conversations &bull; Culture
+            Stories &bull; Podcasts &bull; Culture
           </p>
         </div>
       </section>

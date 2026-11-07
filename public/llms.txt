@@ -1,22 +1,22 @@
-# WEAVE
+# Weave
 
-> Stories. Culture. What's happening on campus. The modern digital hub for university students.
+> Stories, podcasts, and culture for everyone.
 
-WEAVE is a digital platform and media network built for university students. It unites student journalism, cultural photography, community discussions, campus services, and podcasts into an integrated experience.
+Weave is a digital platform and media network built for everyone. It unites authentic writing, cultural photography, community discussions, connected apps, and podcasts into an integrated experience.
 
 ## Key Sections
 
-- [Home](https://warren-weave.vercel.app/): Media hero, trending campus topics, student voice polls, latest blogs, and campus culture snapshots.
-- [Blogs](https://warren-weave.vercel.app/blogs): Student-written stories, campus opinions, lifestyle guides, and academic insights.
-- [Submit a Blog](https://warren-weave.vercel.app/submit): Public submission portal for students to submit stories and thought pieces for editorial review.
-- [Podcasts](https://warren-weave.vercel.app/podcasts): Student-led audio conversations covering faith, careers, relationships, and university life.
-- [Culture](https://warren-weave.vercel.app/culture): Visual gallery capturing moments, events, and everyday life across campus.
-- [Explore](https://warren-weave.vercel.app/explore): The wider ecosystem of platforms including WAVE (campus networking), PLAWZA (student marketplace and housing), and STITCH (careers and opportunities).
-- [About](https://warren-weave.vercel.app/about): Mission, background, and vision behind WEAVE.
-- [Contact](https://warren-weave.vercel.app/contact): Direct communication, feedback, and community channels.
+- [Home](https://weave.akiba-hara.workers.dev/): Media hero, trending topics, community voice polls, latest blogs, and culture snapshots.
+- [Blogs](https://weave.akiba-hara.workers.dev/blogs): Community-written stories, opinions, lifestyle guides, and perspectives.
+- [Submit a Blog](https://weave.akiba-hara.workers.dev/submit): Public submission portal for readers to submit stories and thought pieces for editorial review.
+- [Podcasts](https://weave.akiba-hara.workers.dev/podcasts): Audio and video conversations covering faith, careers, relationships, technology, and everyday life.
+- [Culture](https://weave.akiba-hara.workers.dev/culture): Visual gallery capturing moments, events, and everyday life across our community.
+- [Explore](https://weave.akiba-hara.workers.dev/explore): The wider ecosystem of platforms including WAVE (community networking), PLAWZA (marketplace and housing), and STITCH (careers and opportunities).
+- [About](https://weave.akiba-hara.workers.dev/about): Mission, background, and vision behind Weave.
+- [Contact](https://weave.akiba-hara.workers.dev/contact): Direct communication, feedback, and community channels.
 
 ## Legal & Policies
 
-- [Privacy Policy](https://warren-weave.vercel.app/privacy): Data collection, usage, and privacy commitments.
-- [Terms of Service](https://warren-weave.vercel.app/terms): Platform guidelines and user agreements.
-- [Cookie Policy](https://warren-weave.vercel.app/cookies): Information about cookies and local storage.
+- [Privacy Policy](https://weave.akiba-hara.workers.dev/privacy): Data collection, usage, and privacy commitments.
+- [Terms of Service](https://weave.akiba-hara.workers.dev/terms): Platform guidelines and user agreements.
+- [Cookie Policy](https://weave.akiba-hara.workers.dev/cookies): Information about cookies and local storage.

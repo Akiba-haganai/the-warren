@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://warren-weave.vercel.app/sitemap.xml
+Sitemap: https://weave.akiba-hara.workers.dev/sitemap.xml

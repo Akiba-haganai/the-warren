@@ -7,12 +7,12 @@ import {
   Shield,
   Zap,
   Map,
-  GraduationCap,
   Check,
   Clock,
   ExternalLink,
   Briefcase,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Reveal } from "@/components/layout/Reveal";
@@ -23,68 +23,52 @@ const apps = [
     icon: BookOpen,
     title: "WAVE",
     description:
-      "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions — the all‑in‑one student hub.",
+      "Social networking, shared learning resources, mentoring, quizzes, and live AMA sessions — an all‑in‑one community hub.",
     features: [
       { text: "Social feed & real‑time chat", icon: Zap, soon: false },
-      {
-        text: "Study hub with past papers & cram plans",
-        icon: GraduationCap,
-        soon: false,
-      },
-      { text: "Peer‑to‑peer tutoring marketplace", icon: Check, soon: false },
+      { text: "Shared learning resources & guides", icon: Check, soon: false },
+      { text: "Peer‑to‑peer mentoring & tutoring", icon: Check, soon: false },
       { text: "Quiz battles & AMA sessions", icon: Check, soon: false },
-      { text: "Interactive campus map", icon: Map, soon: false },
-      { text: "Verified student badges", icon: Shield, soon: false },
+      { text: "Verified member badges", icon: Shield, soon: false },
     ],
     url: SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app",
-    color: "bg-blue-600",
-    gradient: "from-blue-600 to-blue-800",
+    color: "bg-primary",
   },
   {
     icon: ShoppingBag,
     title: "PLAWZA",
     description:
-      "Marketplace, housing, and roommate finder for students — buy, sell, rent, and connect safely.",
+      "Marketplace, housing, and rental finder — buy, sell, rent, and connect safely with verified members.",
     features: [
-      { text: "Buy & sell new/used items", icon: Check, soon: false },
-      { text: "Find accommodation & roommates", icon: Map, soon: false },
-      {
-        text: "Landlord dashboard & occupancy tracking",
-        icon: Check,
-        soon: false,
-      },
-      {
-        text: "Verified seller tiers & reputation scoring",
-        icon: Shield,
-        soon: false,
-      },
+      { text: "Buy & sell new or pre-owned items", icon: Check, soon: false },
+      { text: "Find accommodation & rentals", icon: Map, soon: false },
+      { text: "Property & occupancy dashboard", icon: Check, soon: false },
+      { text: "Verified seller tiers & reputation scoring", icon: Shield, soon: false },
       { text: "Mobile money escrow", icon: Clock, soon: true },
     ],
     url: SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app",
     color: "bg-teal-600",
-    gradient: "from-teal-600 to-teal-800",
   },
   {
     icon: Briefcase,
     title: "STITCH",
-    description: "Find opportunities. Build experience. Get hired. The career hub for students.",
+    description: "Find opportunities. Build experience. Get hired. The career and gigs hub for everyone.",
     features: [
-      { text: "Find internships & part-time jobs", icon: Check, soon: false },
+      { text: "Find internships, gigs & jobs", icon: Check, soon: false },
       { text: "Showcase skills & build experience", icon: Check, soon: false },
       { text: "Connect with verified employers", icon: Shield, soon: false },
       { text: "Opportunity matching & alerts", icon: Zap, soon: false },
     ],
     url: SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app",
     color: "bg-indigo-600",
-    gradient: "from-indigo-600 to-indigo-800",
   },
   {
     icon: Podcast,
     title: "Podcasts",
     description:
-      "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
+      "Original conversations about faith, career, relationships, and culture — powered by YouTube.",
     features: [
-      { text: "Exclusive student content", icon: Check, soon: false },
+      { text: "Original audio & video episodes", icon: Check, soon: false },
       { text: "Play directly in the app", icon: Zap, soon: false },
       { text: "Bookmark & continue listening", icon: Check, soon: false },
       { text: "New episodes added automatically", icon: Zap, soon: false },
@@ -92,8 +76,7 @@ const apps = [
     ],
     url: "/podcasts",
     internal: true,
-    color: "bg-purple-600",
-    gradient: "from-purple-600 to-purple-800",
+    color: "bg-amber-600",
   },
 ];
 
@@ -103,15 +86,15 @@ export default function Products() {
       label="Products"
       title={
         <>
-          Made for the way <span className="text-gradient-blue">students live</span>.
+          Built for the way <span className="text-gradient-blue">people connect</span>.
         </>
       }
-      subtitle="Three powerful platforms – one connected ecosystem for university students."
+      subtitle="Four connected platforms — one ecosystem for everyone."
     >
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-2">
         {apps.map((app, i) => (
           <Reveal key={app.title} delay={i * 0.08}>
-            <Card className="h-full border-border bg-card hover:shadow-glow transition flex flex-col group">
+            <Card className="h-full border-border bg-card hover:shadow-glow transition flex flex-col group rounded-3xl">
               <CardContent className="p-6 flex flex-col h-full">
                 <div className="flex items-center gap-3 mb-4">
                   <span
@@ -122,11 +105,7 @@ export default function Products() {
                   <h2 className="font-display text-2xl font-semibold">{app.title}</h2>
                 </div>
 
-                <div className="mb-4 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 aspect-video flex items-center justify-center text-sm text-muted-foreground border border-border/50">
-                  App screenshot – coming soon
-                </div>
-
-                <p className="text-sm text-muted-foreground flex-1">{app.description}</p>
+                <p className="text-sm text-muted-foreground">{app.description}</p>
 
                 <ul className="mt-4 space-y-2 flex-1">
                   {app.features.map((feat, idx) => (
@@ -144,7 +123,7 @@ export default function Products() {
                         </>
                       ) : (
                         <>
-                          <feat.icon className="mt-0.5 h-4 w-4 text-green-500 shrink-0" />
+                          <feat.icon className="mt-0.5 h-4 w-4 text-primary shrink-0" />
                           {feat.text}
                         </>
                       )}
@@ -155,25 +134,16 @@ export default function Products() {
                 <div className="mt-6">
                   {app.internal ? (
                     <Button asChild className="w-full rounded-full shadow-glow">
-                      <a href={app.url}>
+                      <Link to={app.url}>
                         Explore {app.title} <ArrowRight className="ml-2 h-4 w-4" />
-                      </a>
+                      </Link>
                     </Button>
                   ) : (
-                    <div>
-                      <Button
-                        asChild
-                        className={`w-full rounded-full bg-gradient-to-r ${app.gradient} text-white shadow-glow hover:opacity-90`}
-                      >
-                        <a href={app.url} target="_blank" rel="noopener noreferrer">
-                          Open {app.title} <ExternalLink className="ml-2 h-4 w-4" />
-                        </a>
-                      </Button>
-                      <p className="mt-2 text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
-                        <Shield className="h-3 w-3 text-blue-500" />
-                        Verified student app
-                      </p>
-                    </div>
+                    <Button asChild variant="outline" className="w-full rounded-full">
+                      <a href={app.url} target="_blank" rel="noopener noreferrer">
+                        Open {app.title} <ExternalLink className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
                   )}
                 </div>
               </CardContent>
@@ -184,4 +154,3 @@ export default function Products() {
     </PageShell>
   );
 }
-

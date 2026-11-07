@@ -29,7 +29,7 @@ export function InstallPWA() {
 
   const handleInstall = async () => {
     if (isIOS) {
-      alert("To install WEAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+      alert("To install Weave on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
       return;
     }
     await promptInstall();
@@ -51,7 +51,7 @@ export function InstallPWA() {
   return (
     <div
       role="dialog"
-      aria-label="Install WEAVE app"
+      aria-label="Install Weave app"
       style={{
         bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
         transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
@@ -61,19 +61,19 @@ export function InstallPWA() {
       className="fixed left-1/2 -translate-x-1/2 z-[60] w-[calc(100vw-2rem)] max-w-sm"
     >
       {/* Glow halo behind card */}
-      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 opacity-30 blur-xl pointer-events-none" />
+      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-500 opacity-25 blur-xl pointer-events-none" />
 
       {/* Main card */}
-      <div className="relative rounded-2xl border border-white/20 bg-card/90 backdrop-blur-2xl shadow-2xl overflow-hidden p-4">
+      <div className="relative rounded-2xl border border-border bg-card/95 backdrop-blur-2xl shadow-2xl overflow-hidden p-4">
         {/* Shimmer strip across the top */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/60 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
         <div className="relative flex items-center gap-3.5">
           {/* App icon */}
-          <div className="shrink-0 h-12 w-12 rounded-xl bg-[#FF6D00] flex items-center justify-center shadow-lg shadow-orange-600/30 overflow-hidden">
+          <div className="shrink-0 h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm overflow-hidden">
             <img
               src="/icon-192.png"
-              alt="WEAVE"
+              alt="Weave"
               className="h-10 w-10 object-contain"
             />
           </div>
@@ -81,7 +81,7 @@ export function InstallPWA() {
           {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground leading-tight">
-              Install WEAVE
+              Install Weave
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {isIOS ? "Tap Share → Add to Home Screen" : "Fast, offline-ready & always up to date"}
@@ -89,7 +89,7 @@ export function InstallPWA() {
 
             {/* Badges row */}
             <div className="mt-1.5 flex items-center gap-1.5">
-              <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-[10px] font-medium text-orange-600 dark:text-orange-400">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                 <Smartphone className="h-2.5 w-2.5" /> PWA App
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
@@ -102,7 +102,7 @@ export function InstallPWA() {
           <button
             onClick={handleInstall}
             aria-label="Install app"
-            className="shrink-0 flex items-center gap-1.5 rounded-xl bg-[#FF6D00] hover:bg-orange-600 active:scale-95 px-3.5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-orange-600/30 transition-all duration-200"
+            className="shrink-0 flex items-center gap-1.5 rounded-xl bg-primary hover:bg-primary/90 active:scale-95 px-3.5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow transition-all duration-200"
           >
             {isIOS ? <Share className="h-3.5 w-3.5" /> : <Download className="h-3.5 w-3.5" />}
             {isIOS ? "How-To" : "Install"}
@@ -110,16 +110,16 @@ export function InstallPWA() {
         </div>
 
         {/* Bottom shimmer strip */}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       </div>
 
       {/* Dismiss X button */}
       <button
         onClick={handleDismiss}
         aria-label="Dismiss install prompt"
-        className="absolute -top-2.5 -right-2.5 h-6 w-6 rounded-full bg-muted border border-border text-muted-foreground hover:text-foreground flex items-center justify-center shadow transition"
+        className="absolute -top-2.5 -right-2.5 h-7 w-7 rounded-full bg-muted border border-border text-muted-foreground hover:text-foreground flex items-center justify-center shadow transition"
       >
-        <X className="h-3 w-3" />
+        <X className="h-3.5 w-3.5" />
       </button>
     </div>
   );

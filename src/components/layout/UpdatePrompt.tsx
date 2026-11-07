@@ -19,7 +19,7 @@ export function UpdatePrompt() {
     if ((updateReady || isStale) && !toastShownRef.current) {
       toastShownRef.current = true;
 
-      toast("✨ WEAVE update ready", {
+      toast("✨ Weave update ready", {
         description: "A new version is available.",
         duration: Infinity, // persist until user acts
         action: {

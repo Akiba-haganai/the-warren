@@ -122,11 +122,11 @@ export default defineConfig({
         // id: "/" locks the PWA install identity to this origin+path. Without it,
         // moving to a new domain (e.g. Cloudflare) creates a separate installed app.
         id: "/",
-        name: "WEAVE",
-        short_name: "WEAVE",
-        description: "Stories. Culture. What's happening.",
-        theme_color: "#2563EB",
-        background_color: "#2563EB",
+        name: "Weave",
+        short_name: "Weave",
+        description: "Stories, podcasts, and culture for everyone.",
+        theme_color: "#4f46e5",
+        background_color: "#1a1c29",
         display: "standalone",
         start_url: "/",
         icons: [

@@ -4,10 +4,10 @@ import { HeartHandshake, Lightbulb, Shield, Users } from "lucide-react";
 
 export function CoreValues() {
   const values = [
-    { icon: Users, title: "Community-first", desc: "We connect students so support is never far away." },
-    { icon: Shield, title: "Trust & clarity", desc: "Status labels and transparency keep things honest." },
-    { icon: Lightbulb, title: "Practical learning", desc: "Tools and content that help you move forward now." },
-    { icon: HeartHandshake, title: "Care for students", desc: "Built with empathy for real campus struggles." },
+    { icon: Users, title: "Community-first", desc: "We connect people so meaningful conversation and support are never far away." },
+    { icon: Shield, title: "Trust & clarity", desc: "Clear status labels and editorial transparency keep everything honest." },
+    { icon: Lightbulb, title: "Practical insight", desc: "Tools, stories, and episodes that help you move forward every day." },
+    { icon: HeartHandshake, title: "Built with care", desc: "Crafted with empathy for real everyday questions, growth, and culture." },
   ];
 
   return (
@@ -26,7 +26,7 @@ export function CoreValues() {
               <Card className="border-border bg-card rounded-3xl">
                 <CardContent className="p-7">
                   <div className="flex items-start gap-4">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-glow">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow shrink-0">
                       <v.icon className="h-5 w-5" />
                     </span>
                     <div>
@@ -43,4 +43,3 @@ export function CoreValues() {
     </section>
   );
 }
-

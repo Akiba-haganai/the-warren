@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal, SectionLabel } from "@/components/layout/Reveal";
@@ -57,14 +58,14 @@ export default function BlogsList() {
                   All <span className="text-gradient-blue">Blogs</span>
                 </h1>
                 <p className="mt-3 text-lg text-muted-foreground max-w-xl">
-                  Explore stories, opinions, and campus culture written by university students.
+                  Explore stories, opinions, and cultural perspectives written for everyone.
                 </p>
               </div>
-              <a href="/submit" className="shrink-0">
-                <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 transition-all active:scale-95">
+              <Link to="/submit" className="shrink-0">
+                <Button className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow transition-all active:scale-95">
                   Share your story
                 </Button>
-              </a>
+              </Link>
             </div>
           </Reveal>
 

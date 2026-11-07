@@ -5,7 +5,7 @@ import { schemaTypes } from "./schemaTypes";
 
 export default defineConfig({
   name: "default",
-  title: "WEAVE Media Studio",
+  title: "Weave Studio",
 
   projectId: "7yislksr", // ⚠️ from sanity.io project dashboard
   dataset: "production",

@@ -56,7 +56,7 @@ export function BlogCard({ blog, priority = false }: { blog: BlogCardProps, prio
               fetchPriority={priority ? "high" : "auto"}
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-display transition-transform duration-500 group-hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-display transition-transform duration-500 group-hover:scale-105">
               W
             </div>
           )}
@@ -67,7 +67,7 @@ export function BlogCard({ blog, priority = false }: { blog: BlogCardProps, prio
               {blog.topic.title}
             </Badge>
           )}
-          <h3 className="font-semibold text-lg leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="font-semibold text-lg leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {blog.title}
           </h3>
           {blog.excerpt && (
@@ -77,7 +77,7 @@ export function BlogCard({ blog, priority = false }: { blog: BlogCardProps, prio
           )}
           <div className="mt-auto pt-4 flex items-center justify-between">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <span className="text-foreground">{blog.author?.name || "WEAVE Team"}</span>
+              <span className="text-foreground">{blog.author?.name || "Weave Team"}</span>
               {blog.publishedAt && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-border" />

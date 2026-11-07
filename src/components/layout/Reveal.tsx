@@ -2,8 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
  * Reveal — lightweight fade+slide-up on scroll.
- * Uses IntersectionObserver + CSS transitions — no framer-motion dependency.
- * Same visual result, zero library weight.
+ * Honours prefers-reduced-motion and uses IntersectionObserver + CSS transitions.
  */
 export function Reveal({
   children,
@@ -15,19 +14,25 @@ export function Reveal({
   eager?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(eager);
+  const [visible, setVisible] = useState(() => {
+    if (eager) return true;
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return true;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    if (eager) return;
+    if (visible) return;
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Use setState — never mutate el.style directly inside an
-          // IntersectionObserver callback. Direct DOM mutations bypass React's
-          // reconciler and cause NotFoundError on iOS Safari during unmount.
           setVisible(true);
           observer.unobserve(el);
         }
@@ -37,17 +42,17 @@ export function Reveal({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [eager]);
+  }, [visible]);
 
   return (
     <div
       ref={ref}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transform: visible ? "translateY(0)" : "translateY(16px)",
         transition: eager
           ? "none"
-          : `opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+          : `opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
       }}
     >
       {children}
@@ -57,8 +62,8 @@ export function Reveal({
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium tracking-wide text-blue-600 dark:text-blue-300 uppercase">
-      <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse-glow" />
+    <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
+      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-glow" />
       {children}
     </div>
   );

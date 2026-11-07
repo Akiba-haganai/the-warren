@@ -3,7 +3,7 @@ import { sanityClient } from "@/lib/sanity";
 
 export interface TrendingTopic {
   _id: string;
-  name: string; // Map title to name for backward compatibility with Home.tsx
+  name: string;
   slug: string;
   isTrending: boolean;
   postCount: number;
@@ -11,8 +11,8 @@ export interface TrendingTopic {
   lastUpdated: string | null;
 }
 
-const TRENDING_TOPICS_QUERY_NATIONAL = `
-*[_type == "topic" && !defined(university)]{
+const TRENDING_TOPICS_QUERY = `
+*[_type == "topic"]{
   _id,
   "name": title,
   "slug": slug.current,
@@ -29,14 +29,11 @@ export function useTrendingTopics() {
 
   useEffect(() => {
     let active = true;
-    
-    const query = TRENDING_TOPICS_QUERY_NATIONAL;
-    
-    sanityClient.fetch<TrendingTopic[]>(query, {})
+
+    sanityClient
+      .fetch<TrendingTopic[]>(TRENDING_TOPICS_QUERY, {})
       .then((data) => {
         if (!active) return;
-        
-        // Data is now already sorted and limited to top 10 on Sanity's edge
         setTopics(data);
         setLoading(false);
       })
@@ -44,7 +41,7 @@ export function useTrendingTopics() {
         console.error("Failed to fetch trending topics:", error);
         if (active) setLoading(false);
       });
-      
+
     return () => {
       active = false;
     };

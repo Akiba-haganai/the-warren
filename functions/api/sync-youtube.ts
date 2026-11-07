@@ -15,7 +15,7 @@ function extractCategory(title: string, description: string): string {
   const text = `${title} ${description}`.toLowerCase();
   if (text.includes("#technology") || text.includes("#tech") || text.includes("tech") || text.includes("coding") || text.includes("software")) return "Technology";
   if (text.includes("#faith") || text.includes("#community") || text.includes("faith") || text.includes("church") || text.includes("god")) return "Faith & Community";
-  if (text.includes("#academics") || text.includes("#academic") || text.includes("academic") || text.includes("exam") || text.includes("study") || text.includes("degree")) return "Academics";
+  if (text.includes("#learning") || text.includes("#growth") || text.includes("education") || text.includes("study") || text.includes("learning")) return "Learning & Growth";
   if (text.includes("#sports") || text.includes("#recreation") || text.includes("sports") || text.includes("fitness") || text.includes("football") || text.includes("soccer")) return "Sports & Recreation";
   if (text.includes("#career") || text.includes("#jobs") || text.includes("career") || text.includes("job") || text.includes("internship")) return "Career";
   if (text.includes("#entrepreneurship") || text.includes("#business") || text.includes("business") || text.includes("hustle") || text.includes("startup") || text.includes("money")) return "Entrepreneurship";
@@ -24,7 +24,7 @@ function extractCategory(title: string, description: string): string {
   if (text.includes("#people") || text.includes("interview") || text.includes("spotlight") || text.includes("story") || text.includes("guest")) return "People";
   if (text.includes("#music") || text.includes("music") || text.includes("song") || text.includes("artist")) return "Music";
   if (text.includes("#entertainment") || text.includes("entertainment") || text.includes("comedy")) return "Entertainment";
-  return "Campus Life";
+  return "Life & Culture";
 }
 
 function formatDuration(isoDuration: string): string {

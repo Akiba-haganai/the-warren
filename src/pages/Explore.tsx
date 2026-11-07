@@ -1,16 +1,11 @@
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
 import { Hero } from "../components/sections/Hero";
-import { WhyWarren } from "../components/sections/WhyWarren";
-import { JourneyTimeline } from "../components/sections/JourneyTimeline";
-import { EcosystemMap } from "../components/sections/EcosystemMap";
-import { CampusShowcase } from "../components/sections/CampusShowcase";
-import { MarketShowcase } from "../components/sections/MarketShowcase";
 import { PodcastSection } from "../components/sections/PodcastSection";
-import { FounderNote } from "../components/sections/FounderNote";
 import { CoreValues } from "../components/sections/CoreValues";
-import { Roadmap } from "../components/sections/Roadmap";
 import { FinalCTA } from "../components/sections/FinalCTA";
+import { JoinCommunity } from "../components/sections/JoinCommunity";
+import { Stats } from "../components/sections/Stats";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,27 +16,21 @@ import {
   ArrowRight,
   BookOpen,
   Check,
-  GraduationCap,
   Map,
   Podcast,
   Shield,
   ShoppingBag,
   Zap,
-  MessageCircle,
-  Users,
-  Camera,
-  PlaySquare,
   Briefcase,
 } from "lucide-react";
 
-import { StitchShowcase } from "../components/sections/StitchShowcase";
 import { SITE_CONFIG } from "@/config/site";
 
-const WARREN_CAMPUS_URL =
+const WAVE_URL =
   SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app";
-const WARREN_CONNECT_URL =
+const PLAWZA_URL =
   SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app";
-const WARREN_STITCH_URL =
+const STITCH_URL =
   SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app";
 
 export default function Explore() {
@@ -51,17 +40,10 @@ export default function Explore() {
       <main>
         <Hero />
         <OurApps />
-        <WhyWarren />
-        <JoinCommunity />
-        <JourneyTimeline />
-        <EcosystemMap />
-        <CampusShowcase />
-        <MarketShowcase />
-        <StitchShowcase />
+        <Stats />
         <PodcastSection />
-        <FounderNote />
         <CoreValues />
-        <Roadmap />
+        <JoinCommunity />
         <FinalCTA />
       </main>
       <Footer />
@@ -73,114 +55,105 @@ function OurApps() {
   const apps = [
     {
       icon: BookOpen,
-      title: "Campus",
+      title: "WAVE",
       description:
-        "Social networking, study materials, tutoring, quizzes, campus map, and AMA sessions — the all‑in‑one student hub.",
+        "Social networking, shared learning resources, live discussions, and community spaces for everyone.",
       features: [
         { text: "Social feed & real‑time chat", icon: Zap },
-        { text: "Study hub with past papers & cram plans", icon: GraduationCap },
-        { text: "Peer‑to‑peer tutoring marketplace", icon: Check },
-        { text: "Quiz battles & AMA sessions", icon: Check },
-        { text: "Interactive campus map", icon: Map },
-        { text: "Verified student badges", icon: Shield },
+        { text: "Learning hub & shared study resources", icon: Check },
+        { text: "Peer‑to‑peer mentoring & Q&A", icon: Check },
+        { text: "Interactive quizzes & AMA sessions", icon: Check },
+        { text: "Verified member badges", icon: Shield },
       ],
-      url: WARREN_CAMPUS_URL,
+      url: WAVE_URL,
       internal: false,
-      color: "bg-blue-600",
-      gradient: "from-blue-600 to-blue-800",
+      color: "bg-primary",
     },
     {
       icon: ShoppingBag,
-      title: "Market",
+      title: "PLAWZA",
       description:
-        "Marketplace, housing, and roommate finder for students — buy, sell, rent, and connect safely.",
+        "Marketplace and accommodation finder — buy, sell, rent, and connect safely with verified members.",
       features: [
-        { text: "Buy & sell new/used items", icon: Check },
-        { text: "Find accommodation & roommates", icon: Map },
-        { text: "Landlord dashboard & occupancy tracking", icon: Check },
+        { text: "Buy & sell new or pre-owned items", icon: Check },
+        { text: "Find accommodation & rentals", icon: Map },
+        { text: "Property & listing management", icon: Check },
         { text: "Verified seller tiers & reputation scoring", icon: Shield },
-        { text: "Fast mobile money escrow (coming soon)", icon: Zap },
       ],
-      url: WARREN_CONNECT_URL,
+      url: PLAWZA_URL,
       internal: false,
       color: "bg-teal-600",
-      gradient: "from-teal-600 to-teal-800",
     },
     {
       icon: Briefcase,
-      title: "Careers",
+      title: "STITCH",
       description:
-        "Find opportunities. Build experience. Get hired. The career hub for students.",
+        "Find opportunities. Build experience. Get hired. The career and gigs hub for everyone.",
       features: [
-        { text: "Find internships & part-time jobs", icon: Check },
-        { text: "Showcase skills & build experience", icon: Check },
+        { text: "Discover internships, gigs & jobs", icon: Check },
+        { text: "Showcase skills & build your portfolio", icon: Check },
         { text: "Connect with verified employers", icon: Shield },
         { text: "Opportunity matching & alerts", icon: Zap },
       ],
-      url: WARREN_STITCH_URL,
+      url: STITCH_URL,
       internal: false,
       color: "bg-indigo-600",
-      gradient: "from-indigo-600 to-indigo-800",
     },
     {
       icon: Podcast,
       title: "Podcasts",
       description:
-        "Student‑led conversations about faith, career, relationships, and campus life — powered by YouTube.",
+        "Original conversations about faith, career, relationships, and everyday life — streamed inside Weave.",
       features: [
-        { text: "Exclusive student content", icon: Check },
-        { text: "Play directly in the app", icon: Zap },
-        { text: "Bookmark & continue listening", icon: Check },
-        { text: "New episodes added automatically", icon: Zap },
-        { text: "Free & always available", icon: Check },
+        { text: "Original video & audio episodes", icon: Check },
+        { text: "Play directly with mini-player", icon: Zap },
+        { text: "Bookmark & resume where you left off", icon: Check },
+        { text: "New episodes synced automatically", icon: Zap },
       ],
       url: "/podcasts",
       internal: true,
-      color: "bg-purple-600",
-      gradient: "from-purple-600 to-purple-800",
+      color: "bg-amber-600",
     },
   ];
 
   return (
-    <section className="py-24 bg-muted/30">
+    <section id="ecosystem" className="py-24 bg-muted/30">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <div className="text-center">
             <SectionLabel>Our Platforms</SectionLabel>
             <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-              Three powerful apps, <span className="text-gradient-blue">one hub</span>
+              Connected apps, <span className="text-gradient-blue">one hub</span>
             </h2>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything a university student needs — social, study, marketplace, housing, and podcasts — all in one place.
+              Community, marketplace, housing, career opportunities, and podcasts — all brought together in one place.
             </p>
           </div>
         </Reveal>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {apps.map((app, i) => (
-            <Reveal key={app.title} delay={i * 0.1}>
-              <Card className="h-full border-border bg-card hover:shadow-glow transition flex flex-col">
+            <Reveal key={app.title} delay={i * 0.08}>
+              <Card className="h-full border-border bg-card hover:shadow-glow transition flex flex-col rounded-3xl">
                 <CardContent className="p-6 flex flex-col h-full">
                   <div className="flex items-center gap-3 mb-4">
                     <span
-                      className={`flex h-12 w-12 items-center justify-center rounded-xl ${app.color} text-white`}
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl ${app.color} text-white`}
                     >
-                      <app.icon className="h-6 w-6" />
+                      <app.icon className="h-5 w-5" />
                     </span>
-                    <div>
-                      <h3 className="font-display text-2xl font-semibold leading-tight">{app.title}</h3>
-                    </div>
+                    <h3 className="font-display text-xl font-semibold leading-tight">{app.title}</h3>
                   </div>
 
-                  <p className="text-sm text-muted-foreground flex-1">{app.description}</p>
+                  <p className="text-sm text-muted-foreground">{app.description}</p>
 
                   <ul className="mt-4 space-y-2 flex-1">
                     {app.features.map((feat) => (
                       <li
                         key={feat.text}
-                        className="flex items-start gap-2 text-sm text-muted-foreground"
+                        className="flex items-start gap-2 text-xs text-muted-foreground"
                       >
-                        <feat.icon className="mt-0.5 h-4 w-4 text-green-500 shrink-0" />
+                        <feat.icon className="mt-0.5 h-3.5 w-3.5 text-primary shrink-0" />
                         {feat.text}
                       </li>
                     ))}
@@ -188,16 +161,13 @@ function OurApps() {
 
                   <div className="mt-6">
                     {app.internal ? (
-                      <Button asChild className="w-full rounded-full shadow-glow">
+                      <Button asChild className="w-full rounded-full">
                         <Link to={app.url}>
                           Explore {app.title} <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
                     ) : (
-                      <Button
-                        asChild
-                        className={`w-full rounded-full bg-gradient-to-r ${app.gradient} text-white shadow-glow hover:opacity-90`}
-                      >
+                      <Button asChild variant="outline" className="w-full rounded-full">
                         <a href={app.url} target="_blank" rel="noopener noreferrer">
                           Open {app.title} <ArrowRight className="ml-2 h-4 w-4" />
                         </a>
@@ -208,109 +178,6 @@ function OurApps() {
               </Card>
             </Reveal>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function JoinCommunity() {
-  return (
-    <section id="community" className="py-24 bg-muted/30 dark:bg-muted/10 scroll-mt-24">
-      <div className="mx-auto max-w-5xl px-6 text-center">
-        <Reveal>
-          <SectionLabel>Get Involved</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-            Join the <span className="text-gradient-blue">community</span>
-          </h2>
-          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Whether you want quick updates, deep conversations, or podcast content – we're everywhere you are.
-          </p>
-        </Reveal>
-
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {/* WhatsApp Channel */}
-          <Button
-            asChild
-            size="lg"
-            className="rounded-full bg-green-500 hover:bg-green-600 text-white shadow-glow font-semibold"
-          >
-            <a
-              href="https://whatsapp.com/channel/0029Vb8NY5f84OmCRIr9K91V"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              WhatsApp Channel
-            </a>
-          </Button>
-
-          {/* WhatsApp Group */}
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 font-semibold"
-          >
-            <a
-              href="https://chat.whatsapp.com/I4TtoTKBGB9I4eVv4VKXGs"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              WhatsApp Group
-            </a>
-          </Button>
-
-          {/* Facebook Group */}
-          <Button
-            asChild
-            size="lg"
-            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-glow font-semibold"
-          >
-            <a
-              href="https://web.facebook.com/groups/warrenstudenthub/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Users className="mr-2 h-5 w-5" />
-              Facebook Group
-            </a>
-          </Button>
-
-          {/* Instagram */}
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="rounded-full border-2 border-pink-500 text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950 font-semibold"
-          >
-            <a
-              href="https://instagram.com/warrenpodcasts"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Camera className="mr-2 h-5 w-5" />
-              Instagram
-            </a>
-          </Button>
-
-          {/* YouTube */}
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="rounded-full border-2 border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 font-semibold"
-          >
-            <a
-              href="https://youtube.com/channel/UCGKgsxYNTUESqdvySiMIQ1A"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <PlaySquare className="mr-2 h-5 w-5" />
-              YouTube
-            </a>
-          </Button>
         </div>
       </div>
     </section>

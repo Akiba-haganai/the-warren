@@ -13,6 +13,8 @@ import {
   Sparkles,
   Camera,
   Send,
+  Headphones,
+  BookOpen,
 } from "lucide-react";
 import { useTrendingTopics } from "@/hooks/useTrendingTopics";
 import { timeAgo } from "@/lib/utils";
@@ -27,7 +29,6 @@ import { useBlogLikeCounts } from "@/hooks/useBlogLikeCounts";
 import { getBrowserId } from "@/lib/browserId";
 import { urlForImage } from "@/lib/sanityImage";
 
-
 export default function Home() {
   return (
     <div className="relative">
@@ -36,11 +37,11 @@ export default function Home() {
         <MediaHero />
         <TrendingTopics />
         <LatestBlogs />
-        <StudentVoicePoll />
         <PodcastTeaser />
+        <CommunityPoll />
         <CultureSnapshot />
         <YourVoiceCTA />
-        <DiscoverWarren />
+        <DiscoverWeave />
       </main>
       <Footer />
     </div>
@@ -51,21 +52,38 @@ export default function Home() {
 /*  Media Hero                                                        */
 /* ------------------------------------------------------------------ */
 function MediaHero() {
-
   return (
     <section className="relative pt-32 pb-20 bg-hero overflow-hidden">
       <div className="mx-auto max-w-4xl px-6 text-center">
         <Reveal eager>
-          <Badge variant="outline" className="px-3 py-1 text-xs sm:text-sm border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10 backdrop-blur-sm">
-            <Sparkles className="mr-1 h-3.5 w-3.5" /> Media
+          <Badge
+            variant="outline"
+            className="px-3.5 py-1 text-xs sm:text-sm border-primary/30 text-primary bg-primary/10 backdrop-blur-sm mb-4"
+          >
+            <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Weave Media
           </Badge>
-          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance">
-            <span className="sr-only">Warren Weave — Campus Audio, Culture &amp; Stories: </span>
-            University, beyond the classroom.
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance leading-[1.06]">
+            <span className="sr-only">Weave — Audio, Culture &amp; Stories: </span>
+            Stories, culture &amp; conversations for{" "}
+            <span className="text-gradient-blue">everyone</span>.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-            Stories &bull; Conversations &bull; Culture
+            Original podcasts, thoughtful perspectives, and moments worth sharing.
           </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground shadow-glow">
+              <Link to="/podcasts">
+                <Headphones className="mr-2 h-4 w-4" />
+                Listen to Podcasts
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-full">
+              <Link to="/blogs">
+                <BookOpen className="mr-2 h-4 w-4" />
+                Read Stories
+              </Link>
+            </Button>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -85,10 +103,8 @@ function TrendingTopics() {
           <div className="mb-6">
             <SectionLabel>Discover</SectionLabel>
             <div className="flex items-center gap-2 mt-2">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold">
-                Trending Now
-              </h2>
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Trending Topics</h2>
             </div>
           </div>
         </Reveal>
@@ -107,11 +123,11 @@ function TrendingTopics() {
               <Link
                 key={topic._id}
                 to={`/topics/${topic.slug}`}
-                className="shrink-0 flex flex-col justify-center rounded-2xl border border-border bg-card px-5 py-3 hover:bg-accent hover:border-accent-foreground/20 transition-all shadow-sm"
+                className="shrink-0 flex flex-col justify-center rounded-2xl border border-border bg-card px-5 py-3 hover:bg-accent hover:border-primary/30 transition-all shadow-sm"
               >
                 <span className="font-medium text-foreground">{topic.name}</span>
                 <span className="text-xs text-muted-foreground mt-0.5 whitespace-nowrap">
-                  {topic.postCount} article{topic.postCount !== 1 ? 's' : ''} 
+                  {topic.postCount} article{topic.postCount !== 1 ? "s" : ""}
                   {topic.lastUpdated && ` · Updated ${timeAgo(topic.lastUpdated)}`}
                 </span>
               </Link>
@@ -124,7 +140,7 @@ function TrendingTopics() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Latest Blogs                                                      */
+/*  Latest Stories                                                    */
 /* ------------------------------------------------------------------ */
 function LatestBlogs() {
   const { blogs, loading } = useLatestBlogs();
@@ -137,12 +153,10 @@ function LatestBlogs() {
         <Reveal>
           <SectionLabel>Read</SectionLabel>
           <div className="flex items-center justify-between mt-2 mb-8">
-            <h2 className="text-2xl font-semibold">
-              Latest Blogs 
-            </h2>
-            <Button asChild variant="ghost" className="text-blue-600">
+            <h2 className="text-2xl font-semibold">Latest Stories</h2>
+            <Button asChild variant="ghost" className="text-primary">
               <Link to="/blogs">
-                All Blogs <ArrowRight className="ml-1 h-4 w-4" />
+                All Stories <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -163,7 +177,7 @@ function LatestBlogs() {
           </div>
         ) : blogs.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">
-            No blogs published yet. Check back soon!
+            No stories published yet. Check back soon!
           </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -193,9 +207,9 @@ function LatestBlogs() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Student Voice (Poll)                                              */
+/*  Community Pulse (Poll)                                            */
 /* ------------------------------------------------------------------ */
-function StudentVoicePoll() {
+function CommunityPoll() {
   const [sectionRef, inView] = useInView<HTMLElement>();
   const { poll, loading } = useActivePoll({ enabled: inView });
   const [voterId, setVoterId] = useState("");
@@ -211,7 +225,6 @@ function StudentVoicePoll() {
   useEffect(() => {
     if (!poll || !voterId || !supabase) return;
 
-    // Use maybeSingle — returns null (not 406) when the user hasn't voted yet
     supabase
       .from("poll_votes")
       .select("option_index")
@@ -222,26 +235,33 @@ function StudentVoicePoll() {
         if (data) {
           setHasVoted(true);
           setSelectedOption(data.option_index);
-          // poll_results is a view — guard against it not existing yet
-          // supabase is non-null here (checked above), but TS loses narrowing across the .then() boundary
           supabase!
-            .from("poll_votes")
-            .select("option_index")
+            .from("poll_results")
+            .select("poll_id, option_index, vote_count")
             .eq("poll_id", poll.id)
-            .then(({ data: votes }) => {
-              if (!votes) return;
-              // Tally votes client-side as fallback if poll_results view is missing
-              const tally: Record<number, number> = {};
-              for (const v of votes) {
-                tally[v.option_index] = (tally[v.option_index] ?? 0) + 1;
+            .then(({ data: viewVotes, error: viewError }) => {
+              if (!viewError && viewVotes && viewVotes.length > 0) {
+                setResults(viewVotes);
+                return;
               }
-              setResults(
-                Object.entries(tally).map(([option_index, vote_count]) => ({
-                  poll_id: poll.id,
-                  option_index: Number(option_index),
-                  vote_count,
-                }))
-              );
+              supabase!
+                .from("poll_votes")
+                .select("option_index")
+                .eq("poll_id", poll.id)
+                .then(({ data: votes }) => {
+                  if (!votes) return;
+                  const tally: Record<number, number> = {};
+                  for (const v of votes) {
+                    tally[v.option_index] = (tally[v.option_index] ?? 0) + 1;
+                  }
+                  setResults(
+                    Object.entries(tally).map(([option_index, vote_count]) => ({
+                      poll_id: poll.id,
+                      option_index: Number(option_index),
+                      vote_count,
+                    }))
+                  );
+                });
             });
         }
       });
@@ -258,23 +278,30 @@ function StudentVoicePoll() {
     if (!error) {
       setHasVoted(true);
       setSelectedOption(optionIndex);
-      // Tally all votes for this poll client-side (avoids dependency on poll_results view)
-      const { data: votes } = await supabase
-        .from("poll_votes")
-        .select("option_index")
+      const { data: viewVotes, error: viewError } = await supabase
+        .from("poll_results")
+        .select("poll_id, option_index, vote_count")
         .eq("poll_id", poll.id);
-      if (votes) {
-        const tally: Record<number, number> = {};
-        for (const v of votes) {
-          tally[v.option_index] = (tally[v.option_index] ?? 0) + 1;
+      if (!viewError && viewVotes && viewVotes.length > 0) {
+        setResults(viewVotes);
+      } else {
+        const { data: votes } = await supabase
+          .from("poll_votes")
+          .select("option_index")
+          .eq("poll_id", poll.id);
+        if (votes) {
+          const tally: Record<number, number> = {};
+          for (const v of votes) {
+            tally[v.option_index] = (tally[v.option_index] ?? 0) + 1;
+          }
+          setResults(
+            Object.entries(tally).map(([idx, count]) => ({
+              poll_id: poll.id,
+              option_index: Number(idx),
+              vote_count: count,
+            }))
+          );
         }
-        setResults(
-          Object.entries(tally).map(([idx, count]) => ({
-            poll_id: poll.id,
-            option_index: Number(idx),
-            vote_count: count,
-          }))
-        );
       }
     }
     setVoting(false);
@@ -287,9 +314,7 @@ function StudentVoicePoll() {
       <div className="mx-auto max-w-3xl px-6">
         <Reveal>
           <SectionLabel>Speak</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-6">
-            Student Voice 
-          </h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-6">Community Pulse</h2>
           {loading ? (
             <Card>
               <CardContent className="p-6 space-y-3">
@@ -318,7 +343,7 @@ function StudentVoicePoll() {
                           </div>
                           <div className="w-full h-2 bg-muted rounded-full">
                             <div
-                              className="h-2 bg-blue-600 rounded-full"
+                              className="h-2 bg-primary rounded-full"
                               style={{ width: `${percent}%` }}
                             />
                           </div>
@@ -335,7 +360,7 @@ function StudentVoicePoll() {
                       <Button
                         key={i}
                         variant="outline"
-                        className="w-full justify-start rounded-xl"
+                        className="w-full justify-start rounded-xl h-11"
                         onClick={() => handleVote(i)}
                         disabled={voting}
                       >
@@ -374,8 +399,8 @@ function PodcastTeaser() {
         <Reveal>
           <SectionLabel>Listen</SectionLabel>
           <div className="flex items-center justify-between mt-2 mb-6">
-            <h2 className="text-2xl font-semibold">Latest Podcast</h2>
-            <Button asChild variant="ghost" className="text-blue-600">
+            <h2 className="text-2xl font-semibold">Latest Episode</h2>
+            <Button asChild variant="ghost" className="text-primary">
               <Link to="/podcasts">
                 All Episodes <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -396,7 +421,7 @@ function PodcastTeaser() {
           </Card>
         ) : latest ? (
           <Reveal delay={0.05}>
-            <Link to={`/podcasts`}>
+            <Link to="/podcasts">
               <Card className="overflow-hidden border-border bg-card hover:shadow-glow transition">
                 <div className="grid md:grid-cols-2">
                   {(() => {
@@ -412,7 +437,7 @@ function PodcastTeaser() {
                         alt={latest.title}
                         width={640}
                         height={360}
-                        className="aspect-video object-cover"
+                        className="aspect-video object-cover w-full"
                         loading="lazy"
                       />
                     );
@@ -420,7 +445,7 @@ function PodcastTeaser() {
                   <CardContent className="p-6 flex flex-col justify-center">
                     <Badge className="mb-2 w-fit">{latest.category}</Badge>
                     <h3 className="font-display text-2xl font-semibold">{latest.title}</h3>
-                    <p className="mt-2 text-muted-foreground">{latest.description}</p>
+                    <p className="mt-2 text-muted-foreground line-clamp-3">{latest.description}</p>
                   </CardContent>
                 </div>
               </Card>
@@ -450,12 +475,10 @@ function CultureSnapshot() {
           <SectionLabel>See</SectionLabel>
           <div className="flex items-center justify-between mt-2 mb-6">
             <div className="flex items-center gap-2">
-              <Camera className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold">
-                Culture Snapshot
-              </h2>
+              <Camera className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Culture Snapshot</h2>
             </div>
-            <Button asChild variant="ghost" className="text-blue-600">
+            <Button asChild variant="ghost" className="text-primary">
               <Link to="/culture">
                 View All <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -471,7 +494,7 @@ function CultureSnapshot() {
           </div>
         ) : photos.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
-            No photos yet. Share your campus moments!
+            No photos yet. Share your moments!
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -484,7 +507,7 @@ function CultureSnapshot() {
                       src={base.width(400).height(400).url()}
                       srcSet={`${base.width(200).height(200).url()} 200w, ${base.width(400).height(400).url()} 400w`}
                       sizes="(max-width: 768px) 50vw, 25vw"
-                      alt={photo.caption || "campus culture"}
+                      alt={photo.caption || "Culture snapshot"}
                       width={400}
                       height={400}
                       className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
@@ -492,10 +515,12 @@ function CultureSnapshot() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-3 flex flex-col justify-between">
                       {photo.category ? (
-                        <Badge className="bg-blue-600/90 text-[10px] text-white w-fit border-none">
+                        <Badge className="bg-primary/90 text-[10px] text-primary-foreground w-fit border-none">
                           {photo.category}
                         </Badge>
-                      ) : <div />}
+                      ) : (
+                        <div />
+                      )}
                       {photo.caption && (
                         <p className="text-xs text-white font-medium line-clamp-1">
                           {photo.caption}
@@ -524,11 +549,11 @@ function YourVoiceCTA() {
           <SectionLabel>Create</SectionLabel>
           <h2 className="text-2xl font-semibold mt-2 mb-4">Have something to say?</h2>
           <p className="text-muted-foreground mb-6">
-            Share your blog, opinion, or experience with the student community.
+            Share your story, opinion, or experience with everyone on Weave.
           </p>
-          <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
+          <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground shadow-glow">
             <Link to="/submit">
-              <Send className="mr-2 h-4 w-4" /> Submit a Blog
+              <Send className="mr-2 h-4 w-4" /> Submit a Story
             </Link>
           </Button>
         </Reveal>
@@ -538,22 +563,21 @@ function YourVoiceCTA() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Discover Weave                                                    */
 /* ------------------------------------------------------------------ */
-/*  Discover Commons                                                  */
-/* ------------------------------------------------------------------ */
-function DiscoverWarren() {
+function DiscoverWeave() {
   return (
     <section className="py-16 bg-muted/30">
       <div className="mx-auto max-w-5xl px-6 text-center">
         <Reveal>
           <SectionLabel>Explore</SectionLabel>
-          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover WEAVE</h2>
+          <h2 className="text-2xl font-semibold mt-2 mb-2">Discover Weave</h2>
           <p className="text-muted-foreground mb-8">
-            Everything university students need, in one place.
+            Stories, podcasts, and companion apps built for everyone.
           </p>
-          <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 shadow-glow">
+          <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground shadow-glow">
             <Link to="/explore">
-              Explore <ArrowRight className="ml-2 h-4 w-4" />
+              Explore Ecosystem <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </Reveal>

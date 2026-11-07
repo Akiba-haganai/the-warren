@@ -16,28 +16,31 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow">
               <img
                 src={warrenLogo}
-                alt="WEAVE logo"
-                className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
+                alt="Weave logo"
+                className="h-5 w-5 object-contain"
               />
             </span>
-            <span className="font-display text-xl font-semibold">WEAVE</span>
+            <span className="font-display text-xl font-semibold">Weave</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            Stories. Culture. What's happening.
+            Stories, podcasts, and culture for everyone.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
-            Built with ❤️ for students.
+            Crafted by Warren.
           </p>
         </div>
 
-        {/* Company */}
+        {/* Explore */}
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Company</h3>
+          <h3 className="text-sm font-semibold text-foreground">Explore</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/blogs" className="hover:text-foreground transition">Stories</Link></li>
+            <li><Link to="/podcasts" className="hover:text-foreground transition">Podcasts</Link></li>
+            <li><Link to="/culture" className="hover:text-foreground transition">Culture</Link></li>
             <li><Link to="/about" className="hover:text-foreground transition">About</Link></li>
             <li><Link to="/contact" className="hover:text-foreground transition">Contact</Link></li>
           </ul>
@@ -85,16 +88,9 @@ export function Footer() {
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <MessageCircle className="h-3.5 w-3.5" />
-                WhatsApp Group
+                WhatsApp Community
               </a>
             </li>
-
-            <li className="pt-2 border-t border-border/60">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">
-                Follow Us
-              </span>
-            </li>
-
             <li>
               <a
                 href="https://web.facebook.com/groups/warrenstudenthub/"
@@ -103,10 +99,9 @@ export function Footer() {
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <Users className="h-3.5 w-3.5" />
-                Facebook Group
+                Facebook Community
               </a>
             </li>
-
             <li>
               <a
                 href="https://instagram.com/warrenpodcasts"
@@ -115,10 +110,9 @@ export function Footer() {
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <Camera className="h-3.5 w-3.5" />
-                Instagram (coming soon)
+                Instagram
               </a>
             </li>
-
             <li>
               <a
                 href="https://youtube.com/channel/UCGKgsxYNTUESqdvySiMIQ1A"
@@ -130,58 +124,34 @@ export function Footer() {
                 YouTube
               </a>
             </li>
-
             <li className="pt-2 border-t border-border/60">
               <span className="text-xs font-semibold uppercase text-muted-foreground">
-                Our Apps
+                Companion Apps
               </span>
             </li>
-            <li>
-              <a
-                href={SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app"}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                WAVE
-              </a>
-            </li>
-            <li>
-              <a
-                href={SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app"}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                PLAWZA
-              </a>
-            </li>
-            <li>
-              <a
-                href={SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app"}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-foreground transition"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                STITCH
-              </a>
-            </li>
+            {SITE_CONFIG.apps
+              .filter((app) => app.isExternal)
+              .map((app) => (
+                <li key={app.id}>
+                  <a
+                    href={app.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-foreground transition"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    {app.name}
+                  </a>
+                </li>
+              ))}
           </ul>
         </div>
       </div>
 
       <div className="border-t border-border/40 bg-background/50">
-        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 text-xs text-muted-foreground">
-          <p className="max-w-4xl leading-relaxed">
-            <strong>Disclaimer:</strong> The views and opinions expressed in stories and blogs on this platform are solely those of the individual authors. They do not necessarily reflect the official policy, stance, or position of WEAVE, its creators, or any affiliated institution. WEAVE is an independent platform built for student expression and acts solely as a neutral host for user-generated content.
-          </p>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-2 border-t border-border/40 pt-4">
-            <p>© {new Date().getFullYear()} WEAVE. All rights reserved.</p>
-            <p>Built with care in Kitwe, Zambia. <span className="opacity-0 select-none" aria-hidden="true">Voice of the unheard.</span></p>
-          </div>
+        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} Weave. All rights reserved.</p>
+          <p>Stories • Podcasts • Culture</p>
         </div>
       </div>
     </footer>

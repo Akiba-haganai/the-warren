@@ -1,8 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState, Suspense } from "react";
-import { Search, Menu, Sun, Moon, Laptop, ArrowUpRight, User, Bookmark } from "lucide-react";
+import { Search, Menu, Sun, Moon, Laptop, Headphones, Bookmark, ChevronDown, ExternalLink } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.webp";
-
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +13,15 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
+import { SITE_CONFIG } from "@/config/site";
 
 import {
   getThemePreference,
@@ -27,38 +33,26 @@ import {
 
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 
-// Lazy-load SearchDialog with retry so @sanity/client, cmdk, and RxJS are only
-// fetched when the user actually opens search, retrying automatically on flaky connections.
 const LazySearchDialog = lazyWithRetry(() =>
   import("@/components/layout/SearchDialog").then((m) => ({ default: m.SearchDialog }))
 );
 
 const nav = [
-  { to: "/", label: "Media" },
-  { to: "/blogs", label: "Blogs" },
+  { to: "/", label: "Home" },
+  { to: "/blogs", label: "Stories" },
   { to: "/podcasts", label: "Podcasts" },
   { to: "/culture", label: "Culture" },
   { to: "/explore", label: "Explore" },
   { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
 ];
 
-const EXTERNAL_APPS = [
-  {
-    href: "https://warren-wave.vercel.app",
-    label: "WAVE",
-  },
-  {
-    href: "https://warren-plawza.vercel.app",
-    label: "PLAWZA",
-  },
-  {
-    href: "https://warren-stitch.vercel.app",
-    label: "STITCH",
-  },
-];
-
-const GET_STARTED_URL = "https://warren-wave.vercel.app";
+const EXTERNAL_APPS = SITE_CONFIG.apps
+  .filter((app) => app.isExternal)
+  .map((app) => ({
+    href: app.url,
+    label: app.name,
+    tagline: app.tagline,
+  }));
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
   { value: "light", label: "Light", icon: Sun },
@@ -72,7 +66,7 @@ function InstallAppButton() {
 
   const handleClick = () => {
     if (isIOS) {
-      alert("To install WEAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+      alert("To install Weave on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
     } else {
       promptInstall();
     }
@@ -83,7 +77,7 @@ function InstallAppButton() {
       size="sm"
       variant="outline"
       onClick={handleClick}
-      className="rounded-full border-orange-500/30 text-orange-600 dark:text-orange-400 hover:bg-orange-500/10"
+      className="rounded-full border-primary/30 text-primary hover:bg-primary/10"
     >
       Install App
     </Button>
@@ -94,7 +88,7 @@ export function Header() {
   const location = useLocation();
 
   const [themePref, setThemePref] = useState<ThemePreference>(() =>
-    typeof window === "undefined" ? "system" : getThemePreference(),
+    typeof window === "undefined" ? "system" : getThemePreference()
   );
 
   const [resolvedDark, setResolvedDark] = useState<boolean>(() => {
@@ -128,7 +122,7 @@ export function Header() {
 
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
-    const color = resolvedDark ? "#0f1420" : "#FF6D00";
+    const color = resolvedDark ? "#1a1c29" : "#4f46e5";
     if (meta) {
       meta.setAttribute("content", color);
     } else {
@@ -139,20 +133,20 @@ export function Header() {
     }
   }, [resolvedDark]);
 
-  // Reset search state when dialog closes
   useEffect(() => {
     if (!searchOpen) {
       setSearchQuery("");
     }
   }, [searchOpen]);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) =>
+    path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   const selectTheme = (pref: ThemePreference) => {
     setThemePref(pref);
     setThemePreference(pref);
     setResolvedDark(
-      pref === "dark" || (pref === "system" && getSystemTheme() === "dark"),
+      pref === "dark" || (pref === "system" && getSystemTheme() === "dark")
     );
   };
 
@@ -200,56 +194,81 @@ export function Header() {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 mt-3">
-        <div className="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <span className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-glow">
+        <div className="glass rounded-2xl px-4 sm:px-6 py-2.5 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow transition-transform group-hover:scale-105">
               <img
                 src={warrenLogo}
-                alt="WEAVE logo"
-                className="h-4 w-4 sm:h-5 sm:w-5 object-contain"
+                alt="Weave logo"
+                className="h-5 w-5 object-contain"
               />
             </span>
 
             <div className="flex flex-col">
-              <span className="font-display text-lg font-semibold tracking-tight">WEAVE</span>
-              <span className="sr-only">Stories. Culture. What's happening.</span>
+              <span className="font-display text-lg font-semibold tracking-tight">Weave</span>
+              <span className="sr-only">Stories. Podcasts. Culture.</span>
             </div>
           </Link>
 
-
-
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
             {items.map((n) => (
               <Link key={n.to} to={n.to} className={navLinkClass(n.to)}>
                 {n.label}
               </Link>
             ))}
-            {EXTERNAL_APPS.map((app) => (
-              <a
-                key={app.href}
-                href={app.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40`}
-              >
-                {app.label} ↗
-              </a>
-            ))}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                >
+                  Apps <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl">
+                {EXTERNAL_APPS.map((app) => (
+                  <DropdownMenuItem key={app.href} asChild className="rounded-lg cursor-pointer">
+                    <a
+                      href={app.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between w-full py-2 px-2.5"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-xs">{app.label}</span>
+                        <span className="text-[11px] text-muted-foreground">{app.tagline}</span>
+                      </div>
+                      <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                    </a>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2.5">
             <InstallAppButton />
-            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="h-9 w-9 rounded-full"
+            >
               <Search className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" asChild aria-label="Saved articles">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              aria-label="Saved articles"
+              className="h-9 w-9 rounded-full"
+            >
               <Link to="/saved">
                 <Bookmark className="h-4 w-4" />
               </Link>
-            </Button>
-            <Button variant="ghost" size="icon" disabled title="Profile (coming soon)" className="text-muted-foreground">
-              <User className="h-4 w-4" />
             </Button>
 
             <ThemeSelector />
@@ -257,82 +276,100 @@ export function Header() {
             <Button
               asChild
               size="sm"
-              className="rounded-full text-white font-medium bg-gradient-sunset shadow-glow-coral hover:brightness-110 transition"
+              className="rounded-full bg-primary text-primary-foreground font-medium shadow-glow hover:opacity-95 transition px-4"
             >
-              <a href={GET_STARTED_URL} target="_blank" rel="noreferrer">
-                Get Started
-                <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-              </a>
+              <Link to="/podcasts">
+                <Headphones className="mr-1.5 h-3.5 w-3.5" />
+                Listen
+              </Link>
             </Button>
           </div>
 
-          {/* Mobile: Sheet */}
-          <div className="md:hidden flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search">
+          {/* Mobile: Quick actions + Sheet */}
+          <div className="md:hidden flex items-center gap-1.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="h-10 w-10 rounded-full"
+            >
               <Search className="h-4 w-4" />
             </Button>
 
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu">
+                <Button variant="ghost" size="icon" aria-label="Open menu" className="h-10 w-10 rounded-full">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[260px] sm:w-[320px] pt-10 overflow-y-auto pb-20">
+              <SheetContent side="right" className="w-[280px] sm:w-[320px] pt-10 overflow-y-auto pb-24">
                 <SheetHeader className="sr-only">
                   <SheetTitle>Menu</SheetTitle>
                   <SheetDescription>Site navigation and theme settings</SheetDescription>
                 </SheetHeader>
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-1.5" aria-label="Mobile navigation">
                   {items.map((n) => (
                     <SheetClose key={n.to} asChild>
-                      <Link
-                        to={n.to}
-                        className={navLinkClass(n.to)}
-                      >
+                      <Link to={n.to} className={`${navLinkClass(n.to)} py-2.5 text-base`}>
                         {n.label}
                       </Link>
                     </SheetClose>
                   ))}
                   <SheetClose asChild>
-                    <Link to="/saved" className={navLinkClass("/saved")}>
-                      🔖 Saved Articles
+                    <Link to="/saved" className={`${navLinkClass("/saved")} py-2.5 text-base flex items-center gap-2`}>
+                      <Bookmark className="h-4 w-4" /> Saved Articles
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link to="/contact" className={`${navLinkClass("/contact")} py-2.5 text-base`}>
+                      Contact
                     </Link>
                   </SheetClose>
 
-                  <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3">
+                  <SheetClose asChild>
+                    <Button
+                      asChild
+                      className="mt-3 rounded-full bg-primary text-primary-foreground font-semibold shadow-glow py-5"
+                    >
+                      <Link to="/podcasts">
+                        <Headphones className="mr-2 h-4 w-4" />
+                        Listen to Podcasts
+                      </Link>
+                    </Button>
+                  </SheetClose>
+
+                  <div className="mt-4 rounded-2xl border border-border/60 bg-card p-3.5">
                     <div className="flex flex-col gap-2">
-                      <span className="text-sm font-medium">Theme</span>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Theme
+                      </span>
                       <ThemeSelector compact />
                     </div>
                   </div>
 
-                  <div className="mt-2 rounded-2xl border border-border/60 bg-card p-3">
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm font-medium">Our Apps</span>
+                  <div className="mt-2 rounded-2xl border border-border/60 bg-card p-3.5">
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                        Companion Apps
+                      </span>
                       {EXTERNAL_APPS.map((app) => (
                         <a
                           key={app.href}
                           href={app.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                          className="flex items-center justify-between px-3 py-2 text-sm rounded-lg transition text-muted-foreground hover:text-foreground hover:bg-accent/40"
                         >
-                          {app.label} ↗
+                          <div className="flex flex-col">
+                            <span className="font-medium text-foreground">{app.label}</span>
+                            <span className="text-xs text-muted-foreground">{app.tagline}</span>
+                          </div>
+                          <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                         </a>
                       ))}
                     </div>
                   </div>
-
-                  <Button
-                    asChild
-                    className="mt-2 rounded-full text-white font-semibold bg-gradient-royal shadow-glow hover:shadow-glow hover:brightness-125 transition-all duration-300"
-                  >
-                    <a href={GET_STARTED_URL} target="_blank" rel="noreferrer">
-                      Get Started
-                      <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-                    </a>
-                  </Button>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -340,7 +377,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Search dialog — lazy-loaded so @sanity/client only downloads when opened */}
       {searchOpen && (
         <Suspense fallback={null}>
           <LazySearchDialog
@@ -353,4 +389,4 @@ export function Header() {
       )}
     </header>
   );
-}
+}

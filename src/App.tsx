@@ -7,52 +7,41 @@ import { usePlayer } from "./contexts/PlayerContext";
 import { lazyWithRetry } from "./lib/lazyWithRetry";
 
 // Lazy load MiniPlayer so framer-motion is only bundled when a podcast is played
-const LazyMiniPlayer = lazyWithRetry(() => 
-  import("./components/player/MiniPlayer").then(module => ({ default: module.MiniPlayer }))
+const LazyMiniPlayer = lazyWithRetry(() =>
+  import("./components/player/MiniPlayer").then((module) => ({ default: module.MiniPlayer }))
 );
 import { WhatsAppFAB } from "./components/layout/WhatsappFAB";
 import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
 import { UpdatePrompt } from "./components/layout/UpdatePrompt";
-import { RebrandBanner } from "./components/layout/RebrandBanner";
 
-// Home is imported eagerly so the landing page renders without a chunk download waterfall.
-// Other routes use lazyWithRetry so transient mobile packet drops retry automatically.
 import Home from "./pages/Home";
-const Explore         = lazyWithRetry(() => import("./pages/Explore"));
-const SubmitBlog      = lazyWithRetry(() => import("./pages/SubmitBlog"));
-const BlogPreview     = lazyWithRetry(() => import("./pages/BlogPreview"));
-const BlogsList       = lazyWithRetry(() => import("./pages/BlogsList"));
-const BlogPage        = lazyWithRetry(() => import("./pages/BlogPage"));
-const TopicPage       = lazyWithRetry(() => import("./pages/TopicPage"));
-const AuthorPage      = lazyWithRetry(() => import("./pages/AuthorPage"));
-const About           = lazyWithRetry(() => import("./pages/About"));
-const Contact         = lazyWithRetry(() => import("./pages/Contact"));
-const Privacy         = lazyWithRetry(() => import("./pages/Privacy"));
-const Terms           = lazyWithRetry(() => import("./pages/Terms"));
-const Cookies         = lazyWithRetry(() => import("./pages/Cookies"));
-const Ecosystem       = lazyWithRetry(() => import("./pages/Ecosystem"));
-const Products        = lazyWithRetry(() => import("./pages/Products"));
-const Podcasts        = lazyWithRetry(() => import("./pages/Podcasts"));
-const Culture         = lazyWithRetry(() => import("./pages/Culture"));
-const SavedArticles   = lazyWithRetry(() => import("./pages/SavedArticles"));
+const Explore       = lazyWithRetry(() => import("./pages/Explore"));
+const SubmitBlog    = lazyWithRetry(() => import("./pages/SubmitBlog"));
+const BlogsList     = lazyWithRetry(() => import("./pages/BlogsList"));
+const BlogPage      = lazyWithRetry(() => import("./pages/BlogPage"));
+const TopicPage     = lazyWithRetry(() => import("./pages/TopicPage"));
+const AuthorPage    = lazyWithRetry(() => import("./pages/AuthorPage"));
+const About         = lazyWithRetry(() => import("./pages/About"));
+const Contact       = lazyWithRetry(() => import("./pages/Contact"));
+const Privacy       = lazyWithRetry(() => import("./pages/Privacy"));
+const Terms         = lazyWithRetry(() => import("./pages/Terms"));
+const Cookies       = lazyWithRetry(() => import("./pages/Cookies"));
+const Ecosystem     = lazyWithRetry(() => import("./pages/Ecosystem"));
+const Products      = lazyWithRetry(() => import("./pages/Products"));
+const Podcasts      = lazyWithRetry(() => import("./pages/Podcasts"));
+const Culture       = lazyWithRetry(() => import("./pages/Culture"));
+const SavedArticles = lazyWithRetry(() => import("./pages/SavedArticles"));
 
 function StoryToBlogRedirect() {
   const params = useParams();
   return <Navigate to={`/blogs/${params.slug}`} replace />;
 }
 
-function StoryPreviewToBlogRedirect() {
-  const params = useParams();
-  return <Navigate to={`/blogs/preview/${params.token}`} replace />;
-}
-
-// Minimal inline fallback — just keeps the background colour so there's no
-// white flash while a chunk loads. No spinner needed; chunks are tiny.
 function PageFallback() {
   return (
     <div className="min-h-screen bg-background relative">
-      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-orange-500 to-amber-500 animate-pulse z-[100]" />
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-amber-500 to-primary animate-pulse z-[100]" />
     </div>
   );
 }
@@ -65,24 +54,19 @@ function App() {
       <ScrollToTopOnNavigate />
       <LegacyAnchorRedirect />
       <ScrollToTopButton />
-      <RebrandBanner />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/campuses" element={<Navigate to="/" replace />} />
-          <Route path="/campuses/:slug" element={<Navigate to="/" replace />} />
           <Route path="/explore" element={<Explore />} />
 
-          {/* Blog Routes */}
+          {/* Story / Blog Routes */}
           <Route path="/submit" element={<SubmitBlog />} />
           <Route path="/blogs" element={<BlogsList />} />
           <Route path="/blogs/:slug" element={<BlogPage />} />
-          <Route path="/blogs/preview/:token" element={<BlogPreview />} />
 
           {/* Legacy Story Routes → Redirect to Blogs */}
           <Route path="/stories" element={<Navigate to="/blogs" replace />} />
           <Route path="/stories/:slug" element={<StoryToBlogRedirect />} />
-          <Route path="/stories/preview/:token" element={<StoryPreviewToBlogRedirect />} />
 
           <Route path="/topics/:slug" element={<TopicPage />} />
           <Route path="/authors/:name" element={<AuthorPage />} />

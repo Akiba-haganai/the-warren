@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { urlForImage } from "@/lib/sanityImage";
 import { usePlayer } from "@/contexts/PlayerContext";
+import { SITE_CONFIG } from "@/config/site";
 
 export default function TopicPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -31,7 +32,7 @@ export default function TopicPage() {
       document.head.appendChild(metaDescription);
     }
 
-    document.title = topic.seoTitle || `${topic.title} - WEAVE`;
+    document.title = topic.seoTitle || `${topic.title} — ${SITE_CONFIG.name}`;
     
     if (topic.seoDescription) {
       metaDescription.setAttribute("content", topic.seoDescription);
@@ -142,7 +143,7 @@ export default function TopicPage() {
                         <figure className="group relative overflow-hidden rounded-2xl bg-muted/40 aspect-square shadow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
                           <img
                             src={urlForImage(photo.image).width(600).height(600).fit("crop").auto("format").quality(75).url()}
-                            alt={photo.caption || "campus culture photo"}
+                            alt={photo.caption || "culture photo"}
                             width={600}
                             height={600}
                             className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
@@ -177,7 +178,7 @@ export default function TopicPage() {
                             />
                             <button
                               onClick={() => playEpisode(ep, podcasts)}
-                              className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition"
+                              className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-100 sm:opacity-0 sm:hover:opacity-100 transition"
                               aria-label={`Play ${ep.title}`}
                             >
                               <Play className="h-12 w-12 text-white fill-white" />

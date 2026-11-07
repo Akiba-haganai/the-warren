@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 
 export function PodcastSection() {
   const episodes = [
-    { title: "Breakfast Stories", desc: "Mindset, faith and campus life." },
-    { title: "From Class to Community", desc: "Clubs, events and belonging." },
-    { title: "Jobs & Opportunities", desc: "Real paths to get moving." },
+    { title: "Morning Perspectives", desc: "Mindset, faith, and everyday life." },
+    { title: "Culture & Community", desc: "Events, creative voices, and belonging." },
+    { title: "Work & Opportunity", desc: "Practical paths to build skills and grow." },
   ];
 
   return (
@@ -20,7 +20,7 @@ export function PodcastSection() {
             Learn, laugh, and grow — on the go.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-            Student‑led conversations about faith, career, relationships, and campus life. Powered by YouTube, played right here.
+            Honest conversations about faith, career, relationships, and culture. Synced from YouTube, played right here.
           </p>
         </Reveal>
 
@@ -30,7 +30,7 @@ export function PodcastSection() {
               <Card className="border-border bg-card rounded-3xl h-full flex flex-col">
                 <CardContent className="p-7 flex flex-col h-full">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-glow">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
                       <Mic className="h-5 w-5" />
                     </span>
                     <h3 className="font-display text-2xl font-semibold">{ep.title}</h3>
@@ -39,7 +39,7 @@ export function PodcastSection() {
                   <Button
                     asChild
                     variant="outline"
-                    className="mt-6 rounded-full border-blue-500 text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950 font-semibold w-full"
+                    className="mt-6 rounded-full border-primary/40 text-primary hover:bg-primary/10 font-semibold w-full"
                   >
                     <Link to="/podcasts">
                       <PlayCircle className="mr-2 h-4 w-4" />
@@ -53,7 +53,7 @@ export function PodcastSection() {
         </div>
 
         <div className="mt-10 text-center">
-          <Button asChild variant="ghost" className="rounded-full text-blue-600 font-medium">
+          <Button asChild variant="ghost" className="rounded-full text-primary font-medium">
             <Link to="/podcasts">
               Browse all episodes <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

@@ -1,19 +1,19 @@
 {
   "$schema": "https://agenticresourcediscovery.org/schema/v1/catalog.json",
-  "name": "Warren Weave",
-  "description": "Stories, campus podcasts, and student culture connecting university students across Zambia.",
+  "name": "Weave",
+  "description": "Stories, podcasts, and culture for everyone.",
   "version": "1.0.0",
-  "homepage": "https://warren-weave.vercel.app",
+  "homepage": "https://weave.akiba-hara.workers.dev",
   "capabilities": ["llms-txt"],
   "resources": [
     {
       "type": "documentation",
-      "url": "https://warren-weave.vercel.app/llms.txt",
+      "url": "https://weave.akiba-hara.workers.dev/llms.txt",
       "title": "LLMs.txt"
     },
     {
       "type": "sitemap",
-      "url": "https://warren-weave.vercel.app/sitemap.xml",
+      "url": "https://weave.akiba-hara.workers.dev/sitemap.xml",
       "title": "Sitemap"
     }
   ]

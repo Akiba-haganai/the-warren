@@ -91,7 +91,7 @@ export default function Contact() {
           href={`mailto:${SITE_CONFIG.contact.email}`}
           className="rounded-2xl border border-border bg-card p-6 hover:shadow-glow transition"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Mail className="h-5 w-5" />
           </span>
           <h2 className="mt-4 font-semibold text-lg">Email</h2>
@@ -116,7 +116,7 @@ export default function Contact() {
 
         {/* ---------- Location (non-interactive, no hover) ---------- */}
         <div className="rounded-2xl border border-border bg-card p-6">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <MapPin className="h-5 w-5" />
           </span>
           <h2 className="mt-4 font-semibold text-lg">Based in</h2>
@@ -208,7 +208,7 @@ export default function Contact() {
               type="submit"
               size="lg"
               disabled={sending}
-              className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-glow font-semibold"
+              className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow font-semibold"
             >
               {sending ? (
                 <>

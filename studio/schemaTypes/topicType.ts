@@ -30,19 +30,20 @@ export const topicType = defineType({
       of: [{ type: "string" }],
       options: {
         list: [
-          { title: "Campus Life", value: "Campus Life" },
+          { title: "Life & Culture", value: "Life & Culture" },
           { title: "Events", value: "Events" },
           { title: "Faith & Community", value: "Faith & Community" },
           { title: "People", value: "People" },
-          { title: "Academics", value: "Academics" },
+          { title: "Learning & Growth", value: "Learning & Growth" },
           { title: "Sports & Recreation", value: "Sports & Recreation" },
           { title: "Technology", value: "Technology" },
           { title: "Career", value: "Career" },
           { title: "Entertainment", value: "Entertainment" },
           { title: "Music", value: "Music" },
-        ]
+        ],
       },
-      description: "Map this topic to existing hardcoded categories used by Culture Photos (Sanity) and Podcasts (Supabase). This ensures those items appear on this topic's page.",
+      description:
+        "Map this topic to categories used by Culture Photos (Sanity) and Podcasts (Supabase).",
     }),
     defineField({
       name: "seoTitle",
@@ -55,13 +56,6 @@ export const topicType = defineType({
       title: "SEO Description",
       type: "text",
       description: "Optional: override the meta description for SEO.",
-    }),
-    defineField({
-      name: "university",
-      title: "University (Optional)",
-      type: "reference",
-      to: [{ type: "university" }],
-      description: "If this topic is exclusive to one university (e.g., 'CBU Freshers').",
     }),
   ],
 });

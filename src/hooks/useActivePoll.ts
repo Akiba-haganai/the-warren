@@ -9,8 +9,6 @@ export interface Poll {
   is_active: boolean;
   expires_at: string | null;
   created_at: string;
-  university_slug?: string | null;
-  campus_slug?: string | null;
 }
 
 export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {
@@ -27,16 +25,13 @@ export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {
       return;
     }
 
-    const cacheKey = `polls:active:national`;
+    const cacheKey = `polls:active:global`;
 
     cachedSupabaseQuery(cacheKey, async () => {
-      let query = supabase!
+      const { data, error } = await supabase!
         .from("polls")
         .select("*")
-        .eq("is_active", true);
-      query = query.is("university_slug", null);
-      
-      const { data, error } = await query
+        .eq("is_active", true)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -63,4 +58,3 @@ export function useActivePoll({ enabled = true }: { enabled?: boolean } = {}) {
 
   return { poll, loading, error };
 }
-

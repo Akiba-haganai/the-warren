@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Episode } from "@/data/podcasts";
+import { SITE_CONFIG } from "@/config/site";
 
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -22,7 +23,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://warren-weave.vercel.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : SITE_CONFIG.defaultOrigin;
   const url = `${origin}/podcasts?episode=${episode.id}`;
   const youtubeUrl = `https://www.youtube.com/watch?v=${episode.youtubeId}`;
   const strippedUrl = url.replace(/^https?:\/\//, "");
@@ -45,11 +46,13 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
   }, [url]);
 
   const whatsappStatusMsg = encodeURIComponent(
-    `🎙️ Listen to "${episode.title}" on WEAVE\n\n${episode.description ? episode.description.slice(0, 100) + "..." : ""}\n\n${strippedUrl}`
+    `🎙️ Listen to "${episode.title}" on Weave\n\n${
+      episode.description ? episode.description.slice(0, 100) + "..." : ""
+    }\n\n${strippedUrl}`
   );
 
   const whatsappChatMsg = encodeURIComponent(
-    `🎙️ "${episode.title}"\n\nListen on WEAVE: ${url}`
+    `🎙️ "${episode.title}"\n\nListen on Weave: ${url}`
   );
 
   const handleNativeShare = async () => {
@@ -100,7 +103,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
               </div>
               <div className="flex-1 min-w-0">
                 <span className="font-semibold text-sm block">Share to WhatsApp Status</span>
-                <span className="text-xs text-muted-foreground">Post thumbnail link to your WhatsApp status</span>
+                <span className="text-xs text-muted-foreground">Post link to your WhatsApp status</span>
               </div>
             </a>
 
@@ -115,7 +118,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
               </div>
               <div className="flex-1 min-w-0">
                 <span className="font-semibold text-sm block">Send via WhatsApp Chat</span>
-                <span className="text-xs text-muted-foreground">Directly message friends or campus groups</span>
+                <span className="text-xs text-muted-foreground">Directly message friends or community groups</span>
               </div>
             </a>
 
@@ -130,7 +133,7 @@ export function PodcastShareModal({ episode, trigger }: PodcastShareModalProps) 
               </div>
               <div className="flex-1 min-w-0">
                 <span className="font-semibold text-sm block">Post to Facebook</span>
-                <span className="text-xs text-muted-foreground">Share to timeline or student groups</span>
+                <span className="text-xs text-muted-foreground">Share to your timeline or groups</span>
               </div>
             </a>
 

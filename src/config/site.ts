@@ -10,12 +10,12 @@ export interface EcosystemApp {
 }
 
 export const SITE_CONFIG = {
-  name: "WEAVE",
-  brandName: "Warren Weave",
-  tagline: "Audio, Culture & Stories",
+  name: "Weave",
+  brandName: "Weave",
+  tagline: "Stories, Podcasts & Culture",
   description:
-    "Discover university podcasts, student journalism, campus culture, and stories connecting students across Zambia.",
-  defaultOrigin: "https://thewarren.network", // Or fallback to window.location.origin
+    "Discover original podcasts, thoughtful stories, culture, and conversations for everyone.",
+  defaultOrigin: "https://weave.akiba-hara.workers.dev",
   contact: {
     email: "contact@thewarren.network",
     supportEmail: "support@thewarren.network",
@@ -32,8 +32,8 @@ export const SITE_CONFIG = {
     {
       id: "wave",
       name: "WAVE",
-      tagline: "Campus Community & Social",
-      description: "Join campus conversations, connect with your tribe, and stay informed on WAVE.",
+      tagline: "Community & Social",
+      description: "Join conversations, connect with your community, and stay informed on WAVE.",
       url: "https://warren-wave.vercel.app",
       status: "Live",
       badgeColor: "bg-blue-500/10 text-blue-600 border-blue-500/20",
@@ -42,18 +42,18 @@ export const SITE_CONFIG = {
     {
       id: "plawza",
       name: "PLAWZA",
-      tagline: "Student Marketplace & Housing",
-      description: "Find verified student accommodation and buy or sell student goods securely.",
+      tagline: "Marketplace & Housing",
+      description: "Find verified accommodation and buy or sell everyday goods securely.",
       url: "https://warren-plawza.vercel.app",
       status: "Live",
-      badgeColor: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+      badgeColor: "bg-amber-500/10 text-amber-600 border-amber-500/20",
       isExternal: true,
     },
     {
       id: "stitch",
       name: "STITCH",
-      tagline: "Student Jobs & Internships",
-      description: "Discover verified student jobs, paid internships, and launch your career.",
+      tagline: "Jobs & Opportunities",
+      description: "Discover verified jobs, gigs, and internships to grow your career.",
       url: "https://warren-stitch.vercel.app",
       status: "Live",
       badgeColor: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
@@ -61,12 +61,12 @@ export const SITE_CONFIG = {
     },
     {
       id: "weave",
-      name: "WEAVE",
+      name: "Weave",
       tagline: "Audio & Culture Network",
-      description: "The media and discovery front door connecting students through stories and conversations.",
+      description: "The media and discovery hub connecting everyone through stories and conversations.",
       url: "/",
       status: "Live",
-      badgeColor: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+      badgeColor: "bg-primary/10 text-primary border-primary/20",
       isExternal: false,
     },
   ] as EcosystemApp[],

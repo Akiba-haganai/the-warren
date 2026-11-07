@@ -36,7 +36,7 @@ function buildHtml({
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>${safeTitle} — WEAVE</title>
+  <title>${safeTitle} — Weave</title>
   <meta name="description" content="${safeDesc}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="${safeTitle}">
@@ -98,9 +98,9 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
     if (!story) {
       const html = buildHtml({
-        title: "WEAVE — Stories. Culture. What's happening.",
-        description: "Read the latest stories and blogs from your campus.",
-        image: `${baseUrl}/warren-preview.png`,
+        title: "Weave — Stories, Podcasts & Culture",
+        description: "Discover stories, podcasts, and culture for everyone.",
+        image: `${baseUrl}/og-image-1200x630.png`,
         url: `${baseUrl}/blogs`,
       });
       return new Response(html, {
@@ -111,9 +111,9 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
     const title = story.title;
     const description =
-      story.excerpt || "Read this story on your campus platform.";
+      story.excerpt || "Read this story on Weave.";
     const image =
-      getSanityImageUrl(story.mainImage) || `${baseUrl}/warren-preview.png`;
+      getSanityImageUrl(story.mainImage) || `${baseUrl}/og-image-1200x630.png`;
     const url = `${baseUrl}/blogs/${slug}`;
 
     return new Response(buildHtml({ title, description, image, url }), {
@@ -123,9 +123,9 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
   } catch (err) {
     console.error("OG tags handler error:", err);
     const html = buildHtml({
-      title: "WEAVE — Stories. Culture. What's happening.",
-      description: "Read the latest stories and blogs from your campus.",
-      image: `${baseUrl}/warren-preview.png`,
+      title: "Weave — Stories, Podcasts & Culture",
+      description: "Discover stories, podcasts, and culture for everyone.",
+      image: `${baseUrl}/og-image-1200x630.png`,
       url: baseUrl,
     });
     return new Response(html, {

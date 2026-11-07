@@ -6,14 +6,13 @@ import { Reveal, SectionLabel } from "@/components/layout/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, Loader2, Clock, Search, Mic, ArrowRight, ExternalLink } from "lucide-react";
+import { Play, Pause, Loader2, Clock, Search, Mic, ArrowRight, ExternalLink, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { usePodcasts } from "@/hooks/usePodcasts";
 import { PodcastShareModal } from "@/components/podcast/PodcastShareModal";
 import { getLocalProgressMap, getInProgressEpisodes } from "@/lib/podcastProgress";
 import { useSavedEpisodes } from "@/lib/savedEpisodes";
-import { Bookmark } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +23,29 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
+const CATEGORIES = [
+  "All",
+  "Saved",
+  "Life & Culture",
+  "Faith & Community",
+  "Learning & Growth",
+  "Sports & Recreation",
+  "Technology",
+  "Career",
+  "Entrepreneurship",
+  "Relationships",
+  "Events",
+  "People",
+  "Entertainment",
+  "Music",
+];
+
+function normalizeCategory(cat: string): string {
+  if (cat === "Campus Life") return "Life & Culture";
+  if (cat === "Academics") return "Learning & Growth";
+  return cat;
+}
+
 export default function Podcasts() {
   const { playEpisode, currentEpisode, restoreFromEpisodes, isPlaying, isLoading } = usePlayer();
   const { podcasts, loading, error } = usePodcasts();
@@ -31,31 +53,14 @@ export default function Podcasts() {
   const [filter, setFilter] = useState("All");
   const restoredRef = useRef(false);
 
-  const categories = [
-    "All",
-    "Saved",
-    "Campus Life",
-    "Faith & Community",
-    "Academics",
-    "Sports & Recreation",
-    "Technology",
-    "Career",
-    "Entrepreneurship",
-    "Relationships",
-    "Events",
-    "People",
-    "Entertainment",
-    "Music",
-  ];
-
   const { toggleSaveEpisode, isSaved } = useSavedEpisodes();
 
-  // Filter and search logic with defensive null checks
+  // Filter and search logic with defensive null checks and legacy category mapping
   const filtered = podcasts
     .filter((ep) => {
       if (filter === "All") return true;
       if (filter === "Saved") return isSaved(ep.id);
-      return ep.category === filter;
+      return normalizeCategory(ep.category) === filter;
     })
     .filter((ep) => {
       const q = search.toLowerCase();
@@ -109,7 +114,7 @@ export default function Podcasts() {
               Podcasts
             </h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-              Conversations about student life, faith, career, and everything in
+              Conversations about life, faith, career, culture, and everything in
               between.
             </p>
           </Reveal>
@@ -157,7 +162,7 @@ export default function Podcasts() {
                         {/* Progress Bar overlay at bottom edge of thumbnail */}
                         <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/50">
                           <div
-                            className="h-full bg-[#FF6D00]"
+                            className="h-full bg-primary"
                             style={{ width: `${prog?.progressPercent || 0}%` }}
                           />
                         </div>
@@ -209,7 +214,7 @@ export default function Podcasts() {
                               className={`absolute inset-0 flex items-center justify-center transition ${
                                 isCurrent
                                   ? "bg-black/50 opacity-100"
-                                  : "bg-black/40 opacity-0 hover:opacity-100"
+                                  : "bg-black/40 opacity-100 sm:opacity-0 sm:hover:opacity-100"
                               }`}
                               aria-label={isCurLoading ? "Loading" : isCurPlaying ? "Pause" : `Play ${ep.title}`}
                             >
@@ -230,7 +235,7 @@ export default function Podcasts() {
                           </div>
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between gap-2 mb-2">
-                              <Badge variant="secondary">{ep.category}</Badge>
+                              <Badge variant="secondary">{normalizeCategory(ep.category)}</Badge>
                               <div className="flex items-center gap-1">
                                 <Button
                                   variant="ghost"
@@ -278,9 +283,9 @@ export default function Podcasts() {
           )}
 
           {/* Search bar + category filter */}
-          <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="mt-12 space-y-4">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search episodes..."
                 value={search}
@@ -288,14 +293,14 @@ export default function Podcasts() {
                 className="pl-10 rounded-full"
               />
             </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0 scrollbar-hide">
+              {CATEGORIES.map((cat) => (
                 <Button
                   key={cat}
                   variant={filter === cat ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilter(cat)}
-                  className="rounded-full"
+                  className="rounded-full shrink-0"
                 >
                   {cat}
                 </Button>
@@ -377,7 +382,7 @@ export default function Podcasts() {
                             className={`absolute inset-0 flex items-center justify-center transition ${
                               currentEpisode?.id === ep.id
                                 ? "bg-black/50 opacity-100"
-                                : "bg-black/40 opacity-0 hover:opacity-100"
+                                : "bg-black/40 opacity-100 sm:opacity-0 sm:hover:opacity-100"
                             }`}
                             aria-label={
                               currentEpisode?.id === ep.id && isLoading
@@ -404,7 +409,7 @@ export default function Podcasts() {
                         </div>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <Badge variant="secondary">{ep.category}</Badge>
+                            <Badge variant="secondary">{normalizeCategory(ep.category)}</Badge>
                             <div className="flex items-center gap-1">
                               <Button
                                 variant="ghost"
@@ -449,7 +454,7 @@ export default function Podcasts() {
           {/* ───── CTA: collaborate on podcasts ───── */}
           <div className="mt-20">
             <Reveal>
-              <Card className="overflow-hidden border-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-glow">
+              <Card className="overflow-hidden border-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-glow">
                 <CardContent className="p-8 sm:p-10 text-center">
                   <Mic className="h-10 w-10 mx-auto mb-4 text-white/80" />
                   <h2 className="font-display text-2xl sm:text-3xl font-semibold">
@@ -464,7 +469,7 @@ export default function Podcasts() {
                     <Button
                       asChild
                       size="lg"
-                      className="rounded-full bg-white text-purple-700 hover:bg-purple-50 font-semibold"
+                      className="rounded-full bg-white text-indigo-700 hover:bg-indigo-50 font-semibold"
                     >
                       <Link to="/contact">
                         Get in touch <ArrowRight className="ml-2 h-4 w-4" />

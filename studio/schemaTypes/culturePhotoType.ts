@@ -18,11 +18,11 @@ export const culturePhotoType = defineType({
       type: "string",
       options: {
         list: [
-          { title: "Campus Life", value: "Campus Life" },
+          { title: "Life & Culture", value: "Life & Culture" },
           { title: "Events", value: "Events" },
           { title: "Faith & Community", value: "Faith & Community" },
           { title: "People", value: "People" },
-          { title: "Academics", value: "Academics" },
+          { title: "Learning & Growth", value: "Learning & Growth" },
           { title: "Sports & Recreation", value: "Sports & Recreation" },
         ],
       },
@@ -39,18 +39,6 @@ export const culturePhotoType = defineType({
       type: "number",
       description: "Lower numbers show first.",
       initialValue: 0,
-    }),
-    defineField({
-      name: "university",
-      title: "University (Optional)",
-      type: "reference",
-      to: [{ type: "university" }],
-    }),
-    defineField({
-      name: "campus",
-      title: "Campus (Optional)",
-      type: "reference",
-      to: [{ type: "campus" }],
     }),
   ],
   preview: {
