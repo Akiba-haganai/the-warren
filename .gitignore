@@ -6,8 +6,16 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+
+# Environment variables
 .env
+.env.local
+.env.development
+.env.production
 .env.*
+!.env.example
+
+# Dependencies & build output
 node_modules
 dist
 dist-ssr
@@ -24,5 +32,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+.wrangler
 
+# Local scratch / repo dumps
 repomix-output.md
