@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/config/site";
 
 // ---------------------------------------------------------------------------
 // 1. Get your free access key at https://web3forms.com/#start
@@ -87,7 +88,7 @@ export default function Contact() {
       <div className="grid gap-6 md:grid-cols-3">
         {/* ---------- Email card ---------- */}
         <a
-          href="mailto:chilengawarren307@gmail.com"
+          href={`mailto:${SITE_CONFIG.contact.email}`}
           className="rounded-2xl border border-border bg-card p-6 hover:shadow-glow transition"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
@@ -95,13 +96,13 @@ export default function Contact() {
           </span>
           <h2 className="mt-4 font-semibold text-lg">Email</h2>
           <p className="text-muted-foreground text-sm break-words">
-            chilengawarren307@gmail.com
+            {SITE_CONFIG.contact.email}
           </p>
         </a>
 
         {/* ---------- WhatsApp chat (direct message) ---------- */}
         <a
-          href="https://wa.me/260966738707"   // ← replace with your actual phone number in international format, no + sign
+          href={SITE_CONFIG.contact.whatsappLink}
           target="_blank"
           rel="noreferrer"
           className="rounded-2xl border border-border bg-card p-6 hover:shadow-glow transition"

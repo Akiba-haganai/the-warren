@@ -321,9 +321,11 @@ export default function Podcasts() {
           {!loading && !error && filtered.length === 0 && (
             <div className="mt-12 text-center py-20">
               <p className="text-muted-foreground">
-                No episodes match your search.
+                {podcasts.length === 0
+                  ? "No episodes found yet. YouTube sync runs automatically every 6 hours."
+                  : "No episodes match your search."}
               </p>
-              {(search || filter !== "All") && (
+              {(search || filter !== "All") && podcasts.length > 0 && (
                 <Button
                   variant="outline"
                   className="mt-4"

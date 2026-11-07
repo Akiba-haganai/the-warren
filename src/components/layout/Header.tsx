@@ -37,7 +37,7 @@ const nav = [
   { to: "/", label: "Media" },
   { to: "/blogs", label: "Blogs" },
   { to: "/podcasts", label: "Podcasts" },
-  { to: "/campuses", label: "Campuses" },
+  { to: "/culture", label: "Culture" },
   { to: "/explore", label: "Explore" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -72,7 +72,7 @@ function InstallAppButton() {
 
   const handleClick = () => {
     if (isIOS) {
-      alert("To install WAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
+      alert("To install WEAVE on iOS:\n1. Tap the Share button in Safari\n2. Scroll down and tap 'Add to Home Screen'");
     } else {
       promptInstall();
     }

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/config/site";
 
 
 const products = [
@@ -18,14 +19,14 @@ const products = [
     icon: GraduationCap,
     name: "WAVE",
     desc: "Social networking, study hub, tutoring marketplace, quiz battles, campus map, and AMA sessions.",
-    url: "https://warren-wave.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app",
     status: "Live",
   },
   {
     icon: Store,
     name: "PLAWZA",
     desc: "Marketplace, housing, roommate finder, landlord dashboard, verified seller tiers, and escrow (coming soon).",
-    url: "https://warren-plawza.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app",
     status: "Live",
   },
   {
@@ -39,7 +40,7 @@ const products = [
     icon: Briefcase,
     name: "STITCH",
     desc: "Find opportunities. Build experience. Get hired. The career hub for students.",
-    url: "https://warren-stitch.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app",
     status: "Live",
   },
   {

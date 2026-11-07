@@ -35,10 +35,14 @@ import {
 } from "lucide-react";
 
 import { StitchShowcase } from "../components/sections/StitchShowcase";
+import { SITE_CONFIG } from "@/config/site";
 
-const WARREN_CAMPUS_URL = "https://warren-wave.vercel.app";
-const WARREN_CONNECT_URL = "https://warren-plawza.vercel.app";
-const WARREN_STITCH_URL = "https://warren-stitch.vercel.app";
+const WARREN_CAMPUS_URL =
+  SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app";
+const WARREN_CONNECT_URL =
+  SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app";
+const WARREN_STITCH_URL =
+  SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app";
 
 export default function Explore() {
   return (

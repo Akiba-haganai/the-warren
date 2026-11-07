@@ -11,7 +11,6 @@ interface Env {
 
 async function verifyTurnstile(token: string, secret?: string): Promise<boolean> {
   if (!secret) {
-    console.warn("TURNSTILE_SECRET_KEY not set — skipping bot verification in development.");
     return true;
   }
 
@@ -43,7 +42,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     return Response.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const { title, body, author, excerpt, turnstileToken, universitySlug } = bodyData;
+  const { title, body, author, excerpt, turnstileToken } = bodyData;
+
+  const isLocalhost =
+    context.request.url.includes("localhost") || context.request.url.includes("127.0.0.1");
 
   if (context.env.TURNSTILE_SECRET_KEY) {
     if (typeof turnstileToken !== "string" || !turnstileToken) {
@@ -56,6 +58,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         { status: 403 }
       );
     }
+  } else if (!isLocalhost) {
+    console.warn("TURNSTILE_SECRET_KEY is not configured in production. Bot protection disabled.");
   }
 
   if (typeof title !== "string" || title.trim().length < 3) {
@@ -96,12 +100,12 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
   try {
     const draftId = `drafts.submission-${crypto.randomUUID()}`;
 
+    // Story schema matches studio/schemaTypes/storyType.ts
     const doc = await client.create({
       _id: draftId,
       _type: "story",
       title: title.trim(),
       author: author.trim(),
-      universitySlug: typeof universitySlug === "string" ? universitySlug.trim() || undefined : undefined,
       excerpt: typeof excerpt === "string" ? excerpt.trim() || undefined : undefined,
       submittedViaForm: true,
       body: [

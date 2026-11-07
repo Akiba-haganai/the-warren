@@ -18,21 +18,10 @@ export function usePodcasts(category?: string, { enabled = true }: { enabled?: b
 
       if (!supabase) {
         if (!cancelled) {
-          try {
-            console.warn("Supabase not configured. Using fallback podcast data.");
-            const { episodes } = await import("@/data/podcasts");
-            let filtered = episodes;
-            if (category && category !== "All") {
-              filtered = filtered.filter((ep: Episode) => ep.category === category);
-            }
-            
-            setData(filtered);
-            setLoading(false);
-          } catch (e) {
-            setError("Podcast service is not configured and fallback data failed to load.");
-            setData([]);
-            setLoading(false);
-          }
+          console.warn("Supabase not configured: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be provided at build time.");
+          setError("Podcast service is not configured. Please check your Supabase environment variables.");
+          setData([]);
+          setLoading(false);
         }
         return;
       }
@@ -67,12 +56,12 @@ export function usePodcasts(category?: string, { enabled = true }: { enabled?: b
             duration: row.duration,
             category: row.category,
             date: row.published_date,
-            
-          })),
+          }))
         );
         setLoading(false);
-      } catch {
+      } catch (err) {
         if (cancelled) return;
+        console.error("usePodcasts query failed:", err);
         setError("Couldn't load episodes. Please try again.");
         setLoading(false);
       }

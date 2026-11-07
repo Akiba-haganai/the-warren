@@ -10,6 +10,7 @@ const STATIC_PATHS = [
   "/explore",
   "/podcasts",
   "/blogs",
+  "/culture",
   "/submit",
   "/about",
   "/contact",
@@ -31,14 +32,14 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
   try {
     const [stories, topics, authors] = await Promise.all([
-      sanity.fetch(`*[_type == "story" && defined(publishedAt)]{ "slug": slug.current }`),
-      sanity.fetch(`*[_type == "topic"]{ "slug": slug.current }`),
-      sanity.fetch(`array::unique(*[_type == "story" && defined(publishedAt)].author)`),
+      sanity.fetch(`*[_type == "story" && defined(publishedAt) && defined(slug.current)]{ "slug": slug.current }`),
+      sanity.fetch(`*[_type == "topic" && defined(slug.current)]{ "slug": slug.current }`),
+      sanity.fetch(`*[_type == "author" && defined(slug.current)]{ "slug": slug.current }`),
     ]);
 
     const storyUrls = (stories || []).map((s: { slug: string }) => `${baseUrl}/blogs/${s.slug}`);
     const topicUrls = (topics || []).map((t: { slug: string }) => `${baseUrl}/topics/${t.slug}`);
-    const authorUrls = (authors || []).map((a: string) => `${baseUrl}/authors/${encodeURIComponent(a)}`);
+    const authorUrls = (authors || []).map((a: { slug: string }) => `${baseUrl}/authors/${a.slug}`);
 
     const allUrls = [
       ...STATIC_PATHS.map((p) => baseUrl + p),

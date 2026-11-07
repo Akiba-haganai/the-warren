@@ -1,6 +1,7 @@
 import { ArrowRight, Briefcase, ShoppingBag, MessageCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/config/site";
 
 interface EcosystemCTAProps {
   topics: { slug: string; title: string }[];
@@ -27,7 +28,7 @@ export function EcosystemCTA({ topics }: EcosystemCTAProps) {
       name: "PLAWZA",
       title: "Looking for Campus Housing?",
       description: "Find affordable student accommodation and buy/sell items easily on PLAWZA.",
-      url: "https://warren-plawza.vercel.app",
+      url: SITE_CONFIG.apps.find(a => a.id === "plawza")?.url || "https://warren-plawza.vercel.app",
       icon: <ShoppingBag className="h-6 w-6 text-orange-600" />,
       color: "border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-900",
       buttonClass: "bg-orange-600 hover:bg-orange-700 text-white"
@@ -36,7 +37,7 @@ export function EcosystemCTA({ topics }: EcosystemCTAProps) {
       name: "STITCH",
       title: "Kickstart Your Career",
       description: "Discover internships, entry-level jobs, and career resources tailored for students on STITCH.",
-      url: "https://warren-stitch.vercel.app",
+      url: SITE_CONFIG.apps.find(a => a.id === "stitch")?.url || "https://warren-stitch.vercel.app",
       icon: <Briefcase className="h-6 w-6 text-emerald-600" />,
       color: "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:border-emerald-900",
       buttonClass: "bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -45,7 +46,7 @@ export function EcosystemCTA({ topics }: EcosystemCTAProps) {
       name: "WAVE",
       title: "Connect with Campus",
       description: "Join the conversation, find your tribe, and stay connected with students on WAVE.",
-      url: "https://warren-wave.vercel.app",
+      url: SITE_CONFIG.apps.find(a => a.id === "wave")?.url || "https://warren-wave.vercel.app",
       icon: <MessageCircle className="h-6 w-6 text-blue-600" />,
       color: "border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900",
       buttonClass: "bg-blue-600 hover:bg-blue-700 text-white"

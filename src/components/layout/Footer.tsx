@@ -8,6 +8,7 @@ import {
   PlaySquare,
 } from "lucide-react";
 import warrenLogo from "@/assets/warren_logo.webp";
+import { SITE_CONFIG } from "@/config/site";
 
 export function Footer() {
   return (
@@ -58,7 +59,7 @@ export function Footer() {
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li>
               <a
-                href="mailto:chilengawarren307@gmail.com"
+                href={`mailto:${SITE_CONFIG.contact.email}`}
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
               >
                 <Mail className="h-3.5 w-3.5" />
@@ -137,7 +138,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://warren-wave.vercel.app"
+                href={SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app"}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
@@ -148,7 +149,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://warren-plawza.vercel.app"
+                href={SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app"}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"
@@ -159,7 +160,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://warren-stitch.vercel.app"
+                href={SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app"}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-foreground transition"

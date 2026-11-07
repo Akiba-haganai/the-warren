@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Reveal } from "@/components/layout/Reveal";
+import { SITE_CONFIG } from "@/config/site";
 
 const apps = [
   {
@@ -35,7 +36,7 @@ const apps = [
       { text: "Interactive campus map", icon: Map, soon: false },
       { text: "Verified student badges", icon: Shield, soon: false },
     ],
-    url: "https://warren-wave.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "wave")?.url || "https://warren-wave.vercel.app",
     color: "bg-blue-600",
     gradient: "from-blue-600 to-blue-800",
   },
@@ -59,7 +60,7 @@ const apps = [
       },
       { text: "Mobile money escrow", icon: Clock, soon: true },
     ],
-    url: "https://warren-plawza.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "plawza")?.url || "https://warren-plawza.vercel.app",
     color: "bg-teal-600",
     gradient: "from-teal-600 to-teal-800",
   },
@@ -73,7 +74,7 @@ const apps = [
       { text: "Connect with verified employers", icon: Shield, soon: false },
       { text: "Opportunity matching & alerts", icon: Zap, soon: false },
     ],
-    url: "https://warren-stitch.vercel.app",
+    url: SITE_CONFIG.apps.find((a) => a.id === "stitch")?.url || "https://warren-stitch.vercel.app",
     color: "bg-indigo-600",
     gradient: "from-indigo-600 to-indigo-800",
   },
