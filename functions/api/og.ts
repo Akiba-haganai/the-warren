@@ -6,6 +6,24 @@ interface Env {
   VITE_SANITY_DATASET?: string;
 }
 
+function sanitizeDataset(val?: string | null): string {
+  if (!val) return "production";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^~?[a-z0-9_-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "production";
+}
+
+function sanitizeProjectId(val?: string | null): string {
+  if (!val) return "7yislksr";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^[a-z0-9-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "7yislksr";
+}
+
 function escapeHtml(str: string): string {
   if (!str) return "";
   return str
@@ -64,8 +82,8 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
     return new Response("Missing slug", { status: 400 });
   }
 
-  const projectId = context.env.VITE_SANITY_PROJECT_ID || "7yislksr";
-  const dataset = context.env.VITE_SANITY_DATASET || "production";
+  const projectId = sanitizeProjectId(context.env.VITE_SANITY_PROJECT_ID);
+  const dataset = sanitizeDataset(context.env.VITE_SANITY_DATASET);
 
   const sanity = createClient({
     projectId,

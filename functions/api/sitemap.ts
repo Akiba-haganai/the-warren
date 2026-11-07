@@ -5,6 +5,24 @@ interface Env {
   VITE_SANITY_DATASET?: string;
 }
 
+function sanitizeDataset(val?: string | null): string {
+  if (!val) return "production";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^~?[a-z0-9_-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "production";
+}
+
+function sanitizeProjectId(val?: string | null): string {
+  if (!val) return "7yislksr";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^[a-z0-9-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "7yislksr";
+}
+
 const STATIC_PATHS = [
   "/",
   "/explore",
@@ -24,8 +42,8 @@ const STATIC_PATHS = [
 export const onRequestGet = async (context: { request: Request; env: Env }) => {
   const baseUrl = new URL(context.request.url).origin;
   const sanity = createClient({
-    projectId: context.env.VITE_SANITY_PROJECT_ID || "7yislksr",
-    dataset: context.env.VITE_SANITY_DATASET || "production",
+    projectId: sanitizeProjectId(context.env.VITE_SANITY_PROJECT_ID),
+    dataset: sanitizeDataset(context.env.VITE_SANITY_DATASET),
     apiVersion: "2024-01-01",
     useCdn: true,
   });

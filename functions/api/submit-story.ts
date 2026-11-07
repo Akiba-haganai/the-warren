@@ -9,6 +9,24 @@ interface Env {
   TURNSTILE_SECRET_KEY?: string;
 }
 
+function sanitizeDataset(val?: string | null): string {
+  if (!val) return "production";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^~?[a-z0-9_-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "production";
+}
+
+function sanitizeProjectId(val?: string | null): string {
+  if (!val) return "7yislksr";
+  const cleaned = val.replace(/['"]/g, "").trim().toLowerCase();
+  if (/^[a-z0-9-]+$/.test(cleaned) && cleaned.length <= 64) {
+    return cleaned;
+  }
+  return "7yislksr";
+}
+
 async function verifyTurnstile(token: string, secret?: string): Promise<boolean> {
   if (!secret) {
     return true;
@@ -88,10 +106,12 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
   }
 
   const client = createClient({
-    projectId:
-      context.env.SANITY_PROJECT_ID || context.env.VITE_SANITY_PROJECT_ID || "7yislksr",
-    dataset:
-      context.env.SANITY_DATASET || context.env.VITE_SANITY_DATASET || "production",
+    projectId: sanitizeProjectId(
+      context.env.SANITY_PROJECT_ID || context.env.VITE_SANITY_PROJECT_ID
+    ),
+    dataset: sanitizeDataset(
+      context.env.SANITY_DATASET || context.env.VITE_SANITY_DATASET
+    ),
     apiVersion: "2024-01-01",
     token: context.env.SANITY_WRITE_TOKEN,
     useCdn: false,
