@@ -15,7 +15,6 @@ import { ScrollToTopButton } from "./components/layout/ScrollToTopButton";
 import { InstallPWA } from "./components/layout/InstallPWA";
 import { UpdatePrompt } from "./components/layout/UpdatePrompt";
 import { RebrandBanner } from "./components/layout/RebrandBanner";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Home is imported eagerly so the landing page renders without a chunk download waterfall.
 // Other routes use lazyWithRetry so transient mobile packet drops retry automatically.
@@ -121,7 +120,6 @@ function App() {
       <WhatsAppFAB />
       <InstallPWA />
       <UpdatePrompt />
-      <SpeedInsights />
       <Toaster />
     </>
   );

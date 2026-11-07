@@ -1,12 +1,14 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+interface Env {
+  SUPABASE_URL?: string;
+  VITE_SUPABASE_URL?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+  CRON_SECRET?: string;
+  YOUTUBE_API_KEY?: string;
+  YOUTUBE_UPLOADS_PLAYLIST_ID?: string;
+}
 
-// Helper to parse hashtags from YouTube descriptions into Weave categories
 function extractCategory(description: string): string {
   if (!description) return "Uncategorized";
   const desc = description.toLowerCase();
@@ -25,7 +27,6 @@ function extractCategory(description: string): string {
   return "Uncategorized";
 }
 
-// Converts ISO 8601 duration string (e.g. "PT1H2M10S", "PT14M22S", "PT45S") to formatted time "1:02:10" or "14:22"
 function formatDuration(isoDuration: string): string {
   if (!isoDuration) return "0:00";
   const regex = /P(?:([0-9]+)D)?T?(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?/;
@@ -43,38 +44,60 @@ function formatDuration(isoDuration: string): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Guard: only Vercel Cron (or you, manually, with the secret) can trigger this
-  const authHeader = req.headers.authorization;
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ error: "Unauthorized" });
+export const onRequest = async (context: { request: Request; env: Env }) => {
+  const authHeader = context.request.headers.get("authorization");
+  if (!context.env.CRON_SECRET || authHeader !== `Bearer ${context.env.CRON_SECRET}`) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const apiKey = process.env.YOUTUBE_API_KEY!;
-    const playlistId = process.env.YOUTUBE_UPLOADS_PLAYLIST_ID!;
+  const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
+  const supabaseKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    // Step 1: get video IDs from the uploads playlist
+  if (!supabaseUrl || !supabaseKey) {
+    return Response.json({ error: "Supabase not configured" }, { status: 500 });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  try {
+    const apiKey = context.env.YOUTUBE_API_KEY!;
+    const playlistId = context.env.YOUTUBE_UPLOADS_PLAYLIST_ID!;
+
     const playlistRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=25&key=${apiKey}`,
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=25&key=${apiKey}`
     );
-    const playlistData = await playlistRes.json();
+    const playlistData = (await playlistRes.json()) as {
+      items?: Array<{ snippet: { resourceId: { videoId: string } } }>;
+    };
 
     if (!playlistData.items) {
-      return res.status(500).json({ error: "Failed to fetch playlist", detail: playlistData });
+      return Response.json(
+        { error: "Failed to fetch playlist", detail: playlistData },
+        { status: 500 }
+      );
     }
 
     const videoIds = playlistData.items
-      .map((item: any) => item.snippet.resourceId.videoId)
+      .map((item) => item.snippet.resourceId.videoId)
       .join(",");
 
-    // Step 2: get duration + full details for those videos
     const videosRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`,
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`
     );
-    const videosData = await videosRes.json();
+    const videosData = (await videosRes.json()) as {
+      items: Array<{
+        id: string;
+        snippet: {
+          title: string;
+          description?: string;
+          publishedAt: string;
+          thumbnails?: { high?: { url?: string }; medium?: { url?: string } };
+        };
+        contentDetails: { duration: string };
+      }>;
+    };
 
-    const episodes = videosData.items.map((video: any) => ({
+    const episodes = videosData.items.map((video) => ({
       id: video.id,
       title: video.snippet.title,
       description: video.snippet.description?.slice(0, 500) || "",
@@ -91,12 +114,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { error } = await supabase.from("episodes").upsert(episodes);
 
     if (error) {
-      return res.status(500).json({ error: "Supabase upsert failed", detail: error });
+      return Response.json({ error: "Supabase upsert failed", detail: error }, { status: 500 });
     }
 
-    return res.status(200).json({ synced: episodes.length });
+    return Response.json({ synced: episodes.length }, { status: 200 });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Sync failed", detail: String(err) });
+    return Response.json({ error: "Sync failed", detail: String(err) }, { status: 500 });
   }
-}
+};

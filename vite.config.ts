@@ -5,11 +5,19 @@ import { VitePWA } from "vite-plugin-pwa";
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const buildVersion = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) 
-  ?? new Date().toISOString();
+const buildVersion =
+  process.env.CF_PAGES_COMMIT_SHA?.slice(0, 7) ??
+  process.env.WORKERS_CI_COMMIT_SHA?.slice(0, 7) ??
+  new Date().toISOString();
 
-const vercelEnv = process.env.VERCEL_ENV || "local";
-const vercelBranch = process.env.VERCEL_GIT_COMMIT_REF || "main";
+const appEnv =
+  process.env.CF_PAGES || process.env.WORKERS_CI
+    ? "production"
+    : process.env.NODE_ENV || "local";
+const appBranch =
+  process.env.CF_PAGES_BRANCH ||
+  process.env.WORKERS_CI_BRANCH ||
+  "main";
 
 export default defineConfig({
   resolve: {
@@ -17,8 +25,8 @@ export default defineConfig({
   },
   define: {
     __APP_VERSION__: JSON.stringify(buildVersion),
-    __APP_ENV__: JSON.stringify(vercelEnv),
-    __APP_BRANCH__: JSON.stringify(vercelBranch),
+    __APP_ENV__: JSON.stringify(appEnv),
+    __APP_BRANCH__: JSON.stringify(appBranch),
   },
   plugins: [
     {
@@ -176,4 +184,4 @@ export default defineConfig({
       },
     },
   },
-});
+});
