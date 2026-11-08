@@ -2,13 +2,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "the-warren",
   "main": "worker/index.ts",
+  "keep_vars": true,
   "compatibility_date": "2026-07-13",
   "compatibility_flags": [
     "nodejs_compat"
   ],
   "triggers": {
     "crons": [
-      "0 */6 * * *"
+      "0 * * * *"
     ]
   },
   "assets": {

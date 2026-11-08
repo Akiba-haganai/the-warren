@@ -327,7 +327,7 @@ export default function Podcasts() {
             <div className="mt-12 text-center py-20">
               <p className="text-muted-foreground">
                 {podcasts.length === 0
-                  ? "No episodes found yet. YouTube sync runs automatically every 6 hours."
+                  ? "No episodes found yet. YouTube sync runs automatically every hour."
                   : "No episodes match your search."}
               </p>
               {(search || filter !== "All") && podcasts.length > 0 && (
