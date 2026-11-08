@@ -1,4 +1,9 @@
-import { onRequestGet as handleOg } from "../functions/api/og";
+import {
+  onRequestGet as handleOg,
+  resolveStoryOg,
+  resolveEpisodeOg,
+  injectOgIntoHtml,
+} from "../functions/api/og";
 import { onRequestGet as handleSitemap } from "../functions/api/sitemap";
 import { onRequestPost as handleSubmitComment } from "../functions/api/submit-comment";
 import { onRequestPost as handleSubmitStory } from "../functions/api/submit-story";
@@ -24,6 +29,7 @@ interface ScheduledController {
 
 const CRAWLER_USER_AGENTS = [
   "facebookexternalhit",
+  "meta-externalagent",
   "whatsapp",
   "twitterbot",
   "linkedinbot",
@@ -36,12 +42,36 @@ const CRAWLER_USER_AGENTS = [
   "embedly",
   "pinterest",
   "quora link preview",
+  "skypeuripreview",
+  "redditbot",
+  "snapchat",
+  "viber",
 ];
 
 function isBotCrawler(userAgent: string | null): boolean {
   if (!userAgent) return false;
   const ua = userAgent.toLowerCase();
   return CRAWLER_USER_AGENTS.some((crawler) => ua.includes(crawler));
+}
+
+async function serveSpaWithOg(
+  request: Request,
+  env: Env,
+  meta: Awaited<ReturnType<typeof resolveEpisodeOg>>
+): Promise<Response> {
+  const assetRes = await env.ASSETS.fetch(request);
+  const contentType = assetRes.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) {
+    return assetRes;
+  }
+  const rawHtml = await assetRes.text();
+  const updatedHtml = injectOgIntoHtml(rawHtml, meta);
+  const headers = new Headers(assetRes.headers);
+  headers.set("Content-Type", "text/html; charset=utf-8");
+  return new Response(updatedHtml, {
+    status: assetRes.status,
+    headers,
+  });
 }
 
 export default {
@@ -67,17 +97,38 @@ export default {
       return handleSyncYoutube({ request, env: env as any });
     }
 
-    // Serve Rich Open Graph HTML for bots sharing blog articles on WhatsApp, Facebook, Twitter, etc.
+    // 1. Dynamic Open Graph metadata for Podcast Episode links: /podcasts?episode=<id>
+    if (
+      request.method === "GET" &&
+      (url.pathname === "/podcasts" || url.pathname === "/podcasts/") &&
+      url.searchParams.get("episode")
+    ) {
+      const episodeId = url.searchParams.get("episode")!;
+      const userAgent = request.headers.get("user-agent");
+      if (isBotCrawler(userAgent)) {
+        const ogUrl = new URL("/api/og", request.url);
+        ogUrl.searchParams.set("episode", episodeId);
+        return handleOg({ request: new Request(ogUrl.toString(), request), env: env as any });
+      }
+      // Also inject OG tags directly into the SPA HTML so in-app browsers, iMessage,
+      // and any crawler with a standard browser User-Agent still see the episode thumbnail
+      const meta = await resolveEpisodeOg(episodeId, url.origin, env as any);
+      return serveSpaWithOg(request, env, meta);
+    }
+
+    // 2. Dynamic Open Graph metadata for Blog Article links: /blogs/:slug
     if (request.method === "GET" && url.pathname.startsWith("/blogs/")) {
       const parts = url.pathname.split("/").filter(Boolean);
       if (parts.length === 2 && parts[0] === "blogs" && parts[1] !== "preview") {
+        const slug = parts[1];
         const userAgent = request.headers.get("user-agent");
         if (isBotCrawler(userAgent)) {
           const ogUrl = new URL("/api/og", request.url);
-          ogUrl.searchParams.set("slug", parts[1]);
-          const ogRequest = new Request(ogUrl.toString(), request);
-          return handleOg({ request: ogRequest, env: env as any });
+          ogUrl.searchParams.set("slug", slug);
+          return handleOg({ request: new Request(ogUrl.toString(), request), env: env as any });
         }
+        const meta = await resolveStoryOg(slug, url.origin, env as any);
+        return serveSpaWithOg(request, env, meta);
       }
     }
 
