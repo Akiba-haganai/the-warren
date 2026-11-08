@@ -1,4 +1,3 @@
-
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -8,7 +7,6 @@ import { PlayerProvider } from "./contexts/PlayerContext";
 
 import { initThemeFromStorage } from "./lib/theme";
 import { SentryErrorBoundary } from "./components/SentryErrorBoundary";
-
 
 function renderFatalError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
@@ -30,23 +28,23 @@ function renderFatalError(err: unknown) {
 // turn any transient background network blip into a catastrophic screen crash.
 window.addEventListener("error", (event) => {
   const err = event.error ?? event.message;
-  console.error("[WEAVE Uncaught Error]", err);
+  console.error("[Weave Uncaught Error]", err);
   import("./lib/sentry")
     .then(({ captureLazyException }) => captureLazyException(err))
     .catch(() => {});
 });
 window.addEventListener("unhandledrejection", (event) => {
-  console.warn("[WEAVE Unhandled Rejection]", event.reason);
+  console.warn("[Weave Unhandled Rejection]", event.reason);
   import("./lib/sentry")
     .then(({ captureLazyException }) => captureLazyException(event.reason))
     .catch(() => {});
 });
 
 // ── Chunk Loading Auto-Recovery (vite:preloadError) ────────────────────────
-// When a new deployment is pushed to Vercel, previously cached HTML may request
+// When a new deployment is pushed to production, previously cached HTML may request
 // older JS chunks that no longer exist on the server (returning 404).
 //
-// Automatically recover by clearing stale caches and refreshing the page ONCE.
+// Automatically recover by clearing stale precache assets and refreshing the page ONCE.
 // Guarded with a sessionStorage flag to strictly prevent reload loops.
 const CHUNK_RELOAD_KEY = "weave:chunk_reload_done";
 window.addEventListener("vite:preloadError", async (event) => {
@@ -57,26 +55,23 @@ window.addEventListener("vite:preloadError", async (event) => {
     try {
       if ("caches" in window) {
         const keys = await caches.keys();
-        await Promise.all(keys.map((k) => caches.delete(k)));
+        await Promise.all(
+          keys
+            .filter((k) => !k.includes("sanity")) // preserve API cache so offline content survives
+            .map((k) => caches.delete(k))
+        );
       }
     } catch {}
     window.location.reload();
   } else {
-    console.error("[WEAVE] Chunk failed to load even after cache-refresh reload");
+    console.error("[Weave] Chunk failed to load even after cache-refresh reload");
   }
 });
-
 
 try {
   // Clear chunk reload flag on successful start
   sessionStorage.removeItem(CHUNK_RELOAD_KEY);
   initThemeFromStorage();
-
-  // ── Sentry is NOT pre-fetched here ────────────────────────────────────────
-  // SentryErrorBoundary (below) lazy-imports @sentry/react the first time an
-  // error is caught, keeping ~270 KB of Sentry off the critical entry bundle.
-  // There's no requestIdleCallback pre-fetch — loading Sentry proactively was
-  // consuming bandwidth and blocking FCP/LCP even when no error occurred.
 
   const rootEl = document.getElementById("root");
   if (!rootEl) {
@@ -86,14 +81,14 @@ try {
   createRoot(rootEl).render(
     <StrictMode>
       <SentryErrorBoundary>
-          <BrowserRouter>
-            <PlayerProvider>
-              <App />
-            </PlayerProvider>
-          </BrowserRouter>
+        <BrowserRouter>
+          <PlayerProvider>
+            <App />
+          </PlayerProvider>
+        </BrowserRouter>
       </SentryErrorBoundary>
-    </StrictMode>,
+    </StrictMode>
   );
 } catch (err) {
   renderFatalError(err);
-}
+}

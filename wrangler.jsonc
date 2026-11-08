@@ -12,6 +12,17 @@
       "0 * * * *"
     ]
   },
+  "vars": {
+    "CRON_SECRET": "weave@2019podcats",
+    "SUPABASE_URL": "https://otdeonkfwghuevzhxrsy.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGVvbmtmd2dodWV2emh4cnN5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NDAyNTY3OSwiZXhwIjoyMDk5NjAxNjc5fQ.Rjn8wo47OVSMW2hb0qwd-NN1NPIV8UtQLwDPnIYeAsM",
+    "YOUTUBE_API_KEY": "AIzaSyB00m3TeM9D6QXZFGb39jbo6-F001Kw2bs",
+    "YOUTUBE_CHANNEL_ID": "UCGKgsxYNTUESqdvySiMIQ1A",
+    "VITE_SANITY_PROJECT_ID": "7yislksr",
+    "VITE_SANITY_DATASET": "production",
+    "VITE_SUPABASE_URL": "https://otdeonkfwghuevzhxrsy.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGVvbmtmd2dodWV2emh4cnN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMjU2NzksImV4cCI6MjA5OTYwMTY3OX0.GcXKpB_99bVCQOtlJx8O9ttJxrL-kdP3XSEkCxkGaEs"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

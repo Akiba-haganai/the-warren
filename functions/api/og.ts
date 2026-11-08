@@ -18,6 +18,8 @@ export interface OgMetadata {
   image: string;
   url: string;
   type?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 function sanitizeDataset(val?: string | null): string {
@@ -54,12 +56,18 @@ export function buildHtml({
   image,
   url,
   type = "article",
+  imageWidth,
+  imageHeight,
 }: OgMetadata) {
   const safeTitle = escapeHtml(title);
   const safeDesc = escapeHtml(description);
   const safeImage = escapeHtml(image);
   const safeUrl = escapeHtml(url);
   const safeType = escapeHtml(type);
+
+  const dimensionTags = imageWidth && imageHeight
+    ? `\n  <meta property="og:image:width" content="${imageWidth}">\n  <meta property="og:image:height" content="${imageHeight}">`
+    : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -71,7 +79,7 @@ export function buildHtml({
   <meta property="og:type" content="${safeType}">
   <meta property="og:title" content="${safeTitle}">
   <meta property="og:description" content="${safeDesc}">
-  <meta property="og:image" content="${safeImage}">
+  <meta property="og:image" content="${safeImage}">${dimensionTags}
   <meta property="og:url" content="${safeUrl}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
@@ -87,8 +95,7 @@ export function buildHtml({
 
 /**
  * Replaces the generic Open Graph and Twitter meta tags in index.html
- * so both social crawlers (regardless of User-Agent) and human browsers
- * receive the specific episode or article thumbnail and title.
+ * so social crawlers and in-app webviews receive the specific thumbnail.
  */
 export function injectOgIntoHtml(html: string, meta: OgMetadata): string {
   const safeTitle = escapeHtml(`${meta.title} — Weave`);
@@ -96,7 +103,7 @@ export function injectOgIntoHtml(html: string, meta: OgMetadata): string {
   const safeImage = escapeHtml(meta.image);
   const safeUrl = escapeHtml(meta.url);
 
-  return html
+  let updated = html
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${safeTitle}</title>`)
     .replace(
       /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,
@@ -134,6 +141,20 @@ export function injectOgIntoHtml(html: string, meta: OgMetadata): string {
       /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i,
       `<link rel="canonical" href="${safeUrl}" />`
     );
+
+  if (meta.imageWidth && meta.imageHeight) {
+    updated = updated
+      .replace(
+        /<meta\s+property="og:image:width"\s+content="[^"]*"\s*\/?>/i,
+        `<meta property="og:image:width" content="${meta.imageWidth}" />`
+      )
+      .replace(
+        /<meta\s+property="og:image:height"\s+content="[^"]*"\s*\/?>/i,
+        `<meta property="og:image:height" content="${meta.imageHeight}" />`
+      );
+  }
+
+  return updated;
 }
 
 export async function resolveStoryOg(
@@ -141,6 +162,19 @@ export async function resolveStoryOg(
   baseUrl: string,
   env: Env
 ): Promise<OgMetadata> {
+  const cleanSlug = slug.trim();
+  if (!cleanSlug || !/^[A-Za-z0-9_-]{1,120}$/.test(cleanSlug)) {
+    return {
+      title: "Weave — Stories, Podcasts & Culture",
+      description: "Discover stories, podcasts, and culture for everyone.",
+      image: `${baseUrl}/og-image-1200x630.png`,
+      url: `${baseUrl}/blogs`,
+      type: "website",
+      imageWidth: 1200,
+      imageHeight: 630,
+    };
+  }
+
   const projectId = sanitizeProjectId(env.VITE_SANITY_PROJECT_ID);
   const dataset = sanitizeDataset(env.VITE_SANITY_DATASET);
 
@@ -169,7 +203,7 @@ export async function resolveStoryOg(
         excerpt,
         mainImage
       }`,
-      { slug }
+      { slug: cleanSlug }
     );
 
     if (story?.title) {
@@ -177,8 +211,10 @@ export async function resolveStoryOg(
         title: story.title,
         description: story.excerpt || "Read this story on Weave.",
         image: getSanityImageUrl(story.mainImage) || `${baseUrl}/og-image-1200x630.png`,
-        url: `${baseUrl}/blogs/${slug}`,
+        url: `${baseUrl}/blogs/${cleanSlug}`,
         type: "article",
+        imageWidth: 1200,
+        imageHeight: 630,
       };
     }
   } catch (err) {
@@ -189,8 +225,10 @@ export async function resolveStoryOg(
     title: "Weave — Stories, Podcasts & Culture",
     description: "Discover stories, podcasts, and culture for everyone.",
     image: `${baseUrl}/og-image-1200x630.png`,
-    url: `${baseUrl}/blogs/${slug}`,
+    url: `${baseUrl}/blogs/${cleanSlug}`,
     type: "website",
+    imageWidth: 1200,
+    imageHeight: 630,
   };
 }
 
@@ -200,8 +238,21 @@ export async function resolveEpisodeOg(
   env: Env
 ): Promise<OgMetadata> {
   const cleanId = episodeId.trim();
+
+  // Validate YouTube / episode ID format (alphanumeric, dashes, underscores, length 6-30)
+  if (!cleanId || !/^[A-Za-z0-9_-]{6,30}$/.test(cleanId)) {
+    return {
+      title: "Weave Podcasts",
+      description: "Listen to podcast episodes on Weave.",
+      image: `${baseUrl}/og-image-1200x630.png`,
+      url: `${baseUrl}/podcasts`,
+      type: "website",
+      imageWidth: 1200,
+      imageHeight: 630,
+    };
+  }
+
   const targetUrl = `${baseUrl}/podcasts?episode=${encodeURIComponent(cleanId)}`;
-  // Reliable YouTube high-quality 16:9 thumbnail that always exists for every public video
   const defaultYtThumb = `https://i.ytimg.com/vi/${encodeURIComponent(cleanId)}/hqdefault.jpg`;
 
   // 1. Try Supabase episodes table first
@@ -214,7 +265,7 @@ export async function resolveEpisodeOg(
       const { data: ep } = await supabase
         .from("episodes")
         .select("id, title, description, thumbnail, youtube_id")
-        .or(`id.eq.${cleanId},youtube_id.eq.${cleanId}`)
+        .eq("id", cleanId)
         .limit(1)
         .maybeSingle();
 
@@ -224,9 +275,11 @@ export async function resolveEpisodeOg(
           description: ep.description
             ? ep.description.slice(0, 200)
             : "Listen to this podcast episode on Weave.",
-          image: ep.thumbnail || `https://i.ytimg.com/vi/${ep.youtube_id || cleanId}/hqdefault.jpg`,
+          image: ep.thumbnail || defaultYtThumb,
           url: targetUrl,
           type: "video.Episode",
+          imageWidth: 480,
+          imageHeight: 360,
         };
       }
     } catch (err) {
@@ -245,6 +298,8 @@ export async function resolveEpisodeOg(
         title?: string;
         author_name?: string;
         thumbnail_url?: string;
+        thumbnail_width?: number;
+        thumbnail_height?: number;
       };
       if (data.title) {
         return {
@@ -253,6 +308,8 @@ export async function resolveEpisodeOg(
           image: data.thumbnail_url || defaultYtThumb,
           url: targetUrl,
           type: "video.other",
+          imageWidth: data.thumbnail_width || 480,
+          imageHeight: data.thumbnail_height || 360,
         };
       }
     }
@@ -260,13 +317,15 @@ export async function resolveEpisodeOg(
     console.error("YouTube oEmbed fallback failed:", err);
   }
 
-  // 3. Final fallback still uses the specific YouTube video's thumbnail
+  // 3. Final fallback with validated YouTube thumbnail
   return {
     title: "Weave Podcasts",
     description: "Listen to this podcast episode on Weave.",
     image: defaultYtThumb,
     url: targetUrl,
     type: "website",
+    imageWidth: 480,
+    imageHeight: 360,
   };
 }
 

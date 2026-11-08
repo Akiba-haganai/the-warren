@@ -19,9 +19,11 @@ function sanitizeProjectId(val?: string | null): string {
   return "7yislksr";
 }
 
+const env = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env : ({} as Record<string, string | undefined>);
+
 export const sanityClient = createClient({
-  projectId: sanitizeProjectId(import.meta.env.VITE_SANITY_PROJECT_ID),
-  dataset: sanitizeDataset(import.meta.env.VITE_SANITY_DATASET),
+  projectId: sanitizeProjectId(env.VITE_SANITY_PROJECT_ID),
+  dataset: sanitizeDataset(env.VITE_SANITY_DATASET),
   apiVersion: "2024-01-01",
   useCdn: true,
   timeout: 8000, // Fail fast on stalled connections instead of hanging indefinitely

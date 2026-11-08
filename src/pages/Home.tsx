@@ -212,14 +212,14 @@ function LatestBlogs() {
 function CommunityPoll() {
   const [sectionRef, inView] = useInView<HTMLElement>();
   const { poll, loading } = useActivePoll({ enabled: inView });
-  const [voterId, setVoterId] = useState("");
+  const [voterId] = useState(() => getBrowserId());
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [results, setResults] = useState<any[] | null>(null);
   const [voting, setVoting] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
-    setVoterId(getBrowserId());
+    // voterId initialized synchronously in useState
   }, []);
 
   useEffect(() => {

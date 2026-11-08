@@ -74,13 +74,53 @@ export function useVersionCheck(): PWAUpdateState {
   }, [checkVersion]);
 
   const applyUpdate = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    if (!("serviceWorker" in navigator)) {
+      window.location.reload();
+      return;
+    }
+
     navigator.serviceWorker.addEventListener(
       "controllerchange",
       () => window.location.reload(),
       { once: true }
     );
-    sendSkipWaiting();
-    setTimeout(() => window.location.reload(), 2000);
+
+    // Case 1: A worker is already waiting in background
+    if (registrationRef.current?.waiting) {
+      sendSkipWaiting();
+      setTimeout(() => window.location.reload(), 2500);
+      return;
+    }
+
+    // Case 2: Stale version detected, trigger update check and listen for install completion
+    if (registrationRef.current) {
+      registrationRef.current
+        .update()
+        .then((reg) => {
+          if (reg?.waiting) {
+            sendSkipWaiting();
+            setTimeout(() => window.location.reload(), 2500);
+          } else if (reg?.installing) {
+            reg.installing.addEventListener("statechange", (e) => {
+              const worker = e.target as ServiceWorker;
+              if (worker.state === "installed") {
+                sendSkipWaiting();
+                setTimeout(() => window.location.reload(), 2500);
+              }
+            });
+          } else {
+            window.location.reload();
+          }
+        })
+        .catch(() => {
+          window.location.reload();
+        });
+      return;
+    }
+
+    window.location.reload();
   }, []);
 
   return { updateReady, isStale, applyUpdate };
